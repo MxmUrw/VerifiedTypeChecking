@@ -4,136 +4,100 @@ module Verification.Unification.Instance.Signature where
 open import Verification.Conventions hiding (k)
 open import Verification.Core.Category
 open import Verification.Core.Order
+open import Verification.Core.Type
 open import Verification.Core.Category.Monad
 open import Verification.Core.Category.Instance.Kleisli
 open import Verification.Core.Category.Instance.IdxSet
 open import Verification.Unification.RecAccessible
 
-module _ {K : 𝒰₀} where
-  -- Symbol : 𝒰₀
-  -- Symbol = ∑ λ (n : ℕ) -> K ×-𝒰 (Vec K n)
+open import Verification.Core.Syntax.NCSignature
 
-  Signature : 𝒰₁
-  Signature = {n : ℕ} -> K -> Vec K n -> 𝒰₀
+instance
+  IDiscreteStr:Vec : ∀{A : 𝒰 𝑖} {{_ : IDiscreteStr A}} -> IDiscreteStr (Vec A n)
+  (IDiscreteStr:Vec IDiscreteStr.≟-Str a) b = {!!}
 
-  data Term (s : Signature) (V : K -> 𝒰₀) (k : K) : 𝒰₀
-  data Terms (σ : Signature) (V : K -> 𝒰₀) : {n : ℕ} (ks : Vec K n) -> 𝒰₀ where
-    [] : Terms σ V []
-    _∷_ : ∀{k} {ks : Vec K n} -> Term σ V k -> Terms σ V ks -> Terms σ V (k ∷ ks)
+  IDiscreteStr:ℕ : IDiscreteStr ℕ
+  IDiscreteStr:ℕ = {!!}
 
-  data Term σ V k where
-    te : ∀{ks : Vec K n} -> σ k ks -> Terms σ V ks -> Term σ V k
-    var : V k -> Term σ V k
 
-  data Term₊ (s : Signature) (V : Maybe K -> 𝒰₀) : (k : Maybe K) -> 𝒰₀ where
-    none : Term₊ s V nothing
-    some : ∀{k} -> Term s (λ k -> V (just k)) k -> Term₊ s V (just k)
-
-  K₊ = Maybe K
-
+module _ {K : 𝒰₀} {{_ : IDiscreteStr K}} where
 
   module _ {σ : Signature} where
     private
       variable k : K
                ks : Vec K n
-               j : K₊
+               -- j : K
 
-    join-Term : ∀{V : K -> 𝒰₀} -> Term σ (Term σ V) k -> Term σ V k
+    module _ {{_ : ∀{n k} {ks : Vec K (suc n)} -> IDiscreteStr (σ k ks)}} where
 
-    join-Terms : ∀{V : K -> 𝒰₀} -> Terms σ (Term σ V) ks -> Terms σ V ks
-    join-Terms [] = []
-    join-Terms (t ∷ ts) = join-Term t ∷ join-Terms ts
+    -- private
+    --   𝒞 : Category _
+    --   𝒞 = ` IdxSet (Maybe K) ℓ₀ `
 
-    join-Term (te a ts) = te a (join-Terms ts)
-    join-Term (var t) = t
+    -- data SigEdge : (a b : Maybe K) -> 𝒰₀ where
+    --   e-arg : ∀ {k} {ks : Vec K (suc n)} -> (i : Fin-R n) -> σ k ks -> SigEdge (just (lookup i ks)) (just k)
+    --   e-noarg : ∀{k} -> σ k [] -> SigEdge nothing (just k)
 
-    ⇈_ : (K₊ -> 𝒰₀) -> (K -> 𝒰₀)
-    ⇈_ V k = V (just k)
+      data SigEdge : (a b : K) -> 𝒰₀ where
+        edge : ∀ {k} {ks : Vec K (suc n)} -> (i : Fin-R (suc n)) -> σ k ks -> SigEdge (lookup i ks) k
 
+      𝑄 : Quiver ⊥
+      ⟨ 𝑄 ⟩ = K
+      IQuiver.Edge (of 𝑄) = SigEdge
+      IQuiver._≈_ (of 𝑄) = _≡_
+      IQuiver.IEquivInst (of 𝑄) = IEquiv:Path
 
-    join-Term₊' : ∀{V : K₊ -> 𝒰₀} -> Term σ (⇈ Term₊ σ V) k -> Term σ (⇈ V) k
+      -- compare-sig : ∀{k j₁ j₂ : K} -> {n₁ n₂ : ℕ} -> (s )
 
-    join-Terms₊ : ∀{V : K₊ -> 𝒰₀} -> Terms σ (⇈ Term₊ σ V) ks -> Terms σ (⇈ V) ks
-    join-Terms₊ [] = []
-    join-Terms₊ (t ∷ ts) = join-Term₊' t ∷ join-Terms₊ ts
+      module _ {V : K -> 𝒰₀} where
+        lookup-Term : ∀{ks : Vec K (n)} -> (i : Fin-R (n)) -> Terms σ V ks -> Term σ V (lookup i ks)
+        lookup-Term zero    (t ∷ ts) = t
+        lookup-Term (suc i) (t ∷ ts) = lookup-Term i ts
 
-    join-Term₊' (te t ts) = te t (join-Terms₊ ts)
-    join-Term₊' {k = k} (var (some x)) = x
-
-    join-Term₊ : ∀{V : K₊ -> 𝒰₀} -> Term₊ σ (Term₊ σ V) j -> Term₊ σ V j
-    join-Term₊ none = none
-    join-Term₊ (some t) = some (join-Term₊' t)
-
-    map-Term₊ : ∀{V W : K₊ -> 𝒰₀} -> (f : ∀ k -> V k -> W k) -> Term₊ σ V j -> Term₊ σ W j
-    map-Term₊ f none = none
-    map-Term₊ f (some (te x x₁)) = {!!}
-    map-Term₊ f (some (var x)) = {!!}
-
-    private
-      𝒞 : Category _
-      𝒞 = ` IdxSet (Maybe K) ℓ₀ `
-
-    Functor:Term : Functor 𝒞 𝒞
-    ⟨ ⟨ Functor:Term ⟩ X ⟩ k = Term₊ σ ⟨ X ⟩ k
-    of ⟨ Functor:Term ⟩ z = {!!}
-    ⟨ IFunctor.map (of Functor:Term) f ⟩ k = map-Term₊ ⟨ f ⟩
-    IFunctor.functoriality-id (of Functor:Term) = {!!}
-    IFunctor.functoriality-◆ (of Functor:Term) = {!!}
-    IFunctor.functoriality-≣ (of Functor:Term) = {!!}
+        lookup-Term-try : ∀(n₁ n₂ : ℕ) (ks₁ : Vec K (suc n₁)) (ks₂ : Vec K (suc n₂)) (s₁ : σ k ks₁) (s₂ : σ k ks₂) (i : Fin-R (suc n₂)) (ts : Terms σ V ks₁) -> Maybe (Term σ V (lookup i ks₂))
+        lookup-Term-try n₁ n₂ ks₁ ks₂ s₁ s₂ i ts with (n₁ ≟-Str n₂)
+        ... | no ¬p = nothing
+        ... | yes refl-StrId with (ks₁ ≟-Str ks₂)
+        ... | no ¬p = nothing
+        ... | yes refl-StrId with (s₁ ≟-Str s₂)
+        ... | no ¬p = nothing
+        ... | yes refl-StrId = right (lookup-Term i ts)
 
 
-    Monad:Term : Monad 𝒞
-    ⟨ Monad:Term ⟩ = Functor:Term
-    ⟨ IMonad.return (of Monad:Term) ⟩ nothing x = none
-    ⟨ IMonad.return (of Monad:Term) ⟩ (just k) x = some (var x)
-    ⟨ IMonad.join (of Monad:Term) ⟩ _ = join-Term₊
-    IMonad.INatural:return (of Monad:Term) = {!!}
-    IMonad.INatural:join (of Monad:Term) = {!!}
-    IMonad.unit-l-join (of Monad:Term) = {!!}
-    IMonad.unit-r-join (of Monad:Term) = {!!}
-    IMonad.assoc-join (of Monad:Term) = {!!}
+        decomp : {k : K} -> Term σ V k -> V k +-𝒰 (∀(j : K) -> SigEdge j k -> Maybe (Term σ V j))
+        decomp {k = k} (te {n = n₁} {ks = ks₁} s₁ ts) = right f
+          where
+            f : (j : K) → SigEdge j k → Maybe (Term σ V j)
+            f .(lookup i _) (edge {n = n₂} {ks = ks₂} i s₂) with (n₁ ≟-Str n₂)
+            ... | no ¬p = nothing
+            ... | yes refl-StrId with (ks₁ ≟-Str ks₂)
+            ... | no ¬p = nothing
+            ... | yes refl-StrId with (s₁ ≟-Str s₂)
+            ... | no ¬p = nothing
+            ... | yes refl-StrId = right (lookup-Term i ts)
+        decomp (var x) = left x
 
-    data SigEdge : (a b : Maybe K) -> 𝒰₀ where
-      e-arg : ∀ {k} {ks : Vec K n} -> (i : Fin-R n) -> σ k ks -> SigEdge (just (lookup i ks)) (just k)
-      e-noarg : ∀{k} -> σ k [] -> SigEdge nothing (just k)
+        isMono:decomp : ∀ {k} -> (t s : Term σ V k) -> decomp t ≡-Str decomp s -> t ≡-Str s
+        isMono:decomp (te x x₁) (te x₂ x₃) p = {!!}
+        isMono:decomp (var x) (var .x) refl-StrId = refl-StrId
 
-    𝑄 : Quiver ⊥
-    ⟨ 𝑄 ⟩ = Maybe K
-    IQuiver.Edge (of 𝑄) = SigEdge
-    IQuiver._≈_ (of 𝑄) = _≡_
-    IQuiver.IEquivInst (of 𝑄) = IEquiv:Path
+      -- decomp nothing none = right (λ j ())
+      -- decomp {V = V} (just k) (some (te t ts)) = right (f ts)
+      --   where f : Terms σ (V) ks -> (j : K) -> SigEdge j (just k) -> Maybe (Term σ _ j)
+      --         f = ?
+              -- f xs .(just (lookup i _)) (e-arg i x) = {!!}
+              -- f xs .nothing (e-noarg x) = {!!}
+              -- f .(just (lookup i _)) (e-arg i x) = {!!}
+              -- f .nothing (e-noarg x) = {!!}
+      -- decomp (just k) (some (var v)) = left v
 
+      RecAccessible:Term : IRecAccessible (Monad:Term σ)
+      IRecAccessible.Dir RecAccessible:Term = of 𝑄
+      IRecAccessible.ISet:Dir RecAccessible:Term = {!!}
+      ⟨ ⟨ IRecAccessible.decompose RecAccessible:Term ⟩ ⟩ _ = decomp
+      of IRecAccessible.decompose RecAccessible:Term = {!!}
+      IRecAccessible.IMono:decompose RecAccessible:Term = {!!}
+      IRecAccessible.wellfounded RecAccessible:Term = {!!}
 
-    decomp : ∀{V : K₊ -> 𝒰₀} (k : K₊) -> Term₊ σ V k -> V k +-𝒰 (∀(j : K₊) -> SigEdge j k -> Maybe (Term₊ σ V j))
-    decomp nothing none = right (λ j ())
-    decomp {V = V} (just k) (some (te t ts)) = right (f ts)
-      where f : Terms σ (⇈ V) ks -> (j : K₊) -> SigEdge j (just k) -> Maybe (Term₊ σ _ j)
-            f xs .(just (lookup i _)) (e-arg i x) = {!!}
-            f xs .nothing (e-noarg x) = {!!}
-            -- f .(just (lookup i _)) (e-arg i x) = {!!}
-            -- f .nothing (e-noarg x) = {!!}
-    decomp (just k) (some (var v)) = left v
-
-    RecAccessible:Term : IRecAccessible Monad:Term
-    IRecAccessible.Dir RecAccessible:Term = of 𝑄
-    IRecAccessible.ISet:Dir RecAccessible:Term = {!!}
-    ⟨ ⟨ IRecAccessible.decompose RecAccessible:Term ⟩ ⟩ = decomp
-    of IRecAccessible.decompose RecAccessible:Term = {!!}
-    IRecAccessible.IMono:decompose RecAccessible:Term = {!!}
-    IRecAccessible.wellfounded RecAccessible:Term = {!!}
-
-{-
-
-  -- 𝑄 : Signature n -> Quiver ⊥
-  -- ⟨ 𝑄 {n} s ⟩ = K
-  -- IQuiver.Edge (of 𝑄 s) = {!!}
-  -- IQuiver._≈_ (of 𝑄 s) = {!!}
-  -- IQuiver.IEquivInst (of 𝑄 s) = {!!}
-
-
-
-
-
--}
 
 

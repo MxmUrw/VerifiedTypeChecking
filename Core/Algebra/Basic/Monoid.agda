@@ -11,18 +11,20 @@ open import Verification.Core.Homotopy.Level
 
 
 -- ===* Monoids
--- | Monoids mark the beginning of algebra.
+-- | Monoids are an important concept in both mathematics and computer science.
 
 -- [Definition]
--- | A set $A$ has the structure of a monoid,
+-- | A type |A| has the structure of a monoid,
 record IMonoid (A : 𝒰 𝑖) : 𝒰 𝑖 where
-  -- field {{ISet:this}} : ISet A
--- | - if there is a multiplication operation and a special element,
+
+-- | - if there is a special element [..], and a multiplication operation [..].
   field 𝟷    : A
         _⋅_  : A -> A -> A
 
--- | - such that the operation is associative, and the element is a left and right unit.
-  field assoc-⋅   : ∀{a b c : A} -> (a ⋅ b) ⋅ c ≡ a ⋅ (b ⋅ c)
+-- | - Such that the operation is associative,
+        assoc-⋅   : ∀{a b c : A} -> (a ⋅ b) ⋅ c ≡ a ⋅ (b ⋅ c)
+
+-- |>  and |𝟷| is a left and right unit for it.
         unit-l-⋅  : ∀{a : A} -> 𝟷 ⋅ a ≡ a
         unit-r-⋅  : ∀{a : A} -> a ⋅ 𝟷 ≡ a
 

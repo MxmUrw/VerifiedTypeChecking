@@ -209,9 +209,9 @@ map-Arg : ∀{A B : 𝒰 𝑖} -> (A -> B) -> Arg A -> Arg B
 map-Arg f (arg i x) = arg i (f x)
 
 
-map-Maybe : ∀{A B : 𝒰 𝑖} -> (A -> B) -> Maybe A -> Maybe B
-map-Maybe f (left x) = left x
-map-Maybe f (right x) = right (f x)
+-- map-Maybe : ∀{A B : 𝒰 𝑖} -> (A -> B) -> Maybe A -> Maybe B
+-- map-Maybe f (left x) = left x
+-- map-Maybe f (right x) = right (f x)
 
 map-Abs : ∀{A B : 𝒰 𝑖} -> (A -> B) -> Abs A -> Abs B
 map-Abs f (Abs.abs s x) = Abs.abs s (f x)

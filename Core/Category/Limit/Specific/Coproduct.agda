@@ -3,7 +3,7 @@ module Verification.Core.Category.Limit.Specific.Coproduct where
 
 open import Verification.Conventions
 open import Verification.Core.Category.Definition
-open import Verification.Core.Category.Instance.Cat
+open import Verification.Core.Category.Instance.Cat.Products
 
 
 

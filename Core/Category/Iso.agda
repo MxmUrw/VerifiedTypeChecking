@@ -6,7 +6,7 @@ module Verification.Core.Category.Iso where
 open import Verification.Conventions
 open import Verification.Core.Category.Definition
 -- open import Verification.Core.Category.Instance.Cat
-open import Verification.Core.Category.Instance.Type
+open import Verification.Core.Category.Instance.Type.Definition
 
 module _ {X : 𝒰 𝑖} {{_ : ICategory X 𝑗}} where
 

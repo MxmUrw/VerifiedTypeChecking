@@ -4,7 +4,7 @@ module Verification.Unification.RecAccessible where
 
 open import Verification.Conventions
 open import Verification.Core.Type
-open import Verification.Core.Algebra
+-- open import Verification.Core.Algebra
 open import Verification.Core.Order
 open import Verification.Core.Category.Definition
 open import Verification.Core.Category.Instance.Functor
@@ -12,27 +12,40 @@ open import Verification.Core.Category.Quiver
 open import Verification.Core.Category.FreeCategory
 open import Verification.Core.Category.Monad
 open import Verification.Core.Category.EpiMono
+open import Verification.Core.Category.Natural
 open import Verification.Core.Category.Instance.Type
+open import Verification.Core.Category.Instance.Cat
 open import Verification.Core.Category.Instance.TypeProperties
 open import Verification.Core.Category.Instance.SmallCategories
 open import Verification.Core.Category.Instance.Set
 open import Verification.Core.Category.Instance.IdxSet
+open import Verification.Core.Category.Limit.Kan.Terminal
 open import Verification.Core.Homotopy.Level
 open import Verification.Core.Order.Instance.Level
 --- open import Verification.Core.Category.Limit
 -- open import Verification.Unification.Substitution
 
+module _ {𝒞 : Category 𝑖} {𝒟 : Category 𝑗} where
+  Functor:∆ : (x : ⟨ 𝒟 ⟩) -> Functor 𝒞 𝒟
+  ⟨ Functor:∆ x ⟩ = ∆ x
+  IFunctor.map (of Functor:∆ x) _ = id
+  IFunctor.functoriality-id (of Functor:∆ x) = refl
+  IFunctor.functoriality-◆ (of Functor:∆ x) = unit-2-◆ ⁻¹
+  IFunctor.functoriality-≣ (of Functor:∆ x) _ = refl
 
 --------------------------------------------------------------------
 -- == Recursion Monads
+-- (T : Functor ` IdxSet K 𝑖 ` ` IdxSet K 𝑖 `)
 
+module _ {𝒞 : Category 𝑖} where
+  μ : (T : Monad 𝒞) -> (⟨ T ⟩ ◆ ⟨ T ⟩ ⟶ ⟨ T ⟩)
+  μ T = ⌘ join {{of T}}
 
-module _ {K : 𝒰 𝑖} (T : Functor ` IdxSet K 𝑖 ` ` IdxSet K 𝑖 `) (D : IQuiver K (𝑖 , 𝑖)) where
+module _ {K : 𝒰 𝑖} (D : IQuiver K (𝑖 , 𝑖)) where
   Decomp : Functor ` IdxSet K 𝑖 ` ` IdxSet K 𝑖 `
-  ⟨ ⟨ Decomp ⟩ X ⟩ k = (⟨ X ⟩ k) +-𝒰 (∀(k₂ : K) -> (e : Edge {{D}} k₂ k) -> Maybe (⟨ ⟨ T ⟩ X ⟩ k₂))
+  ⟨ ⟨ Decomp ⟩ X ⟩ k = ∀(k₂ : K) -> (e : Edge {{D}} k₂ k) -> Maybe (⟨ X ⟩ k₂)
   of ⟨ Decomp ⟩ X = {!!}
-  ⟨ IFunctor.map (of Decomp) f ⟩ k (left a) = left (⟨ f ⟩ k a)
-  ⟨ IFunctor.map (of Decomp) f ⟩ k (just a) = just (λ k₂ e -> {!!})
+  ⟨ IFunctor.map (of Decomp) f ⟩ k x j e = map-Maybe (⟨ f ⟩ _) (x _ e)
   of IFunctor.map (of Decomp) x = record {}
   IFunctor.functoriality-id (of Decomp) = {!!}
   IFunctor.functoriality-◆ (of Decomp) = {!!}
@@ -41,20 +54,33 @@ module _ {K : 𝒰 𝑖} (T : Functor ` IdxSet K 𝑖 ` ` IdxSet K 𝑖 `) (D : 
 -- [Definition]
 -- | A \textbf{recursion monad} is given by a monad \AB{T}, together with a pointed set \AFd{Direction}
 -- and an action of this on any set $\AB{T} A$.
-module _ {K : 𝒰 𝑖} (T : Monad ` IdxSet K 𝑖 `) where
-  record IRecAccessible : 𝒰 (𝑖 ､ 𝑖 ⁺) where
+module _ {K : 𝒰 𝑖} where
+  record IRecAccessible (T : Monad ` IdxSet K 𝑖 `) : 𝒰 (𝑖 ､ 𝑖 ⁺) where
 
     -- field depth : ∀{A k} -> ⟨ ⟨ T ⟩ A ⟩ k -> ℕ
     --       depth/return : ∀{A : K -> 𝒰 𝑖} -> {{_ : IIdxSet K A}} -> ∀{k : K} -> ∀{a : A k} -> depth (⟨ return {A = ` A `} ⟩ k a) ≡ 0
     field Dir : IQuiver K (𝑖 , 𝑖)
-          {{ISet:Dir}} : ∀{a b : K} -> ISet (Edge a b)
+          {{ISet:Dir}} : ∀{a b : K} -> ISet (Edge {{Dir}} a b)
 
-    field decompose : Natural ⟨ T ⟩ (Decomp ⟨ T ⟩ Dir)
+    field decompose : Natural ⟨ T ⟩ (⟨ T ⟩ ◆ Decomp Dir)
+          commutes:decompose : commutes-Nat (μ T) decompose
           {{IMono:decompose}} : IMono decompose
           wellfounded : WellFounded (λ (a b : K) -> QPath a b)
+          pts : Natural (Functor:∆ 𝟙) ⟨ T ⟩
+
+    δ : ∀{A} -> ∀{k} -> ∀(a : ⟨ ⟨ ⟨ T ⟩ ⟩ A ⟩ k) -> ∀{j} -> (e : Edge {{Dir}} j k) -> Maybe (⟨ ⟨ ⟨ T ⟩ ⟩ A ⟩ j)
+    δ a e = ⟨ ⟨ decompose ⟩ ⟩ _ a _ e
+
+    e0 : ∀{k} {X : IdxSet K 𝑖} -> ⟨ ⟨ ⟨ T ⟩ ⟩ X ⟩ k
+    e0 {k} = ⟨ ⟨ pts ⟩ ⟩ k (↥ tt)
+
+    field a0 : ∀{k : K} -> Edge {{Dir}} k k
+          a0-adsorb : ∀{k : K} -> ∀{X} -> ∀(x : ⟨ ⟨ ⟨ T ⟩ ⟩ X ⟩ k ) -> δ x (a0 {k}) ≡ just e0
+
     --       strict : ∀{A} -> ∀(x : ⟨ T ⟩ A) -> on-Decom T Dir (λ a -> x ≡ return a) (λ a -> depth a < depth x) (⟨ decompose ⟩ x)
 
   open IRecAccessible {{...}} public
+
 
 -- //
 

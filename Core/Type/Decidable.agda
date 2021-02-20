@@ -37,5 +37,8 @@ module _ {A B : 𝒰 𝑖} (f : A -> B) {{_ : IMono f}} where
 record IDiscrete (A : 𝒰 𝑖) : 𝒰 𝑖 where
   field {{Impl}} : ∀{a b : A} -> IDec (a ≡ b)
 
+record IDiscreteStr (A : 𝒰 𝑖) : 𝒰 𝑖 where
+  field _≟-Str_ : (a b : A) -> Decision (a ≡-Str b)
+open IDiscreteStr {{...}} public
 
 

@@ -5,7 +5,7 @@ module Verification.Core.Category.Instance.Set.Definition where
 open import Verification.Conventions
 open import Verification.Core.Category.Definition
 open import Verification.Core.Homotopy.Level
-open import Verification.Core.Category.Instance.Type
+open import Verification.Core.Category.Instance.Type.Definition
 
 -- | In order to define |Category:Set|, we need to say what a set is.
 --   Since the notion of the homotopy level of a type is already defined,

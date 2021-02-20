@@ -4,7 +4,7 @@ module Verification.Core.Category.Instance.Cat.Definition where
 
 open import Verification.Conventions
 open import Verification.Core.Category.Definition
-open import Verification.Core.Category.Instance.Type
+open import Verification.Core.Category.Instance.Type.Definition
 open import Verification.Core.Category.Iso
 
 ------------------
