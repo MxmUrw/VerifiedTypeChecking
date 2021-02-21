@@ -25,9 +25,9 @@ module _ {𝒞 : Category 𝑖} where
           {{INatural:return}}  : INatural id (F) return
           {{INatural:join}}    : INatural (F ◆ F) (F) join
 -- | - And behave monoidal.
-          unit-l-join  : ∀{A : ⟨ 𝒞 ⟩} -> return ◆ join ≡ id {a = ⟨ F ⟩ A}
-          unit-r-join  : ∀{A : ⟨ 𝒞 ⟩} -> map return ◆ join ≡ id {a = ⟨ F ⟩ A}
-          assoc-join   : ∀{A : ⟨ 𝒞 ⟩} -> join ◆ join ≡ (map join) ◆ join {A = A}
+          unit-l-join  : ∀{A : ⟨ 𝒞 ⟩} -> return ◆ join ≣ id {a = ⟨ F ⟩ A}
+          unit-r-join  : ∀{A : ⟨ 𝒞 ⟩} -> map return ◆ join ≣ id {a = ⟨ F ⟩ A}
+          assoc-join   : ∀{A : ⟨ 𝒞 ⟩} -> join ◆ join ≣ (map join) ◆ join {A = A}
   open IMonad {{...}} public
 -- //
 

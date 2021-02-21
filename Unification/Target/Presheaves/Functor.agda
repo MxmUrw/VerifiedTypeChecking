@@ -56,7 +56,7 @@ instance
 ≡-Str→≡ refl-StrId = refl
 
 ≡→≡-Str : ∀{X : 𝒰 𝑖} -> ∀{a b : X} -> (a ≡ b) -> (a ≡-Str b)
-≡→≡-Str = {!!}
+≡→≡-Str {a = a} {b} p = transport (λ i -> a ≡-Str (p i)) refl-StrId
 
 cong-Str : ∀{A : 𝒰 𝑖} {B : 𝒰 𝑗} {a b : A} -> (f : A -> B) -> (a ≡-Str b) -> (f a ≡-Str f b)
 cong-Str f refl-StrId = refl-StrId
@@ -457,11 +457,167 @@ module _ {K : 𝒰 𝑖} (T' : Monad `(IdxSet K 𝑖)`) {{_ : IRecAccessible T'}
                 -> f ↷ g ↷ x ≡ (f ◆ g) ↷ x
       assoc-↷ {f = f} {g = g} {x} = functoriality-◆ {{of 𝑺 X}} {f = g} {g = f} x ⁻¹
 
+      mModNormal : ∀ k j p x -> ⟨ Mod X k ⟩
+      mModNormal k j p x = (j , p , x)
+
+      _≢-Str_ : ∀{X : 𝒰 𝑙} -> (a b : X) -> 𝒰 𝑙
+      a ≢-Str b = ¬ StrId a b
+
+      QPath-break : ∀{k l1 l2 j} -> {e : Edge {{of Q}} k l1} {f : Edge {{of Q}} k l2} {p : QPath {{of Q}} l1 j} {q : QPath {{of Q}} l2 j} -> _≡-Str_ {A = QPath k j} (e ∷ p) (f ∷ q) -> (QQ : l1 ≡ l2)
+                  -> transport (λ i -> QPath {{of Q}} (QQ i) j) p ≡ q
+      QPath-break {l1 = l1} {l2} {j} {e} {f} {p} {q} refl-StrId QQ = X3
+        where X1 : refl ≡ QQ
+              X1 = hlevel {{ISet:K}} l1 l1 refl QQ
+              X2 : transport (λ i -> QPath {{of Q}} l1 j) p ≡ p
+              X2 = transportRefl p
+              X3 : transport (λ i -> QPath {{of Q}} (QQ i) j) p ≡ p
+              X3 = transport (λ k -> transport (λ i -> QPath {{of Q}} (X1 k i) j) p ≡ p) X2
+
+
+      lem-000 : ∀{k} -> ∀ j1 j2 -> ∀ (e1 : Edge {{Dir}} k k) (e2 : Edge {{Dir}} k k) -> (p1 : QPath {{of Q}} k j1) (p2 : QPath {{of Q}} k j2)
+                -> (p : j1 ≡ j2) -> PathP (λ i -> QPath₊ k (p i)) (some (e1 ∷ p1)) (some (e2 ∷ p2)) -> PathP (λ i -> QPath k (p i)) p1 p2
+      lem-000 {k} j1 j2 e1 e2 p1 p2 p q with ≡→≡-Str p
+      ... | refl-StrId = q5
+        where
+            P1 : p ≡ refl
+            P1 = hlevel {{ISet:K}} _ _ p refl
+
+            P0 : Path (QPath₊ k j1) (some (e1 ∷ p1)) (some (e2 ∷ p2))
+            P0 = transport (λ α -> PathP (λ i → QPath₊ k (P1 α i)) (some (e1 ∷ p1)) (some (e2 ∷ p2))) q
+
+            f : (pp : QPath₊ {{of Q}} k j1) -> QPath {{of Q}} k j1
+            f id-Q = last a0
+            f (some x) = x
+
+            q2 : PathP (λ i -> QPath k j1) ((e1 ∷ p1)) ((e2 ∷ p2))
+            q2 i = f (P0 i)
+
+            q3 : PathP (λ i -> QPath k j1) (transport (λ i -> QPath {{of Q}} k j1) p1) (p2)
+            q3 = QPath-break (≡→≡-Str q2) refl
+
+            q4 : PathP (λ i -> QPath k j1) (p1) (p2)
+            q4 = transport (λ α -> PathP (λ i -> QPath k j1) (transportRefl p1 α) (p2)) q3
+
+            q5 : PathP (λ i -> QPath k (p i)) (p1) (p2)
+            q5 = transport (λ α -> PathP (λ i -> QPath k (P1 (~ α) i)) p1 p2) q4
+
+
+      lem-00 : ∀ {k} -> ∀ j1 j2 -> ∀ x1 x2 -> ∀ (e1 : Edge {{Dir}} k k) (e2 : Edge {{Dir}} k k) -> (p1 : QPath {{of Q}} k j1) (p2 : QPath {{of Q}} k j2)
+               -> mModNormal k j1 (some (e1 ∷ p1)) x1 ≡ mModNormal k j2 (some (e2 ∷ p2)) x2
+               -> mModNormal k j1 (some p1) x1 ≡ mModNormal k j2 (some p2) x2
+      lem-00 _ _ _ _ _ _ _ _ p = λ i -> p i .fst , some (lem-000 _ _ _ _ _ _ (λ i -> p i .fst) (λ i -> p i .snd .fst) i) , (p i .snd .snd)
+
+      -- cancel-↷-impl-2 : ∀{k} -> (x y : ⟨ ⟨ T ⟩ X ⟩ k) -> (∀{j} -> (e : Edge {{Dir}} j k) -> ` e ` ↷ ι x ≡ ` e ` ↷ ι y) -> x ≡ y
+      -- cancel-↷-impl-2 x y P with decideDecompose x | decideDecompose y
+      -- cancel-↷-impl-2 {k} x y P | left (Px , _) | left (Py , _) with split-+-Str (δ x a1) | split-+-Str (δ y a1) | (P a1) | ≡→≡-Str (P a1)
+      -- ... | left x₁ | left x₂ | XX | _ =
+      --   let ρ : k ≡ k
+      --       ρ = λ i -> XX i .fst .fst
+      --       ρ-refl : ρ ≡ refl
+      --       ρ-refl = hlevel {{ISet:K}} _ _ ρ refl
+      --       P : PathP (λ i -> ⟨ ⟨ T ⟩ X ⟩ (ρ i)) x y
+      --       P i = XX i .fst .snd .snd
+      --   in transport (λ α -> PathP (λ i -> ⟨ ⟨ T ⟩ X ⟩ (ρ-refl α i)) x y) P
+      -- ... | left (_ , R) | just (_ , S) | _ | ()
+      -- ... | just (_ , R) | just x₂ | XX | _ = 𝟘-rec (right≢left (` R ⁻¹ ∙ Px `))
+      -- cancel-↷-impl-2 x y P | left (Px , _) | just Dy       = {!!} -- 𝟘-rec (right≢left (` Dy a1 .snd ⁻¹ ∙ Px `))
+      -- cancel-↷-impl-2 x y P | just Dx       | left (Py , _) = {!!}
+      -- cancel-↷-impl-2 x y P | just Dx       | just Dy       = {!!}
+
+      δ-decomp : ∀{k j} -> (e : Edge {{of Q}} k j) -> (x : ⟨ ⟨ T ⟩ X ⟩ j) -> (Dx : isDecomposable x) -> ` e ` ↷ ι x ≡ ι (Dx e .fst)
+      δ-decomp e x Dx with split-+-Str (δ x e)
+      ... | left (_ , R) = 𝟘-rec (right≢left (` Dx e .snd ⁻¹ ∙ R `))
+      ... | just (a , S) with Dx e .snd ⁻¹ ∙ S
+      ... | refl-StrId = refl
+
+      injective-ι : ∀{k j} -> {p q : QPath₊ {{of Q}} j k} {x y : ⟨ ⟨ T ⟩ X ⟩ k} -> {N : isNormal (_ , p , x)} {M : isNormal (_ , q , y)} -> Path (⟨ Mod-Normal X j ⟩) ((k , p , x) , N) ((k , q , y) , M) -> x ≡ y
+      injective-ι {k} {x = x} {y = y} XX = P1
+        where ρ : k ≡ k
+              ρ = λ i -> XX i .fst .fst
+              ρ-refl : ρ ≡ refl
+              ρ-refl = hlevel {{ISet:K}} _ _ ρ refl
+              P0 : PathP (λ i -> ⟨ ⟨ T ⟩ X ⟩ (ρ i)) x y
+              P0 i = XX i .fst .snd .snd
+              P1 : PathP (λ i -> ⟨ ⟨ T ⟩ X ⟩ k) x y
+              P1 = transport (λ α -> PathP (λ i -> ⟨ ⟨ T ⟩ X ⟩ (ρ-refl α i)) x y) P0
+
+      cancel-↷-impl-2 : ∀{k} -> (x y : ⟨ ⟨ T ⟩ X ⟩ k) -> (∀{j} -> (e : Edge {{Dir}} j k) -> ` e ` ↷ ι x ≡ ` e ` ↷ ι y) -> x ≡ y
+      cancel-↷-impl-2 {k} x y P with split-+-Str (δ x a1) | split-+-Str (δ y a1) | (P a1) | ≡→≡-Str (P a1)
+      ... | left x₁ | left x₂ | XX | _ = injective-ι XX
+      ... | just (a , R) | just (b , S) | XX | _ with decideDecompose x | decideDecompose y
+      ... | left (Px , _) | just Dy       = 𝟘-rec (left≢right (` Px ⁻¹ ∙ R ` ∙ cong (right {A = 𝟙-𝒰}) (injective-ι XX)  ∙ ` S ⁻¹ ∙ Dy a1 .snd `)) 
+      ... | just Dx       | left (Py , _) = 𝟘-rec (left≢right (` Py ⁻¹ ∙ S ` ∙ cong (right {A = 𝟙-𝒰}) (injective-ι XX) ⁻¹  ∙ ` R ⁻¹ ∙ Dx a1 .snd `))
+      ... | left (Px , _) | left (Py , _) = 𝟘-rec (left≢right (` Px ⁻¹ ∙ R `))
+      ... | just Dx       | just Dy       = cancel-δ x y Dx (λ e -> ` Dx e .snd ` ∙ cong (right {A = 𝟙-𝒰}) (injective-ι (δ-decomp e x Dx ⁻¹ ∙ P e ∙ δ-decomp e y Dy)) ∙ ` Dy e .snd ⁻¹ `)
+
+
+      cancel-↷-impl : ∀{k} -> (x y : ⟨ Mod-Normal X k ⟩) -> (∀{j} -> ∀(e : Edge {{Dir}} j k) -> ` e ` ↷ x ≡ ` e ` ↷ y) -> fst x ≡ fst y
+      cancel-↷-impl ((_ , p , x) , N) ((_ , q , y) , M) P with (P a0)
+      cancel-↷-impl ((_ , id-Q , x) , N) ((_ , id-Q , y) , M) P | X = λ i -> (_ , id-Q , cancel-↷-impl-2 x y P i)
+      cancel-↷-impl ((_ , id-Q , x) , N) ((_ , some q , y) , M) P | X with ν-impl q y | ν-idempotent-impl q y M | split-+-Str (δ x a0) | ≡→≡-Str X
+      ... | .(_ , some q , y) , snd₁ | refl-StrId | left x₁ | ()
+      ... | .(_ , some q , y) , snd₁ | refl-StrId | just x₁ | ()
+      cancel-↷-impl ((_ , some p , x) , N) ((_ , id-Q , y) , M) P | X with ν-impl p x | ν-idempotent-impl p x N | split-+-Str (δ y a0) | ≡→≡-Str X
+      ... | .(_ , some p , x) , snd₁ | refl-StrId | left x₁ | ()
+      ... | .(_ , some p , x) , snd₁ | refl-StrId | just x₁ | ()
+      cancel-↷-impl ((k , some p , x) , N) ((_ , some q , y) , M) P | X with ν-impl p x | ν-impl q y | ν-idempotent-impl p x N | ν-idempotent-impl q y M
+      ... | .(_ , some p , x) , snd₁ | .(_ , some q , y) , snd₂ | refl-StrId | refl-StrId = lem-00 _ _ _ _ _ _ _ _ (cong fst X)
+
+      cancel-↷ : ∀{k} -> (x y : ⟨ Mod-Normal X k ⟩) -> (∀{j} -> ∀(e : Edge {{Dir}} j k) -> ` e ` ↷ x ≡ ` e ` ↷ y) -> x ≡ y
+      cancel-↷ x y P = byFirstP (cancel-↷-impl x y P)
+
+      -- with ≡→≡-Str (λ i -> X i .fst .fst)
+      -- ... | refl-StrId = λ i -> (k , some (F a1 a1 p q (λ i -> X i .fst .snd .fst)) , ?) , ?
+      --   where F : ∀{l k j} -> (e1 e2 : Edge {{of Q}} l k) -> (p1 p2 : QPath {{of Q}} k j) -> (Path (QPath₊ l j) (some (e1 ∷ p1)) (some (e2 ∷ p2))) -> p1 ≡ p2
+      --         F = {!!}
+
+      -- cong-Str (λ ξ -> F ξ .snd) X
+        -- where F : ∀{k A} -> ⟨ Mod-Normal A k ⟩ -> ∑ λ j -> ⟨ Mod-Normal A j ⟩
+        --       F ((j , id-Q , x) , N) = {!!}
+        --       F ((j , some (last x₁) , x) , N) = {!!}
+        --       F ((j , some (x₁ ∷ p) , x) , by-later .p .x₁ N) = _ , ((_ , some p , x) , N)
+
+
+        -- where P : ∀{k1 k2 j1 j2 i1 i2} -> (p : )
+
+-- with cong-Str (λ ξ -> fst (fst ξ)) X
+--       ... | refl-StrId with cong-Str (λ ξ -> (fst ξ)) X
+--       ... | X' = {!!}
+
       lem-0 : ∀{k} -> (x : ⟨ ⟨ T ⟩ X ⟩ k) -> ` a0 ` ↷ ι x ≡ ι e0
       lem-0 {k = k} x with split-+-Str (δ x a0) | ≡→≡-Str (a0-adsorb x)
       ... | left (_ , P) | Q = 𝟘-rec (left≢right `(P ⁻¹ ∙ Q)`)
       ... | just (b , P) | Q with P ⁻¹ ∙ Q
       ... | refl-StrId = refl
+
+      module lem-01 {k} (x : ⟨ ⟨ T ⟩ X ⟩ k) where
+        proof : ∀ {j} -> (p : Hom {{of 𝔇}} j k) -> (N : isNormal (k , p , x)) -> p ↷ ((k , id-Q , x) , by-id) ≡ ((k , p , x) , N)
+
+        P1 : ∀ {j l} -> (e : Edge {{of Q}} l j) -> (p : QPath {{of Q}} j k) -> (N : isNormal (k , ` p ` , x)) -> (` e ` ↷ ((k , ` p ` , x) , N)) ≡ ((k , ` e ` ◆ ` p ` , x) , by-later _ _ N)
+        P1 e p N with ν-impl p x | ν-idempotent-impl p x N
+        ... | .(k , some p , x) , snd₁ | refl-StrId = byFirstP refl
+
+        P0 : ∀ {j} -> (p : QPath {{of Q}} j k) -> (N : isNormal (k , ` p ` , x)) -> (` p ` ↷ ((k , id-Q , x) , by-id)) ≡ ((k , ` p ` , x) , N)
+        P0 (last e) N with split-+-Str (δ x e)
+        P0 (last e) (by-nothing .e x₁) | left x = byFirstP refl
+        P0 (last e) (by-nothing .e P) | just (_ , Q) = 𝟘-rec (left≢right (` P ⁻¹ ∙ Q `))
+        P0 (e ∷ p) (by-later .p .e N) =
+          -- let Q : (` e ∷ p ` ↷ ((k , id-Q , x) , by-id)) ≡ (k , ` e ∷ p ` , x)
+          let Q = (some (e ∷ p) ↷ ((k , id-Q , x) , by-id)) ≡⟨ assoc-↷ {f = ` e `} {g = ` p `} {x = ((k , id-Q , x) , by-id)} ⁻¹ ⟩
+                  (` e ` ↷ ` p ` ↷ ((k , id-Q , x) , by-id)) ≡[ i ]⟨ ` e ` ↷ P0 p N i ⟩
+                  (` e ` ↷ ((k , ` p ` , x) , N))           ≡⟨ (P1 e p N) ⟩
+                  ((k , some (e ∷ p) , x) , by-later p e N)     ∎
+          in Q
+
+        proof id-Q by-id = refl
+        proof (some p) = P0 p
+
+      module lem-02 {k} (x : ⟨ ⟨ T ⟩ X ⟩ k) {j} (e : Edge {{of Q}} j k) (D : isDecomposable x) where
+        proof : ∑ λ y -> (` e ` ↷ ι x ≡ ι y) ×-𝒰 ((_ , y) ≺ (_ , x))
+        proof with split-+-Str (δ x e) | D e
+        ... | left (a , P) | y , Q = 𝟘-rec (right≢left `(Q ⁻¹ ∙ P)`)
+        ... | just (a , P) | y , Q with P ⁻¹ ∙ Q
+        ... | refl-StrId = y , refl , (e , P)
 
 
     module _ {X Y : IdxSet K 𝑖} (α : 𝑺 X ⟶ 𝑺 Y) where
@@ -497,6 +653,78 @@ module _ {K : 𝒰 𝑖} (T' : Monad `(IdxSet K 𝑖)`) {{_ : IRecAccessible T'}
   module _ {X Y : IdxSet K 𝑖} where
     map⁻¹-𝑺 : (𝑺 X ⟶ 𝑺 Y) -> (X ⟶ ⟨ T ⟩ Y)
     ⟨ map⁻¹-𝑺 α ⟩ k x = lem-1.proof α (⟨ return ⟩ _ x) .fst
+
+    module lem-2 (f : X ⟶ ⟨ T ⟩ Y) where
+      proof : map⁻¹-𝑺 (map-𝑺 f) ≣ f
+
+      -- | It is enough to show that:
+      P0 : ∀ k (x : ⟨ X ⟩ k) → ⟨ return ◆ map f ◆ join ⟩ k x ≡ ⟨ f ⟩ k x
+      P0 k x = ⟨ return ◆ map f ◆ join ⟩ k x ≡[ i ]⟨  ⟨ join ⟩ k (naturality f k x i) ⟩
+               ⟨ f ◆ return ◆ join ⟩ k x     ≡⟨ unit-l-join k (⟨ f ⟩ k x) ⟩
+               ⟨ f ⟩ k x                     ∎
+
+      proof = P0
+
+    module lem-3 (α : 𝑺 X ⟶ 𝑺 Y) where
+      proof : map-𝑺 (map⁻¹-𝑺 α) ≣ α
+
+      -- | We set [..].
+      β = map-𝑺 (map⁻¹-𝑺 α)
+      Ξ = ∑ λ k -> ⟨ ⟨ T ⟩ X ⟩ k
+      η' : ∀{k} -> ∀{A : IdxSet K 𝑖} -> ⟨ A ⟩ k -> ⟨ ⟨ T ⟩ A ⟩ k
+      η' = ⟨ return ⟩ _
+
+      μ' : ∀{k} -> ∀{A : IdxSet K 𝑖} -> ⟨ ⟨ T ◆ T ⟩ A ⟩ k -> ⟨ ⟨ T ⟩ A ⟩ k
+      μ' = ⟨ join ⟩ _
+
+
+      -- | We want to show:
+      𝑃 : Ξ -> 𝒰 _
+      𝑃 (k , x) = ⟨ ⟨ β ⟩ ⟩ (ι x) ≡ ⟨ ⟨ α ⟩ ⟩ (ι x)
+
+      -- | We do this with an induction, the base case is:
+      P3-base : ∀ {k} -> (x : ⟨ X ⟩ k) -> 𝑃 (k , η' x)
+      P3-base x = byFirstP P0
+        where P0 = (_ , id-Q , μ' (⟨ map (map⁻¹-𝑺 α) ⟩ _ (η' x))) ≡[ i ]⟨ _ , id-Q , μ' (naturality (map⁻¹-𝑺 α) _ x i) ⟩
+                   (_ , id-Q , μ' ( η' (⟨ map⁻¹-𝑺 α ⟩ _ x)))      ≡[ i ]⟨ _ , id-Q , unit-l-join _ (⟨ map⁻¹-𝑺 α ⟩ _ x) i ⟩
+                   (_ , id-Q , (⟨ map⁻¹-𝑺 α ⟩ _ x))               ≡⟨ refl ⟩
+                   (_ , id-Q , (lem-1.proof α (η' x) .fst))       ≡[ i ]⟨ lem-1.proof α (η' x) .snd (~ i) .fst ⟩
+                   fst (⟨ ⟨ α ⟩ ⟩ (ι (η' x)))                      ∎
+
+      P3-step : ∀ (x : Ξ) -> (isDecomposable (snd x)) -> (∀ y -> y ≺ x -> 𝑃 y) -> 𝑃 x
+      P3-step (k , x) D Hyp = cancel-↷ (⟨ ⟨ β ⟩ ⟩ (ι x)) (⟨ ⟨ α ⟩ ⟩ (ι x)) P0
+        where P0 : ∀{j} -> (e : Edge {{of Q}} j k) -> ` e ` ↷ ⟨ ⟨ β ⟩ ⟩ (ι x) ≡ ` e ` ↷ ⟨ ⟨ α ⟩ ⟩ (ι x)
+              P0 e = ` e ` ↷ ⟨ ⟨ β ⟩ ⟩ (ι x) ≡⟨ naturality {{of β}} ` e ` (ι x) ⟩
+                     ⟨ ⟨ β ⟩ ⟩ (` e ` ↷ ι x) ≡[ i ]⟨ ⟨ ⟨ β ⟩ ⟩ (lem-02.proof x e D .snd .fst i) ⟩
+                     ⟨ ⟨ β ⟩ ⟩ (ι _)          ≡⟨ Hyp _ (lem-02.proof x e D .snd .snd) ⟩
+                     ⟨ ⟨ α ⟩ ⟩ (ι _)          ≡[ i ]⟨ ⟨ ⟨ α ⟩ ⟩ (lem-02.proof x e D .snd .fst (~ i)) ⟩
+                     ⟨ ⟨ α ⟩ ⟩ (` e ` ↷ ι x) ≡⟨ naturality {{of α}} ` e ` (ι x) ⁻¹ ⟩
+                     ` e ` ↷ ⟨ ⟨ α ⟩ ⟩ (ι x) ∎
+
+
+      P3 : ∀ x -> (∀ y -> y ≺ x -> 𝑃 y) -> 𝑃 x
+      P3 (k , x) Q with decideDecompose x
+      ... | left (_ , (x' , refl-StrId)) = P3-base x'
+      ... | just D = P3-step (k , x) D Q
+
+
+      -- | Now we use well foundedness to conclude that the statement holds for all |x|.
+      P2 : (k : K) (x : ⟨ ⟨ T ⟩ X ⟩ k) -> ⟨ ⟨ map-𝑺 (map⁻¹-𝑺 α) ⟩ ⟩ (ι x) ≡ ⟨ ⟨ α ⟩ ⟩ (ι x)
+      P2 k x = WFI.induction isWellfounded::≺ {P = 𝑃} P3 (k , x)
+
+
+      P1 : (k : K) (j : K) -> (p : Hom {{of 𝔇}} k j) -> (x : ⟨ ⟨ T ⟩ X ⟩ j) -> (N : isNormal (j , p , x)) ->
+
+              ⟨ ⟨ β ⟩ ⟩ ((j , p , x) , N) ≡ ⟨ ⟨ α ⟩ ⟩ ((j , p , x) , N)
+
+      P1 k j p x N = ⟨ ⟨ β ⟩ ⟩ ((j , p , x) , N)               ≡[ i ]⟨ ⟨ ⟨ β ⟩ ⟩ (lem-01.proof x p N (~ i)) ⟩
+                     ⟨ ⟨ β ⟩ ⟩ (p ↷ ((j , id-Q , x) , by-id)) ≡⟨ naturality {{of β}} p _ ⁻¹ ⟩
+                     p ↷ ⟨ ⟨ β ⟩ ⟩ (((j , id-Q , x) , by-id)) ≡[ i ]⟨ p ↷ P2 j x i ⟩
+                     p ↷ ⟨ ⟨ α ⟩ ⟩ (((j , id-Q , x) , by-id)) ≡⟨ naturality {{of α}} p _ ⟩
+                     ⟨ ⟨ α ⟩ ⟩ (p ↷ ((j , id-Q , x) , by-id)) ≡[ i ]⟨ ⟨ ⟨ α ⟩ ⟩ (lem-01.proof x p N i) ⟩
+                     ⟨ ⟨ α ⟩ ⟩ ((j , p , x) , N) ∎
+
+      proof k ((j , p , x) , N) = P1 k j p x N
 
 
 
@@ -615,3 +843,96 @@ module _ {K : 𝒰 𝑖} (T' : Monad `(IdxSet K 𝑖)`) {{_ : IRecAccessible T'}
 
 
 
+
+{-
+-------------- OLD TRY TO GET the (_∷ p) ≡ (_∷ q) -> p ≡ q working -------------------
+
+      data QPath-≡ : ∀{k j} -> (p q : QPath {{of Q}} k j) -> 𝒰 𝑖 where
+        last : ∀{k j} -> (e : Edge {{of Q}} k j) -> QPath-≡ (last e) (last e)
+        _∷_ : ∀{l k j} -> (e : Edge {{of Q}} l k) -> {p q : QPath {{of Q}} k j}
+              -> QPath-≡ p q -> QPath-≡ (e ∷ p) (e ∷ q)
+
+      data QPath-≢ : ∀{k j} -> (p q : QPath {{of Q}} k j) -> 𝒰 𝑖 where
+        last-≢ : ∀{k j} -> {e f : Edge {{of Q}} k j} -> (e ≢-Str f) -> QPath-≢ (last e) (last f)
+        lengthMismatch-l : ∀{k l j} -> (e : Edge {{of Q}} k j) (f : Edge {{of Q}} k l) (p : QPath {{of Q}} l j)
+                        -> QPath-≢ (last e) (f ∷ p)
+        lengthMismatch-r : ∀{k l j} -> (e : Edge {{of Q}} k j) (f : Edge {{of Q}} k l) (p : QPath {{of Q}} l j)
+                        -> QPath-≢ (f ∷ p) (last e)
+        ∷-≢ : ∀{k l j} -> {e f : Edge {{of Q}} k l} {p q : QPath {{of Q}} l j} -> (e ≢-Str f) -> QPath-≢ (e ∷ p) (f ∷ q)
+        nodeMismatch : ∀{k l1 l2 j} -> {e : Edge {{of Q}} k l1} {f : Edge {{of Q}} k l2} {p : QPath {{of Q}} l1 j} {q : QPath {{of Q}} l2 j} -> (l1 ≢-Str l2) -> QPath-≢ (e ∷ p) (f ∷ q)
+        _∷_ : ∀{l k j} -> (e : Edge {{of Q}} l k) -> {p q : QPath {{of Q}} k j}
+        -- _∷_ : ∀{k l1 l2 j} -> {e : Edge {{of Q}} k l1} {f : Edge {{of Q}} k l2} {p : QPath {{of Q}} l1 j} {q : QPath {{of Q}} l2 j}
+              -> QPath-≢ p q -> QPath-≢ (e ∷ p) (e ∷ q)
+
+
+
+      decide-QPath-≡ : ∀{k j} -> (p q : QPath {{of Q}} k j) -> (QPath-≢ p q) + (QPath-≡ p q)
+      decide-QPath-≡ (last e) (last f) with e ≟-Str f
+      ... | yes refl-StrId = right (last e)
+      ... | no ¬p = left (last-≢ ¬p)
+      decide-QPath-≡ (last e) (f ∷ p) = left (lengthMismatch-l e f p)
+      decide-QPath-≡ (f ∷ p) (last e) = left (lengthMismatch-r e f p)
+      decide-QPath-≡ (_∷_ {b = l1} e p) (_∷_ {b = l2} f q) with l1 ≟-Str l2
+      ... | no ¬p = left (nodeMismatch ¬p)
+      ... | yes refl-StrId with e ≟-Str f
+      ... | no ¬p = left (∷-≢ ¬p)
+      ... | yes refl-StrId with decide-QPath-≡ p q
+      ... | left x = left (e ∷ x)
+      ... | just x = right (e ∷ x)
+
+
+
+      QPath-⊥ : ∀{k j} -> (p q : QPath {{of Q}} k j) -> (QPath-≢ p q) -> p ≡-Str q -> 𝟘-𝒰
+      QPath-⊥ .(last _) .(last _) (last-≢ x) refl-StrId = x refl
+      QPath-⊥ (e ∷ _) (f ∷ _) (∷-≢ x) S = {!!}
+      QPath-⊥ .(_ ∷ _) .(_ ∷ _) (nodeMismatch x) refl-StrId = x refl
+      QPath-⊥ .(e ∷ _) .(e ∷ _) (e ∷ R) S = {!!}
+        -- where gg : ∀{k j} -> QPath {{of Q}} k j -> ∑ λ l -> Edge {{of Q}} k l
+        --       gg (last x) = {!!}
+        --       gg (x ∷ p) = _ , x
+
+        --       P : (_ , e) ≡-Str (_ , f)
+        --       P = cong-Str gg S
+
+        --       P2 : e ≡-Str f
+        --       P2 with cong-Str fst P
+        --       ... | Z = {!!}
+
+      -- QPath-≡-from-≡ : ∀{k j} -> (p q : QPath {{of Q}} k j) -> p ≡ q -> 
+
+
+      -- lem-000-impl : ∀{k} -> ∀ j -> ∀ (e1 : Edge {{Dir}} k k) (e2 : Edge {{Dir}} k k) -> (p1 : QPath {{of Q}} k j) (p2 : QPath {{of Q}} k j)
+      --           -> Path (QPath₊ k j) (some (e1 ∷ p1)) (some (e2 ∷ p2)) -> Path (QPath k j) p1 p2
+      -- lem-000-impl {k} j e1 e2 p1 p2 q = {!!}
+
+  {-
+      lem-000-impl : ∀{k} -> ∀ j1 j2 -> ∀ (e1 : Edge {{Dir}} k k) (e2 : Edge {{Dir}} k k) -> (p1 : QPath {{of Q}} k j1) (p2 : QPath {{of Q}} k j2)
+                -> (p : j1 ≡-Str j2) -> PathP (λ i -> QPath₊ k (≡-Str→≡ p i)) (some (e1 ∷ p1)) (some (e2 ∷ p2)) -> PathP (λ i -> QPath k (≡-Str→≡ p i)) p1 p2
+      lem-000-impl {k} j1 .j1 e1 e2 p1 p2 refl-StrId q = {!!}
+
+        where q2 : Path (QPath k j1) ((e1 ∷ p1)) ((e2 ∷ p2))
+              q2 i = f (q i)
+                  where f : (pp : QPath₊ {{of Q}} k j1) -> QPath {{of Q}} k j1
+                        f id-Q = last a0
+                        f (some x) = x
+
+              q3 : ψ (e1 ∷ p1) ∼ ψ (e2 ∷ p2)
+              q3 = fromPath {{IEquiv:∼}} (cong ψ q2)
+
+              P : ψ  ∼ ψ p2
+              P with q3
+              ... | nodes≡ , pat = {!!}
+
+        -- where f : (pp : QPath₊ {{of Q}} k j1) -> QPath {{of Q}} k j1
+        --       f id-Q = last a0
+        --       f (some x) = {!!}
+        --       -- f i .(some (e ∷ p)) (isEndoP e p) = p
+
+      data fstIsEndo k j (p : QPath {{of Q}} k j) : 𝒰 𝑖 where
+        isEndoP : (∀ l -> (e : Edge k l) -> (q : QPath {{of Q}} l j) -> (e ∷ q ≡ p) -> k ≡-Str l) -> fstIsEndo k j p
+
+      -}
+
+
+
+-}
