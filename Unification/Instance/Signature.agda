@@ -10,7 +10,7 @@ open import Verification.Core.Category.Instance.Kleisli
 open import Verification.Core.Category.Instance.IdxSet
 open import Verification.Unification.RecAccessible
 
-open import Verification.Core.Syntax.NCSignature
+open import Verification.Core.Syntax.SignatureZ
 
 instance
   IDiscreteStr:Vec : ∀{A : 𝒰 𝑖} {{_ : IDiscreteStr A}} -> IDiscreteStr (Vec A n)
@@ -40,6 +40,7 @@ module _ {K : 𝒰₀} {{_ : IDiscreteStr K}} where
 
       data SigEdge : (a b : K) -> 𝒰₀ where
         edge : ∀ {k} {ks : Vec K (suc n)} -> (i : Fin-R (suc n)) -> σ k ks -> SigEdge (lookup i ks) k
+        fail : ∀{a : K} -> SigEdge a a
 
       𝑄 : Quiver ⊥
       ⟨ 𝑄 ⟩ = K
@@ -63,7 +64,53 @@ module _ {K : 𝒰₀} {{_ : IDiscreteStr K}} where
         ... | no ¬p = nothing
         ... | yes refl-StrId = right (lookup-Term i ts)
 
+      -- [Theorem]
+      -- | The |Monad:TermZ| is recursively accessible.
+      interleaved mutual
+        RecAccessible:TermZ : IRecAccessible (Monad:TermZ σ)
 
+        -- | First we build the decomposition function:
+        decomp : {k : K} {V : K -> 𝒰₀} -> TermZ σ V k -> (∀(j : K) -> SigEdge j k -> Maybe (TermZ σ V j))
+        decomp fail _ _ = right fail
+        decomp (valid (te t ts)) = {!!}
+        decomp (valid (var x)) = {!!}
+
+        -- decomp {k = k} (te {n = n₁} {ks = ks₁} s₁ ts) = right f
+        --   where
+        --     f : (j : K) → SigEdge j k → Maybe (Term σ V j)
+        --     f .(lookup i _) (edge {n = n₂} {ks = ks₂} i s₂) with (n₁ ≟-Str n₂)
+        --     ... | no ¬p = nothing
+        --     ... | yes refl-StrId with (ks₁ ≟-Str ks₂)
+        --     ... | no ¬p = nothing
+        --     ... | yes refl-StrId with (s₁ ≟-Str s₂)
+        --     ... | no ¬p = nothing
+        --     ... | yes refl-StrId = right (lookup-Term i ts)
+        -- decomp (var x) = left x
+
+
+        -- | For this we take the following:
+        IRecAccessible.Dir RecAccessible:TermZ = of 𝑄
+        IRecAccessible.ISet:Dir RecAccessible:TermZ = {!!}
+        IRecAccessible.ISet:K RecAccessible:TermZ = {!!}
+        IRecAccessible.IDiscreteStr:Dir RecAccessible:TermZ = {!!}
+        IRecAccessible.IDiscreteStr:K RecAccessible:TermZ = {!!}
+        ⟨ ⟨ IRecAccessible.decompose RecAccessible:TermZ ⟩ ⟩ _ t = decomp t
+        of IRecAccessible.decompose RecAccessible:TermZ = {!!}
+        IRecAccessible.commutes:decompose RecAccessible:TermZ = {!!}
+        IRecAccessible.pts RecAccessible:TermZ = {!!}
+        IRecAccessible.a0 RecAccessible:TermZ = {!!}
+        IRecAccessible.a0-adsorb RecAccessible:TermZ = {!!}
+        IRecAccessible.k-a1 RecAccessible:TermZ = {!!}
+        IRecAccessible.a1 RecAccessible:TermZ = {!!}
+        IRecAccessible.isDecomposableP RecAccessible:TermZ = {!!}
+        IRecAccessible.isPureP RecAccessible:TermZ = {!!}
+        IRecAccessible.decideDecompose RecAccessible:TermZ = {!!}
+        IRecAccessible.makeDec RecAccessible:TermZ = {!!}
+        IRecAccessible.makePure RecAccessible:TermZ = {!!}
+        IRecAccessible.isWellfounded::≺ RecAccessible:TermZ = {!!}
+        IRecAccessible.cancel-δ RecAccessible:TermZ = {!!}
+
+{-
         decomp : {k : K} -> Term σ V k -> V k +-𝒰 (∀(j : K) -> SigEdge j k -> Maybe (Term σ V j))
         decomp {k = k} (te {n = n₁} {ks = ks₁} s₁ ts) = right f
           where
@@ -100,4 +147,5 @@ module _ {K : 𝒰₀} {{_ : IDiscreteStr K}} where
       IRecAccessible.wellfounded RecAccessible:Term = {!!}
 
 
+-}
 
