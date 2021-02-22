@@ -545,10 +545,10 @@ module _ {K : 𝒰 𝑖} (T' : Monad `(IdxSet K 𝑖)`) {{_ : IRecAccessible T'}
       cancel-↷-impl-2 {k} x y P with split-+-Str (δ x a1) | split-+-Str (δ y a1) | (P a1) | ≡→≡-Str (P a1)
       ... | left x₁ | left x₂ | XX | _ = injective-ι XX
       ... | just (a , R) | just (b , S) | XX | _ with decideDecompose x | decideDecompose y
-      ... | left (Px , _) | just Dy       = 𝟘-rec (left≢right (` Px ⁻¹ ∙ R ` ∙ cong (right {A = 𝟙-𝒰}) (injective-ι XX)  ∙ ` S ⁻¹ ∙ Dy a1 .snd `)) 
-      ... | just Dx       | left (Py , _) = 𝟘-rec (left≢right (` Py ⁻¹ ∙ S ` ∙ cong (right {A = 𝟙-𝒰}) (injective-ι XX) ⁻¹  ∙ ` R ⁻¹ ∙ Dx a1 .snd `))
-      ... | left (Px , _) | left (Py , _) = 𝟘-rec (left≢right (` Px ⁻¹ ∙ R `))
-      ... | just Dx       | just Dy       = cancel-δ x y Dx (λ e -> ` Dx e .snd ` ∙ cong (right {A = 𝟙-𝒰}) (injective-ι (δ-decomp e x Dx ⁻¹ ∙ P e ∙ δ-decomp e y Dy)) ∙ ` Dy e .snd ⁻¹ `)
+      ... | left (Px) | just Dy = let Px = makePure Px .fst; Dy = makeDec Dy       in 𝟘-rec (left≢right (` Px ⁻¹ ∙ R ` ∙ cong (right {A = 𝟙-𝒰}) (injective-ι XX)  ∙ ` S ⁻¹ ∙ Dy a1 .snd `)) 
+      ... | just Dx   | left Py = let Py = makePure Py .fst; Dx = makeDec Dx       in 𝟘-rec (left≢right (` Py ⁻¹ ∙ S ` ∙ cong (right {A = 𝟙-𝒰}) (injective-ι XX) ⁻¹  ∙ ` R ⁻¹ ∙ Dx a1 .snd `))
+      ... | left Px   | left Py = let Px = makePure Px .fst; Py = makePure Py .fst in 𝟘-rec (left≢right (` Px ⁻¹ ∙ R `))
+      ... | just Dx   | just Dy = let Dx' = makeDec Dx      ; Dy' = makeDec Dy       in cancel-δ x y Dx Dy (λ e -> ` Dx' e .snd ` ∙ cong (right {A = 𝟙-𝒰}) (injective-ι (δ-decomp e x Dx' ⁻¹ ∙ P e ∙ δ-decomp e y Dy')) ∙ ` Dy' e .snd ⁻¹ `)
 
 
       cancel-↷-impl : ∀{k} -> (x y : ⟨ Mod-Normal X k ⟩) -> (∀{j} -> ∀(e : Edge {{Dir}} j k) -> ` e ` ↷ x ≡ ` e ` ↷ y) -> fst x ≡ fst y
@@ -704,8 +704,9 @@ module _ {K : 𝒰 𝑖} (T' : Monad `(IdxSet K 𝑖)`) {{_ : IRecAccessible T'}
 
       P3 : ∀ x -> (∀ y -> y ≺ x -> 𝑃 y) -> 𝑃 x
       P3 (k , x) Q with decideDecompose x
-      ... | left (_ , (x' , refl-StrId)) = P3-base x'
-      ... | just D = P3-step (k , x) D Q
+      ... | just D = P3-step (k , x) (makeDec D) Q
+      ... | left Px with makePure Px
+      ... | (_ , (x' , refl-StrId)) = P3-base x'
 
 
       -- | Now we use well foundedness to conclude that the statement holds for all |x|.

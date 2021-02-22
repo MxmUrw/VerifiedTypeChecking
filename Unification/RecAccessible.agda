@@ -90,12 +90,18 @@ module _ {K : 𝒰 𝑖} where
     isPure : ∀{k} {X} -> ⟨ ⟨ ⟨ T ⟩ ⟩ X ⟩ k -> 𝒰 _
     isPure {k} {X} x = (δ x a1 ≡-Str nothing) ×-𝒰 (∑ λ (x' : ⟨ X ⟩ k) -> (x ≡-Str ⟨ return {{of T}} ⟩ _ x'))
 
+    field isDecomposableP : ∀{k} {X} -> ⟨ ⟨ ⟨ T ⟩ ⟩ X ⟩ k -> 𝒰 𝑖
+          isPureP   : ∀{k} {X} -> ⟨ ⟨ ⟨ T ⟩ ⟩ X ⟩ k -> 𝒰 𝑖
+          decideDecompose : ∀{k X} -> (x : ⟨ ⟨ ⟨ T ⟩ ⟩ X ⟩ k) -> isPureP x +-𝒰 isDecomposableP x
+          makeDec : ∀{k X} -> {x : ⟨ ⟨ ⟨ T ⟩ ⟩ X ⟩ k} -> isDecomposableP x -> isDecomposable x
+          makePure : ∀{k X} -> {x : ⟨ ⟨ ⟨ T ⟩ ⟩ X ⟩ k} -> isPureP x -> isPure x
+
     _≺_ : ∀{X} -> (∑ ⟨ ⟨ ⟨ T ⟩ ⟩ X ⟩) -> (∑ ⟨ ⟨ ⟨ T ⟩ ⟩ X ⟩) -> 𝒰 _
     _≺_ = λ {(k , x) (j , y) -> ∑ λ (e : Edge {{Dir}} k j) -> δ y e ≡-Str just x}
 
-    field decideDecompose : ∀{k} {X} -> (x : ⟨ ⟨ ⟨ T ⟩ ⟩ X ⟩ k) -> isPure x +-𝒰 isDecomposable x
+    -- field decideDecompose : ∀{k} {X} -> (x : ⟨ ⟨ ⟨ T ⟩ ⟩ X ⟩ k) -> isPure x +-𝒰 isDecomposable x
     field isWellfounded::≺ : ∀{X} -> WellFounded (_≺_ {X})
-    field cancel-δ : ∀{k} {X} -> (x y : ⟨ ⟨ ⟨ T ⟩ ⟩ X ⟩ k) -> isDecomposable x -> (∀{j} -> ∀(e : Edge {{Dir}} j k) -> δ x e ≡ δ y e) -> x ≡ y
+    field cancel-δ : ∀{k} {X} -> (x y : ⟨ ⟨ ⟨ T ⟩ ⟩ X ⟩ k) -> isDecomposableP x -> isDecomposableP y -> (∀{j} -> ∀(e : Edge {{Dir}} j k) -> δ x e ≡ δ y e) -> x ≡ y
 
 
     -- isVariable : ∀{k} {X} -> ⟨ ⟨ ⟨ T ⟩ ⟩ X ⟩ k -> 𝒰 _
