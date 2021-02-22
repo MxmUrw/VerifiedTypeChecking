@@ -98,7 +98,7 @@ module _ {K : 𝒰 𝑖} (T' : Monad `(IdxSet K 𝑖)`) {{_ : IRecAccessible T'}
   private
     data isNormal {A : IdxSet K 𝑖} : ∀{k} -> ⟨ Mod A k ⟩ -> 𝒰 (𝑖) where
       by-id : ∀{k} -> ∀{a : ⟨ ⟨ T ⟩ A ⟩ k} -> isNormal (_ , id-Q , a)
-      by-nothing : ∀{k j} -> ∀{a : ⟨ ⟨ T ⟩ A ⟩ j} -> (e : Edge {{of Q}} k j) -> ⟨ ⟨ decompose ⟩ ⟩ _ a _ e ≡-Str nothing -> isNormal (_ , some (last e) , a)
+      by-nothing : ∀{k j} -> ∀{a : ⟨ ⟨ T ⟩ A ⟩ j} -> (e : Edge {{of Q}} k j) -> δ a e ≡-Str nothing -> isNormal (_ , some (last e) , a)
       by-later : ∀{j k₁ k₂} -> ∀{a : ⟨ ⟨ T ⟩ A ⟩ j} -> (p : QPath {{of Q}} k₂ j) -> (e : Edge {{of Q}} k₁ k₂) -> isNormal (_ , some p , a) -> isNormal (_ , some (e ∷ p) , a)
 
       -- by-[] : ∀{a : 𝟚-𝒰 +-𝒰 ⟨ ⟨ T ⟩ A ⟩ k} -> isNormal (_ , id-Q , a)
@@ -317,7 +317,7 @@ module _ {K : 𝒰 𝑖} (T' : Monad `(IdxSet K 𝑖)`) {{_ : IRecAccessible T'}
 -}
     module _ {X Y : IdxSet K 𝑖} where
       apply : ∀{k} -> (f : X ⟶ ⟨ T ⟩ Y) -> ⟨ Mod X k ⟩ -> ⟨ Mod Y k ⟩
-      apply f (_ , p , x) = (_ , p , ⟨ _=<< {{of T'}} f ⟩ _ x)
+      apply f (_ , p , x) = (_ , p , ⟨ _=<< {{of T'}} f ⟩ x)
       -- apply f (_ , p , left x) = (_ , p , left x)
       -- apply f (_ , p , right x) = (_ , p , right (⟨ f =<< ⟩ _ x))
 
@@ -335,7 +335,7 @@ module _ {K : 𝒰 𝑖} (T' : Monad `(IdxSet K 𝑖)`) {{_ : IRecAccessible T'}
       -- 	\arrow["\delta"', from=3-1, to=3-2]
       -- 	\arrow["D\mu", from=2-2, to=3-2]
       -- \end{tikzcd}\]
-      δ-comm : ∀(f : X ⟶ ⟨ T ⟩ Y) -> ∀{j k} -> ∀(e : Edge {{of Q}} k j) (x : ⟨ ⟨ T ⟩ X ⟩ j) -> map-Maybe (⟨ map f ◆ join ⟩ _) (δ x e) ≡ δ (⟨ map f ◆ join ⟩ _ x) e
+      δ-comm : ∀(f : X ⟶ ⟨ T ⟩ Y) -> ∀{j k} -> ∀(e : Edge {{of Q}} k j) (x : ⟨ ⟨ T ⟩ X ⟩ j) -> map-Maybe (⟨ map f ◆ join ⟩ {_}) (δ x e) ≡ δ (⟨ map f ◆ join ⟩ x) e
       δ-comm f e x =
         let P1 : ⟨ decompose ⟩ ◆ map {{of T ◆ Decomp Dir}} f ≣ map f ◆ ⟨ decompose ⟩
             P1 = naturality {{of decompose}} f
@@ -355,42 +355,42 @@ module _ {K : 𝒰 𝑖} (T' : Monad `(IdxSet K 𝑖)`) {{_ : IRecAccessible T'}
             --       ≡
             --       δ (⟨ IMonad.join (of T') ⟩ _ (⟨ IFunctor.map (of ⟨ T' ⟩) f ⟩ _ x))
             --       e
-            P4 = funExt⁻¹ (funExt⁻¹ (P3 _ x) _) e
+            P4 = {!!} -- funExt⁻¹ (funExt⁻¹ (P3 {_} x) {_}) e
         in P4
 
-      apply-comm-impl : {j k : K} -> (f : X ⟶ ⟨ T ⟩ Y) -> (p : QPath {{of Q}} k j) -> (x : ⟨ ⟨ T ⟩ X ⟩ j) -> ν₁ (apply f (fst (ν-impl p x))) ≡ fst (ν ((_ , some p , ⟨ map f ◆ join ⟩ _ x)))
+      apply-comm-impl : {j k : K} -> (f : X ⟶ ⟨ T ⟩ Y) -> (p : QPath {{of Q}} k j) -> (x : ⟨ ⟨ T ⟩ X ⟩ j) -> ν₁ (apply f (fst (ν-impl p x))) ≡ fst (ν ((_ , some p , ⟨ map f ◆ join ⟩ {_} x)))
       apply-comm-impl f (last e) x with (δ-comm f e x) | split-+-Str (δ x e)
       ... | X | left x₁ = refl
-      ... | X | just (a , P) with split-+-Str (δ (⟨ map f ◆ join ⟩ _ x) e)
+      ... | X | just (a , P) with split-+-Str (δ (⟨ map f ◆ join ⟩ {_} x) e)
       ... | left (tt , Q) =
-        let R : map-Maybe (⟨ map f ◆ join ⟩ _) (just a) ≡ nothing
-            R = cong (map-Maybe (⟨ map f ◆ join ⟩ _)) (≡-Str→≡ (P ⁻¹)) ∙ X ∙ ` Q `
+        let R : map-Maybe (⟨ map f ◆ join ⟩ {_}) (just a) ≡ nothing
+            R = cong (map-Maybe (⟨ map f ◆ join ⟩ {_})) (≡-Str→≡ (P ⁻¹)) ∙ X ∙ ` Q `
         in 𝟘-rec (right≢left R)
       ... | just (b , Q) =
-        let R : map-Maybe (⟨ map f ◆ join ⟩ _) (just a) ≡ just b
-            R = cong (map-Maybe (⟨ map f ◆ join ⟩ _)) (≡-Str→≡ (P ⁻¹)) ∙ X ∙ ` Q `
+        let R : map-Maybe (⟨ map f ◆ join ⟩ {_}) (just a) ≡ just b
+            R = cong (map-Maybe (⟨ map f ◆ join ⟩ {_})) (≡-Str→≡ (P ⁻¹)) ∙ X ∙ ` Q `
 
         in λ i -> (_ , id-Q , isInjective:right R i)
 
       -- see 2021-02-20:
-      apply-comm-impl f (e ∷ p) x with ν-impl p x | ν-impl p (⟨ map f ◆ join ⟩ _ x) | ≡→≡-Str (apply-comm-impl f p x)
-      ... | (_ , some p' , x') , N    | (_ , p'2 , x'2) , N2 | Y with ν-impl p' (⟨ map f ◆ join ⟩ _ x')
+      apply-comm-impl f (e ∷ p) x with ν-impl p x | ν-impl p (⟨ map f ◆ join ⟩ {_} x) | ≡→≡-Str (apply-comm-impl f p x)
+      ... | (_ , some p' , x') , N    | (_ , p'2 , x'2) , N2 | Y with ν-impl p' (⟨ map f ◆ join ⟩ {_} x')
       apply-comm-impl f (e ∷ p) x | (_ , some p' , x') , N | (_ , id-Q , x'2) , N2 | refl-StrId | .(_ , id-Q , x'2) , snd₁ = refl
       apply-comm-impl f (e ∷ p) x | (_ , some p' , x') , N | (_ , some x₁ , x'2) , N2 | refl-StrId | .(_ , some x₁ , x'2) , snd₁ = refl
 
-      apply-comm-impl f (e ∷ p) x | (_ , id-Q , x') , N | .(fst (ν (_ , id-Q , _))) , snd₁ | refl-StrId with split-+-Str (δ x' e) | split-+-Str (δ (⟨ map f ◆ join ⟩ _ x') e)
+      apply-comm-impl f (e ∷ p) x | (_ , id-Q , x') , N | .(fst (ν (_ , id-Q , _))) , snd₁ | refl-StrId with split-+-Str (δ x' e) | split-+-Str (δ (⟨ map f ◆ join ⟩ {_} x') e)
       ... | just (a , P) | left (tt , Q) =
         -- NOTE: here we do the same as in the `last e` case above
-        let R : map-Maybe (⟨ map f ◆ join ⟩ _) (just a) ≡ nothing
-            R = cong (map-Maybe (⟨ map f ◆ join ⟩ _)) (≡-Str→≡ (P ⁻¹)) ∙ δ-comm f e x' ∙ ` Q `
+        let R : map-Maybe (⟨ map f ◆ join ⟩ {_}) (just a) ≡ nothing
+            R = cong (map-Maybe (⟨ map f ◆ join ⟩ {_})) (≡-Str→≡ (P ⁻¹)) ∙ δ-comm f e x' ∙ ` Q `
         in 𝟘-rec (right≢left R)
         -- NOTE: here we do the same as in the `last e` case above
       ... | just (a , P) | just (b , Q) =
-        let R : map-Maybe (⟨ map f ◆ join ⟩ _) (just a) ≡ just b
-            R = cong (map-Maybe (⟨ map f ◆ join ⟩ _)) (≡-Str→≡ (P ⁻¹)) ∙ δ-comm f e x' ∙ ` Q `
+        let R : map-Maybe (⟨ map f ◆ join ⟩ {_}) (just a) ≡ just b
+            R = cong (map-Maybe (⟨ map f ◆ join ⟩ {_})) (≡-Str→≡ (P ⁻¹)) ∙ δ-comm f e x' ∙ ` Q `
         in λ i -> (_ , id-Q , isInjective:right R i)
 
-      ... | left (tt , Q) | Z with split-+-Str (δ (⟨ map f ◆ join ⟩ _ x') e)
+      ... | left (tt , Q) | Z with split-+-Str (δ (⟨ map f ◆ join ⟩ {_} x') e)
       apply-comm-impl f (e ∷ p) x | (_ , id-Q , x') , N | .(_) , snd₁ | refl-StrId | left (tt , Q) | just (_ , Z1) | left (_ , Z2) = 𝟘-rec (left≢right `(Z2 ⁻¹ ∙ Z1)`)
       apply-comm-impl f (e ∷ p) x | (_ , id-Q , x') , N | .(_) , snd₁ | refl-StrId | left (tt , Q) | just (_ , Z1) | just (_ , Z2) = λ i -> (_ , id-Q , isInjective:right R i)
         where R = `(Z2 ⁻¹ ∙ Z1)`
@@ -399,7 +399,7 @@ module _ {K : 𝒰 𝑖} (T' : Monad `(IdxSet K 𝑖)`) {{_ : IRecAccessible T'}
 
 
 -- ... | (_ , some p' , x') , N    | (_ , id-Q , x'2) , N2 | Y  = {!!}
-      -- ... | (_ , some p' , x') , N    | (_ , some p'2 , x'2) , N2 | Y with ν-impl p' (⟨ map f ◆ join ⟩ _ x')
+      -- ... | (_ , some p' , x') , N    | (_ , some p'2 , x'2) , N2 | Y with ν-impl p' (⟨ map f ◆ join ⟩ {_} x')
       -- apply-comm-impl f (e ∷ p) x | (_ , some p' , x') , N | (_ , some p'2 , x'2) , N2 | refl-StrId | .(_ , some p'2 , x'2) , snd₁ = refl
 
 
@@ -652,16 +652,16 @@ module _ {K : 𝒰 𝑖} (T' : Monad `(IdxSet K 𝑖)`) {{_ : IRecAccessible T'}
 
   module _ {X Y : IdxSet K 𝑖} where
     map⁻¹-𝑺 : (𝑺 X ⟶ 𝑺 Y) -> (X ⟶ ⟨ T ⟩ Y)
-    ⟨ map⁻¹-𝑺 α ⟩ k x = lem-1.proof α (⟨ return ⟩ _ x) .fst
+    ⟨ map⁻¹-𝑺 α ⟩ x = lem-1.proof α (⟨ return ⟩ {_} x) .fst
 
     module lem-2 (f : X ⟶ ⟨ T ⟩ Y) where
       proof : map⁻¹-𝑺 (map-𝑺 f) ≣ f
 
       -- | It is enough to show that:
-      P0 : ∀ k (x : ⟨ X ⟩ k) → ⟨ return ◆ map f ◆ join ⟩ k x ≡ ⟨ f ⟩ k x
-      P0 k x = ⟨ return ◆ map f ◆ join ⟩ k x ≡[ i ]⟨  ⟨ join ⟩ k (naturality f k x i) ⟩
-               ⟨ f ◆ return ◆ join ⟩ k x     ≡⟨ unit-l-join k (⟨ f ⟩ k x) ⟩
-               ⟨ f ⟩ k x                     ∎
+      P0 : ∀ {k} (x : ⟨ X ⟩ k) → ⟨ return ◆ map f ◆ join ⟩ {k} x ≡ ⟨ f ⟩ {k} x
+      P0 {k} x = ⟨ return ◆ map f ◆ join ⟩ {k} x ≡[ i ]⟨  ⟨ join ⟩ (naturality f {k} x i) ⟩
+               ⟨ f ◆ return ◆ join ⟩ {k} x     ≡⟨ unit-l-join (⟨ f ⟩ {k} x) ⟩
+               ⟨ f ⟩ {k} x                     ∎
 
       proof = P0
 
@@ -672,10 +672,10 @@ module _ {K : 𝒰 𝑖} (T' : Monad `(IdxSet K 𝑖)`) {{_ : IRecAccessible T'}
       β = map-𝑺 (map⁻¹-𝑺 α)
       Ξ = ∑ λ k -> ⟨ ⟨ T ⟩ X ⟩ k
       η' : ∀{k} -> ∀{A : IdxSet K 𝑖} -> ⟨ A ⟩ k -> ⟨ ⟨ T ⟩ A ⟩ k
-      η' = ⟨ return ⟩ _
+      η' = ⟨ return ⟩ {_}
 
       μ' : ∀{k} -> ∀{A : IdxSet K 𝑖} -> ⟨ ⟨ T ◆ T ⟩ A ⟩ k -> ⟨ ⟨ T ⟩ A ⟩ k
-      μ' = ⟨ join ⟩ _
+      μ' = ⟨ join ⟩ {_}
 
 
       -- | We want to show:
@@ -685,9 +685,9 @@ module _ {K : 𝒰 𝑖} (T' : Monad `(IdxSet K 𝑖)`) {{_ : IRecAccessible T'}
       -- | We do this with an induction, the base case is:
       P3-base : ∀ {k} -> (x : ⟨ X ⟩ k) -> 𝑃 (k , η' x)
       P3-base x = byFirstP P0
-        where P0 = (_ , id-Q , μ' (⟨ map (map⁻¹-𝑺 α) ⟩ _ (η' x))) ≡[ i ]⟨ _ , id-Q , μ' (naturality (map⁻¹-𝑺 α) _ x i) ⟩
-                   (_ , id-Q , μ' ( η' (⟨ map⁻¹-𝑺 α ⟩ _ x)))      ≡[ i ]⟨ _ , id-Q , unit-l-join _ (⟨ map⁻¹-𝑺 α ⟩ _ x) i ⟩
-                   (_ , id-Q , (⟨ map⁻¹-𝑺 α ⟩ _ x))               ≡⟨ refl ⟩
+        where P0 = (_ , id-Q , μ' (⟨ map (map⁻¹-𝑺 α) ⟩ {_} (η' x))) ≡[ i ]⟨ _ , id-Q , μ' (naturality (map⁻¹-𝑺 α) {_} x i) ⟩
+                   (_ , id-Q , μ' ( η' (⟨ map⁻¹-𝑺 α ⟩ {_} x)))      ≡[ i ]⟨ _ , id-Q , unit-l-join (⟨ map⁻¹-𝑺 α ⟩ {_} x) i ⟩
+                   (_ , id-Q , (⟨ map⁻¹-𝑺 α ⟩ {_} x))               ≡⟨ refl ⟩
                    (_ , id-Q , (lem-1.proof α (η' x) .fst))       ≡[ i ]⟨ lem-1.proof α (η' x) .snd (~ i) .fst ⟩
                    fst (⟨ ⟨ α ⟩ ⟩ (ι (η' x)))                      ∎
 

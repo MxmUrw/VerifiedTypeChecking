@@ -14,10 +14,10 @@ open IIdxSet {{...}} public
 unquoteDecl IdxSet idxSet = #struct "IdxSt" (quote IIdxSet) "A" IdxSet idxSet
 
 module _ {K : 𝒰 𝑘} where
-  record IIdxSetHom (A : IdxSet K 𝑖) (B : IdxSet K 𝑗) (f : ∀(k : K) -> ⟨ A ⟩ k -> ⟨ B ⟩ k) : 𝒰 (𝑖 ､ 𝑗) where
+  record IIdxSetHom (A : IdxSet K 𝑖) (B : IdxSet K 𝑗) (f : ∀{k : K} -> ⟨ A ⟩ k -> ⟨ B ⟩ k) : 𝒰 (𝑖 ､ 𝑗) where
 
   instance
-    IIdxSetHom:Anything : {A : IdxSet K 𝑖} {B : IdxSet K 𝑗} {f : ∀(k : K) -> ⟨ A ⟩ k -> ⟨ B ⟩ k} -> IIdxSetHom A B f
+    IIdxSetHom:Anything : {A : IdxSet K 𝑖} {B : IdxSet K 𝑗} {f : ∀{k : K} -> ⟨ A ⟩ k -> ⟨ B ⟩ k} -> IIdxSetHom A B f
     IIdxSetHom:Anything = record {}
 
 
@@ -28,10 +28,10 @@ unquoteDecl IdxSetHom idxSetHom = #struct "IdxStHom" (quote IIdxSetHom) "f" IdxS
 Category:IdxSet : ∀(K : 𝒰 𝑘) -> ∀ 𝑖 -> Category (𝑖 ⁺ ⊔ 𝑘 , (𝑘 ⊔ 𝑖) , (𝑘 ⊔ 𝑖))
 ⟨ Category:IdxSet K 𝑖 ⟩ = IdxSet K 𝑖
 ICategory.Hom (of Category:IdxSet K 𝑖) = IdxSetHom
-ICategory._≣_ (of Category:IdxSet K 𝑖) f g = ∀ k x -> ⟨ f ⟩ k x ≡ ⟨ g ⟩ k x
+ICategory._≣_ (of Category:IdxSet K 𝑖) f g = ∀ {k} x -> ⟨ f ⟩ {k} x ≡ ⟨ g ⟩ {k} x
 ICategory.IEquiv:≣ (of Category:IdxSet K 𝑖) = {!!}
-ICategory.id (of Category:IdxSet K 𝑖) = idxSetHom (λ _ -> id)
-ICategory._◆_ (of Category:IdxSet K 𝑖) f g = ` (λ k -> ⟨ f ⟩ k ◆ ⟨ g ⟩ k) `
+ICategory.id (of Category:IdxSet K 𝑖) = idxSetHom (id)
+ICategory._◆_ (of Category:IdxSet K 𝑖) f g = ` (λ {k} -> ⟨ f ⟩ {k} ◆ ⟨ g ⟩ {k}) `
 ICategory.unit-l-◆ (of Category:IdxSet K 𝑖) = {!!}
 ICategory.unit-r-◆ (of Category:IdxSet K 𝑖) = {!!}
 ICategory.unit-2-◆ (of Category:IdxSet K 𝑖) = {!!}

@@ -43,13 +43,14 @@ module _ {𝒞 : Category 𝑖} where
 
 module _ {K : 𝒰 𝑖} (D : IQuiver K (𝑖 , 𝑖)) where
   Decomp : Functor ` IdxSet K 𝑖 ` ` IdxSet K 𝑖 `
-  ⟨ ⟨ Decomp ⟩ X ⟩ k = ∀(k₂ : K) -> (e : Edge {{D}} k₂ k) -> Maybe (⟨ X ⟩ k₂)
+  ⟨ ⟨ Decomp ⟩ X ⟩ k = ∀{k₂ : K} -> (e : Edge {{D}} k₂ k) -> Maybe (⟨ X ⟩ k₂)
   of ⟨ Decomp ⟩ X = {!!}
-  ⟨ IFunctor.map (of Decomp) f ⟩ k x j e = map-Maybe (⟨ f ⟩ _) (x _ e)
+  ⟨ IFunctor.map (of Decomp) f ⟩ x e = map-Maybe (⟨ f ⟩) (x e)
   of IFunctor.map (of Decomp) x = record {}
   IFunctor.functoriality-id (of Decomp) = {!!}
   IFunctor.functoriality-◆ (of Decomp) = {!!}
   IFunctor.functoriality-≣ (of Decomp) = {!!}
+
 
 -- [Definition]
 -- | A \textbf{recursion monad} is given by a monad \AB{T}, together with a pointed set \AFd{Direction}
@@ -72,10 +73,10 @@ module _ {K : 𝒰 𝑖} where
           pts : Natural (Functor:∆ 𝟙) ⟨ T ⟩
 
     δ : ∀{A} -> ∀{k} -> ∀(a : ⟨ ⟨ ⟨ T ⟩ ⟩ A ⟩ k) -> ∀{j} -> (e : Edge {{Dir}} j k) -> Maybe (⟨ ⟨ ⟨ T ⟩ ⟩ A ⟩ j)
-    δ a e = ⟨ ⟨ decompose ⟩ ⟩ _ a _ e
+    δ a e = ⟨ ⟨ decompose ⟩ ⟩ a e
 
     e0 : ∀{k} {X : IdxSet K 𝑖} -> ⟨ ⟨ ⟨ T ⟩ ⟩ X ⟩ k
-    e0 {k} = ⟨ ⟨ pts ⟩ ⟩ k (↥ tt)
+    e0 {k} = ⟨ ⟨ pts ⟩ ⟩ (↥ tt)
 
 
     field a0 : ∀{k : K} -> Edge {{Dir}} k k
@@ -88,7 +89,7 @@ module _ {K : 𝒰 𝑖} where
     isDecomposable {k} x = ∀ {j} -> ∀ (e : Edge {{Dir}} j k) -> ∑ λ y -> δ x e ≡-Str just y
 
     isPure : ∀{k} {X} -> ⟨ ⟨ ⟨ T ⟩ ⟩ X ⟩ k -> 𝒰 _
-    isPure {k} {X} x = (δ x a1 ≡-Str nothing) ×-𝒰 (∑ λ (x' : ⟨ X ⟩ k) -> (x ≡-Str ⟨ return {{of T}} ⟩ _ x'))
+    isPure {k} {X} x = (δ x a1 ≡-Str nothing) ×-𝒰 (∑ λ (x' : ⟨ X ⟩ k) -> (x ≡-Str ⟨ return {{of T}} ⟩ x'))
 
     field isDecomposableP : ∀{k} {X} -> ⟨ ⟨ ⟨ T ⟩ ⟩ X ⟩ k -> 𝒰 𝑖
           isPureP   : ∀{k} {X} -> ⟨ ⟨ ⟨ T ⟩ ⟩ X ⟩ k -> 𝒰 𝑖
