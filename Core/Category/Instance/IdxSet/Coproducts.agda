@@ -42,10 +42,26 @@ module _ {K : 𝒰 𝑘} where
   --   IFunctor.functoriality-id (of P) = {!!}
   --   IFunctor.functoriality-◆ (of P) = {!!}
   --   IFunctor.functoriality-≣ (of P) = {!!}
+  -- [_,_]-IdxSet : ∀{A B C : IdxSet K 𝑖} -> (f : A ⟶ C) -> (g : B ⟶ C) -> (A +-IdxSet B) ⟶ C
+  -- ⟨ [ f , g ]-IdxSet ⟩ (left x) = ⟨ f ⟩ x
+  -- ⟨ [ f , g ]-IdxSet ⟩ (just x) = ⟨ g ⟩ x
+
+  [,]-IdxSet : ∀(A B C : IdxSet K 𝑖) -> (f : A ⟶ C) -> (g : B ⟶ C) -> (A +-IdxSet B) ⟶ C
+  ⟨ [,]-IdxSet A B C f g ⟩ (left x) = ⟨ f ⟩ x
+  ⟨ [,]-IdxSet A B C f g ⟩ (just x) = ⟨ g ⟩ x
+  -- ⟨ [ f , g ]-IdxSet ⟩ (left x) = ⟨ f ⟩ x
+  -- ⟨ [ f , g ]-IdxSet ⟩ (just x) = ⟨ g ⟩ x
 
   instance
     hasCoproducts:IdxSet : hasCoproducts (` IdxSet K 𝑖 `)
-    hasCoproducts:IdxSet = {!!}
+    hasCoproducts._+_ hasCoproducts:IdxSet = _+-IdxSet_
+    ⟨ isCoproduct.ι₀ (hasCoproducts.isCoproduct:+ hasCoproducts:IdxSet) ⟩ = left
+    ⟨ isCoproduct.ι₁ (hasCoproducts.isCoproduct:+ hasCoproducts:IdxSet) ⟩ = right
+    isCoproduct.[ hasCoproducts.isCoproduct:+ hasCoproducts:IdxSet , f ] g = [,]-IdxSet _ _ _ f g
+    -- ⟨ isCoproduct.[ hasCoproducts.isCoproduct:+ hasCoproducts:IdxSet , f ] g ⟩ (just x) = ⟨ g ⟩ x
+    isCoproduct.reduce-+-₀ (hasCoproducts.isCoproduct:+ hasCoproducts:IdxSet) = {!!}
+    isCoproduct.reduce-+-₁ (hasCoproducts.isCoproduct:+ hasCoproducts:IdxSet) = {!!}
+    isCoproduct.expand-+ (hasCoproducts.isCoproduct:+ hasCoproducts:IdxSet) = {!!}
     -- ⟨ hasCoproducts:IdxSet ⟩ = P
     -- IAdjoint.embed (of hasCoproducts:IdxSet) = {!!}
     -- IAdjoint.eval (of hasCoproducts:IdxSet) = {!!}

@@ -9,6 +9,7 @@ open import Verification.Core.Order
 open import Verification.Core.Category.Definition
 open import Verification.Core.Category.Functor.Presheaf
 open import Verification.Core.Category.Quiver
+open import Verification.Core.Category.Natural
 open import Verification.Core.Category.FreeCategory
 open import Verification.Core.Category.Instance.Cat
 open import Verification.Core.Category.Instance.Functor
@@ -24,6 +25,51 @@ open import Verification.Core.Category.Limit.Specific
 open import Verification.Core.Category.Monad.Definition
 open import Verification.Unification.RecAccessible
 open import Verification.Core.Homotopy.Level
+
+
+      -- % https://q.uiver.app/?q=WzAsNixbMCwwLCJUWCJdLFswLDEsIlRUWSJdLFswLDIsIlRZIl0sWzEsMCwiRFRYIl0sWzEsMSwiRFRUWSJdLFsxLDIsIkRUWSJdLFswLDMsIlxcZGVsdGEiXSxbMCwxLCJUZiIsMl0sWzMsNCwiRFRmIl0sWzEsMiwiXFxtdSIsMl0sWzIsNSwiXFxkZWx0YSIsMl0sWzQsNSwiRFxcbXUiXV0=
+      -- | Here we do the following:
+      -- \[\begin{tikzcd}
+      -- 	TX & DTX \\
+      -- 	TTY & DTTY \\
+      -- 	TY & DTY
+      -- 	\arrow["\delta", from=1-1, to=1-2]
+      -- 	\arrow["Tf"', from=1-1, to=2-1]
+      -- 	\arrow["DTf", from=1-2, to=2-2]
+      -- 	\arrow["\mu"', from=2-1, to=3-1]
+      -- 	\arrow["\delta"', from=3-1, to=3-2]
+      -- 	\arrow["D\mu", from=2-2, to=3-2]
+      -- \end{tikzcd}\]
+module _ {𝒞 : Category 𝑖} {T : Monad 𝒞} {D : Functor 𝒞 𝒞} (δ : Natural ⟨ T ⟩ (⟨ T ⟩ ◆ D)) where
+  module _ {X Y : ⟨ 𝒞 ⟩} (f : X ⟶ ⟨ ⟨ T ⟩ ⟩ Y) (P : commutes-Nat (μ T) δ) where
+    private
+            T' = ⟨ T ⟩
+    naturalJoinCommute : ⟨ δ ⟩ ◆ map (map f ◆ join) ≣ map f ◆ join ◆ ⟨ δ ⟩
+    naturalJoinCommute = ⟨ δ ⟩ ◆ map (map f ◆ join)
+
+                         ≣⟨ refl ◈ functoriality-◆ ⟩
+
+                         ⟨ δ ⟩ ◆ (map (map f) ◆ map join)
+
+                         ≣⟨ assoc-r-◆ ⟩
+
+                         ⟨ δ ⟩ ◆ map (map f) ◆ map join
+
+                         ≣⟨ naturality f ◈ refl ⟩
+
+                         map f ◆ ⟨ δ ⟩ ◆ map join
+
+                         ≣⟨ assoc-l-◆ ⟩
+
+                         map f ◆ (⟨ δ ⟩ ◆ map join)
+
+                         ≣⟨ refl ◈ P ⟩
+
+                         map f ◆ (join ◆ ⟨ δ ⟩)
+
+                         ≣⟨ assoc-r-◆ ⟩
+
+                         map f ◆ join ◆ ⟨ δ ⟩       ∎
 
 
 
@@ -63,6 +109,18 @@ cong-Str f refl-StrId = refl-StrId
 
 -- right≢left-Str : ∀{a : A}
 
+≡-change-iso : ∀{X : 𝒰 𝑖} -> ∀{a b : X} -> (p : a ≡-Str b) -> (≡→≡-Str (≡-Str→≡ p) ≡ p)
+≡-change-iso refl-StrId = transportRefl refl-StrId
+
+module _ {A : 𝒰 𝑖} {a b : A} (P : isSet A) where
+  isSet-Str : ∀(p q : a ≡-Str b) -> p ≡ q
+  isSet-Str refl-StrId q =
+    let P1 : ≡-Str→≡ q ≡ refl
+        P1 = P _ _ _ refl
+        P2 : q ≡ refl
+        P2 = ≡-change-iso q ⁻¹ ∙ cong ≡→≡-Str P1 ∙ ≡-change-iso refl
+    in P2 ⁻¹
+
 
 
 module _ {K : 𝒰 𝑖} (T' : Monad `(IdxSet K 𝑖)`) {{_ : IRecAccessible T'}} where
@@ -82,17 +140,9 @@ module _ {K : 𝒰 𝑖} (T' : Monad `(IdxSet K 𝑖)`) {{_ : IRecAccessible T'}
   instance _ = of T
   instance _ = of T'
 
-
-
-  -- WithTerm : ∀(A : K -> 𝒰 𝑙) -> Maybe K -> 𝒰 𝑙
-  -- WithTerm A nothing = `𝟙`
-  -- WithTerm A (just x) = A x
-
-
   Mod : IdxSet K 𝑖 -> K -> Set 𝑖
   ⟨ Mod X k ⟩ = ∑ λ j -> Hom {{of 𝔇}} k j ×-𝒰 ⟨ ⟨ T ⟩ X ⟩ j
   of Mod X k = {!!}
-
 
 
   private
@@ -108,49 +158,23 @@ module _ {K : 𝒰 𝑖} (T' : Monad `(IdxSet K 𝑖)`) {{_ : IRecAccessible T'}
         -- by-[] : ∀{a : ⟨ T ⟩ A} -> (depth a ≡ 0 -> 𝟘-𝒰) -> isNormal ([] , a)
         -- by-depth : ∀{ds} -> ∀{a : ⟨ T ⟩ A} -> depth a ≡ 0 -> isNormal (ds , a)
 
+    lem-10 : ∀{A : IdxSet K 𝑖} {k} {a : ⟨ Mod A k ⟩} -> isProp (isNormal a)
+    lem-10 by-id by-id = refl
+    lem-10 {A} {k} (by-nothing e p) (by-nothing .e q) i = by-nothing e (isSet-Str {!!}  p q i) -- (hlevel {{ISet:this {{of ⟨ T ⟩ A}}}})
+    lem-10 (by-later p e x) (by-later .p .e y) i = by-later p e (lem-10 x y i)
+
     instance
       IProp:isNormal : ∀{A : IdxSet K 𝑖} {k} {a : ⟨ Mod A k ⟩} -> IHType 1 (isNormal a)
-      IProp:isNormal = {!!}
+      IHType.hlevel IProp:isNormal = lem-10
+
 
   Mod-Normal : IdxSet K 𝑖 -> K -> Set 𝑖
   ⟨ Mod-Normal X k ⟩ = ∑ λ (a : ⟨ Mod X k ⟩) -> isNormal a
   of Mod-Normal X k = {!!}
 
+
   private
     module _ {X : IdxSet K 𝑖} where
-{-
-      -- ν-impl-1 : {j : K} {k : K} -> (p : Edge {{of Q}} k j) -> ⟨ ⟨ T ⟩ X ⟩ j -> Maybe (𝟚-𝒰 +-𝒰 (⟨ ⟨ T ⟩ X ⟩ k))
-      -- ν-impl-1 nothing x = just (left ₀)
-      -- ν-impl-1 (just e) x with ⟨ ⟨ decompose ⟩ ⟩ _ x
-      -- ... | left _ = nothing
-      -- ... | just xs = just (xs _ e)
-
-      -- ν-impl₁ : {j : K} {k : K} -> (p : QPath {{of Q}} k j) -> 𝟚-𝒰 +-𝒰 ⟨ ⟨ T ⟩ X ⟩ j -> ⟨ Mod-Normal X k ⟩
-
-      ν-impl : {j : K} {k : K} -> (p : QPath {{of Q}} k j) -> 𝟚-𝒰 +-𝒰 ⟨ ⟨ T ⟩ X ⟩ j -> ⟨ Mod X k ⟩
-      ν-impl = {!!}
-      -- ν-impl p (left x) = _ , id , left ₀
-      -- ν-impl (last nothing) (right x) = _ , id , left ₀
-      -- ν-impl (last (just e)) (right x) with split-+-Str (⟨ ⟨ decompose ⟩ ⟩ _ x)
-      -- ... | left _        = _ , some (last (just e)) , right x
-      -- ... | just (xs , _) = _ , id , (xs _ e)
-      -- -- ν-impl (nothing ∷ p) (right x) = _ , id , left ₀
-      -- ν-impl (e ∷ p) (right x) with ν-impl p (right x)
-      -- ... | (_ , some p' , x')       = _ , some (e ∷ p') , x'
-      -- ... | (_ , id-Q , left x₁)     = _ , id , left ₀
-      -- ... | (_ , id-Q , just x')     with split-+-Str (⟨ ⟨ decompose ⟩ ⟩ _ x')
-      -- ... | left _         = _ , some (last (e)) , just x' -- restore old x', with last existing edge e
-      -- ν-impl (nothing ∷ p) (just x) | (_ , id-Q , just x')     | just (x'' , _) = _ , id , left ₀
-      -- ν-impl (just e ∷ p) (just x)  | (_ , id-Q , just x')     | just (x'' , _) = _ , id-Q , x'' _ e
-
-      ν-impl-isNormal : {j : K} {k : K} -> (p : QPath {{of Q}} k j) -> (x : 𝟚-𝒰 +-𝒰 ⟨ ⟨ T ⟩ X ⟩ j) -> isNormal (ν-impl p x)
-      ν-impl-isNormal = {!!}
-
-      -- ν-impl₁ p x = ν-impl p x , ?
-
--}
-
-      -- ν-impl-2 : {j k : K} -> (p : QPath {{of Q}} (k) (j)) -> ⟨ ⟨ T ⟩ X ⟩ j -> ⟨ Mod X k ⟩
 
 
       ν-impl : {j k : K} -> (p : QPath {{of Q}} (k) (j)) -> ⟨ ⟨ T ⟩ X ⟩ j -> ⟨ Mod-Normal X k ⟩
@@ -175,29 +199,6 @@ module _ {K : 𝒰 𝑖} (T' : Monad `(IdxSet K 𝑖)`) {{_ : IRecAccessible T'}
       write : ∀{k j} -> (e : Edge {{of Q}} j k) -> ⟨ Mod X k ⟩ -> ⟨ Mod X j ⟩
       write e (_ , p , x) = (_ , ` e ` ◆ p , x)
 
-{-
-
-      isNormal-ν : ∀{k} -> ∀(x : ⟨ Mod X k ⟩) -> isNormal (ν x)
-      isNormal-ν x = {!!}
-
-      ν₁ : ∀{k} -> ⟨ Mod X k ⟩ -> ⟨ Mod-Normal X k ⟩
-      ν₁ x = ν x , isNormal-ν x
-
-      idempotent-ν : ∀{k} -> ∀{x : ⟨ Mod X k ⟩} -> ν (ν x) ≡ ν x
-      idempotent-ν = {!!}
-
-
-
-
-      write-comm-impl-2 : {j k l : K} -> (e : Edge {{of Q}} l k) -> (p : QPath {{of Q}} k j) -> (x : 𝟚-𝒰 +-𝒰 ⟨ ⟨ T ⟩ X ⟩ j) -> (ν-impl (e ∷ p) x ≡-Str write e (ν-impl p x)) +-𝒰 (∑ λ y -> ν-impl p x ≡-Str (_ , id-Q , y))
-      write-comm-impl-2 e p (left x) = right (_ , refl)
-      write-comm-impl-2 e p (just x) with ν-impl p (right x) | ν-impl-isNormal p (right x)
-      ... | .(_ , id-Q , _) | by-[] = right (_ , refl)
-      ... | .(_ , id-Q , just _) | by-eval x₁ id-Q = right (_ , refl)
-      ... | .(_ , some x₂ , just _) | by-eval x₁ (some x₂) = left refl
-
-
--}
 
       ν-idempotent-impl : ∀{k j} -> (p : QPath {{of Q}} j k) (x : ⟨ ⟨ T ⟩ X ⟩ k) -> isNormal (_ , some p , x) -> ν₁ (_ , some p , x) ≡-Str (_ , some p , x)
       ν-idempotent-impl .(last e) x (by-nothing e P) with split-+-Str (δ x e)
@@ -210,13 +211,6 @@ module _ {K : 𝒰 𝑖} (T' : Monad `(IdxSet K 𝑖)`) {{_ : IRecAccessible T'}
       ν-idempotent ((_ , (some p) , x) , N) = ν-idempotent-impl p x N
       ν-idempotent ((_ , .id-Q , x) , by-id) = refl
 
-      -- with split-+-Str (δ x e)
-      -- ν-idempotent ((_ , .id-Q , x) , by-id) = refl
-      -- ν-idempotent ((_ , .(some (last e)) , x) , by-nothing e P) with split-+-Str (δ x e)
-      -- ... | left _ = refl
-      -- ... | just (_ , Q) = 𝟘-rec (left≢right `(P ⁻¹ ∙ Q)`)
-      -- ν-idempotent ((_ , .(some (e ∷ p)) , x) , by-later p e N) with ν-idempotent ((_ , some p , x) , N)
-      -- ... | X = {!!}
 
 
       write-comm-impl : {j k l : K} -> (e : Edge {{of Q}} l k) -> (p : QPath {{of Q}} k j) -> (x : ⟨ ⟨ T ⟩ X ⟩ j) -> ν₁ (write e (fst (ν-impl p x))) ≡-Str fst (ν-impl (e ∷ p) x)
@@ -238,125 +232,21 @@ module _ {K : 𝒰 𝑖} (T' : Monad `(IdxSet K 𝑖)`) {{_ : IRecAccessible T'}
       ... | just _ = refl
 
 
-      -- write-comm-impl e p x with write-comm-impl-2 e p x
-      -- ... | left P = {!!}
-      -- write-comm-impl e p (left x) | just (fst₁ , P) = refl
-      -- write-comm-impl e p (just x) | just (y , P) with ν-impl p (just x) | P
-      -- write-comm-impl e p (just x) | just (left x' , P) | .(_ , id-Q , left x') | refl-StrId = refl
-      -- write-comm-impl e p (just x) | just (just x' , P) | .(_ , id-Q , just x') | refl-StrId with split-+-Str (⟨ ⟨ decompose ⟩ ⟩ _ x')
-      -- ... | left x₁ = {!!}
-      -- write-comm-impl (left x₂) p (just x) | just (just x' , P) | .(_ , id-Q , just x') | refl-StrId | just x₁ = refl
-      -- write-comm-impl (just x₂) p (just x) | just (just x' , P) | .(_ , id-Q , just x') | refl-StrId | just (x'' , x''p) with split-+-Str (⟨ ⟨ decompose ⟩ ⟩ _ x')
-      -- write-comm-impl (just x₂) p (just x) | just (just x' , P) | .(_ , id-Q , just x') | refl-StrId | just (x'' , x''p) | left (x''2 , x''2p) with x''2p ⁻¹ ∙ x''p
-      -- ... | ()
-      -- write-comm-impl (just x₂) p (just x) | just (just x' , P) | .(_ , id-Q , just x') | refl-StrId | just (x'' , x''p) | right (x''2 , x''2p) with x''2p ⁻¹ ∙ x''p
-      -- ... | refl-StrId = refl
-
-{-
-
-      -- write-comm-impl e p (left x) = refl
-      -- write-comm-impl e (last nothing) (just x) = refl
-      -- write-comm-impl e (last (just x₁)) (just x) = {!!} -- with split-+ (⟨ ⟨ decompose ⟩ ⟩ _ x)
-      -- write-comm-impl f (e ∷ p) (just x) with ν-impl p (right x) | ν-impl-isNormal p (right x)
-      -- ... | _ , some x₁ , just x₂ | Y = {!!}
-      -- ... | _ , id-Q , left x₁ | Y = {!!}
-      -- ... | _ , id-Q , just x' | Y with split-+ (⟨ ⟨ decompose ⟩ ⟩ _ x')
-      -- ... | left _ = {!!}
-      -- write-comm-impl f (left x₁ ∷ p) (just x) | _ , id-Q , just x' | Y | just x'' = {!!}
-      -- write-comm-impl f (just x₁ ∷ p) (just x) | _ , id-Q , just x' | Y | just (x'' , _) = {!!}
-
-      -- ... | _ , id-Q , left x₁ = {!!}
-      -- ... | _ , some x₂ , left x₁ = {!!}
-      -- ... | _ , p' , just x₁ = {!!}
-
-      -- with ν-impl p (right x) | ν-impl (e ∷ p) (right x)
-      -- ... | _ , some x₁ , x' | _ , id-Q , left x₂ = {!!}
-      -- ... | _ , some x₁ , x' | _ , id-Q , just x₂ = {!!}
-      -- ... | _ , some x₁ , x' | _ , some x₂ , x'2 = {!!}
-      -- ... | _ , id-Q , left x' | _ , id-Q , left x₁ = {!!}
-      -- ... | _ , id-Q , left x' | _ , id-Q , just x₁ = {!!}
-      -- ... | _ , id-Q , left x' | _ , some x₁ , left x₂ = {!!}
-      -- ... | _ , id-Q , left x' | _ , some x₁ , just x₂ = {!!}
-      -- ... | _ , id-Q , just x' | Z = {!!}
 
 
-      -- with split-+ (⟨ ⟨ decompose ⟩ ⟩ _ x')
-      -- ... | left x₁ = {!!}
-      -- write-comm-impl f (left x₁ ∷ p) (just x) | _ , id-Q , just x' | just (x'' , _) = {!!}
-      -- write-comm-impl f (just x₁ ∷ p) (just x) | _ , id-Q , just x' | just (x'' , _) = {!!}
-
-      -- write-comm-impl f (e ∷ p) (just x) with ν-impl p (right x)
-      -- ... | _ , some x₁ , x' = {!!}
-      -- ... | _ , id-Q , left x' = {!!}
-      -- ... | _ , id-Q , just x' with split-+ (⟨ ⟨ decompose ⟩ ⟩ _ x')
-      -- ... | left x₁ = {!!}
-      -- write-comm-impl f (left x₁ ∷ p) (just x) | _ , id-Q , just x' | just (x'' , _) = {!!}
-      -- write-comm-impl f (just x₁ ∷ p) (just x) | _ , id-Q , just x' | just (x'' , _) = {!!}
-
-
-      -- write-comm-impl e p (left x) = refl
-      -- write-comm-impl f (last (nothing)) (just x) = refl
-      -- write-comm-impl f (last (just x₁)) (just x) with split-+ (⟨ ⟨ decompose ⟩ ⟩ _ x)
-      -- ... | just _ = refl
-      -- ... | left P with split-+ (⟨ ⟨ decompose ⟩ ⟩ _ x)
-      -- ... | left _ = refl
-      -- ... | just Q = {!!} -- 𝟘-elim (left≢right (snd P ⁻¹ ∙ snd Q))
-      -- write-comm-impl f (e ∷ p) (just x) = {!!}
-
--}
       write-comm : ∀{k j} -> (e : Edge {{of Q}} j k) -> (x : ⟨ Mod X k ⟩)-> ν₁ (write e (ν₁ x)) ≡ ν₁ (write e x)
       write-comm e (j , id-Q , x) = refl
       write-comm e (j , some p , x) = ` write-comm-impl e p x `
-      -- write-comm e (j , id-Q , x) = refl
-      -- write-comm e (j , some p , x) = write-comm-impl e p x
-{-
-      -- write-comm e (j , p , left x) = refl
-      -- write-comm e (j , id-Q , just x) = refl
-      -- write-comm e (j , some p , just x) = ?
 
--}
     module _ {X Y : IdxSet K 𝑖} where
       apply : ∀{k} -> (f : X ⟶ ⟨ T ⟩ Y) -> ⟨ Mod X k ⟩ -> ⟨ Mod Y k ⟩
       apply f (_ , p , x) = (_ , p , ⟨ _=<< {{of T'}} f ⟩ x)
-      -- apply f (_ , p , left x) = (_ , p , left x)
-      -- apply f (_ , p , right x) = (_ , p , right (⟨ f =<< ⟩ _ x))
 
 
-      -- % https://q.uiver.app/?q=WzAsNixbMCwwLCJUWCJdLFswLDEsIlRUWSJdLFswLDIsIlRZIl0sWzEsMCwiRFRYIl0sWzEsMSwiRFRUWSJdLFsxLDIsIkRUWSJdLFswLDMsIlxcZGVsdGEiXSxbMCwxLCJUZiIsMl0sWzMsNCwiRFRmIl0sWzEsMiwiXFxtdSIsMl0sWzIsNSwiXFxkZWx0YSIsMl0sWzQsNSwiRFxcbXUiXV0=
-      -- | Here we do the following:
-      -- \[\begin{tikzcd}
-      -- 	TX & DTX \\
-      -- 	TTY & DTTY \\
-      -- 	TY & DTY
-      -- 	\arrow["\delta", from=1-1, to=1-2]
-      -- 	\arrow["Tf"', from=1-1, to=2-1]
-      -- 	\arrow["DTf", from=1-2, to=2-2]
-      -- 	\arrow["\mu"', from=2-1, to=3-1]
-      -- 	\arrow["\delta"', from=3-1, to=3-2]
-      -- 	\arrow["D\mu", from=2-2, to=3-2]
-      -- \end{tikzcd}\]
-      δ-comm : ∀(f : X ⟶ ⟨ T ⟩ Y) -> ∀{j k} -> ∀(e : Edge {{of Q}} k j) (x : ⟨ ⟨ T ⟩ X ⟩ j) -> map-Maybe (⟨ map f ◆ join ⟩ {_}) (δ x e) ≡ δ (⟨ map f ◆ join ⟩ x) e
-      δ-comm f e x =
-        let P1 : ⟨ decompose ⟩ ◆ map {{of T ◆ Decomp Dir}} f ≣ map f ◆ ⟨ decompose ⟩
-            P1 = naturality {{of decompose}} f
-            P2 : ⟨ decompose ⟩ ◆ map {{of Decomp Dir}} (⟨ μ T' ⟩ {Y}) ≣ ⟨ μ T' ⟩ ◆ ⟨ decompose ⟩
-            P2 = commutes:decompose
-            -- P3 : ⟨ decompose ⟩ ◆ map {{of T ◆ Decomp Dir}} f ◆ map {{of Decomp Dir}} (⟨ μ T' ⟩)
-            --      ≣ map f ◆ ⟨ μ T' ⟩ ◆ ⟨ decompose ⟩
-            -- P3 = {!!}
+      -- δ-comm : ∀(f : X ⟶ ⟨ T ⟩ Y) -> ∀{j k} -> ∀(e : Edge {{of Q}} k j) (x : ⟨ ⟨ T ⟩ X ⟩ j) -> map-Maybe (⟨ map f ◆ join ⟩ {_}) (δ x e) ≡ δ (⟨ map f ◆ join ⟩ x) e
+      -- δ-comm f {j} {k} e x i = naturalJoinCommute {T = T'} decompose f commutes:decompose {_} x i {_} e
 
-            P3 : ⟨ decompose ⟩ ◆ map {{of Decomp Dir}} (map {{of T}} f ◆ ⟨ μ T' ⟩)
-                 ≣ map f ◆ ⟨ μ T' ⟩ ◆ ⟨ decompose ⟩
-            P3 = {!!}
-            -- P4 : map-Maybe
-            --       (λ a →
-            --         ⟨ IMonad.join (of T') ⟩ _ (⟨ IFunctor.map (of ⟨ T' ⟩) f ⟩ _ a))
-            --       (δ x e)
-            --       ≡
-            --       δ (⟨ IMonad.join (of T') ⟩ _ (⟨ IFunctor.map (of ⟨ T' ⟩) f ⟩ _ x))
-            --       e
-            P4 = {!!} -- funExt⁻¹ (funExt⁻¹ (P3 {_} x) {_}) e
-        in P4
+
 
       apply-comm-impl : {j k : K} -> (f : X ⟶ ⟨ T ⟩ Y) -> (p : QPath {{of Q}} k j) -> (x : ⟨ ⟨ T ⟩ X ⟩ j) -> ν₁ (apply f (fst (ν-impl p x))) ≡ fst (ν ((_ , some p , ⟨ map f ◆ join ⟩ {_} x)))
       apply-comm-impl f (last e) x with (δ-comm f e x) | split-+-Str (δ x e)
@@ -937,3 +827,4 @@ module _ {K : 𝒰 𝑖} (T' : Monad `(IdxSet K 𝑖)`) {{_ : IRecAccessible T'}
 
 
 -}
+

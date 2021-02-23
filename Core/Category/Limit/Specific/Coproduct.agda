@@ -33,6 +33,9 @@ module _ {𝒞 : Category 𝑖} {{P : hasCoproducts 𝒞}} where
   IFunctor.functoriality-◆ (of Functor:+) = {!!}
   IFunctor.functoriality-≣ (of Functor:+) = {!!}
 
+  map-+-r : ∀{a b c : ⟨ 𝒞 ⟩} -> (f : a ⟶ b) -> (c + a) ⟶ (c + b)
+  map-+-r f = map {{of Functor:+}} (id , f)
+
 
 
 

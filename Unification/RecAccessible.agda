@@ -75,6 +75,8 @@ module _ {K : 𝒰 𝑖} where
     δ : ∀{A} -> ∀{k} -> ∀(a : ⟨ ⟨ ⟨ T ⟩ ⟩ A ⟩ k) -> ∀{j} -> (e : Edge {{Dir}} j k) -> Maybe (⟨ ⟨ ⟨ T ⟩ ⟩ A ⟩ j)
     δ a e = ⟨ ⟨ decompose ⟩ ⟩ a e
 
+    field δ-comm : ∀{X Y} -> ∀(f : X ⟶ ⟨ ⟨ T ⟩ ⟩ Y) -> ∀{j k} -> ∀(e : Edge {{Dir}} k j) (x : ⟨ ⟨ ⟨ T ⟩ ⟩ X ⟩ j) -> (δ x e ≢ nothing) -> map-Maybe (⟨ map f ◆ join {{of T}} ⟩ {_}) (δ x e) ≡ δ (⟨ map f ◆ join {{of T}} ⟩ x) e
+
     e0 : ∀{k} {X : IdxSet K 𝑖} -> ⟨ ⟨ ⟨ T ⟩ ⟩ X ⟩ k
     e0 {k} = ⟨ ⟨ pts ⟩ ⟩ (↥ tt)
 

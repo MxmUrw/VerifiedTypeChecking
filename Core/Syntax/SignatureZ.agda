@@ -52,6 +52,20 @@ module _ {K : 𝒰₀} where
     join-TermZ fail = fail
     join-TermZ (valid x) = join-Term x
 
+  module _ {σ : Signature} {V W : K -> 𝒰₀} where
+    map-Term : {k : K} -> (∀{k} -> V k -> W k) -> Term σ V k -> Term σ W k
+
+    map-Terms : {ks : Vec K n} -> (∀{k} -> V k -> W k) -> Terms σ V ks -> Terms σ W ks
+    map-Terms f [] = []
+    map-Terms f (t ∷ ts) = map-Term f t ∷ map-Terms f ts
+
+    map-Term f (te s ts) = te s (map-Terms f ts)
+    map-Term f (var x) = var (f x)
+
+    map-TermZ : {k : K} -> (∀{k} -> V k -> W k) -> TermZ σ V k -> TermZ σ W k
+    map-TermZ f fail = fail
+    map-TermZ f (valid x) = valid (map-Term f x)
+
   private
     𝒞 : Category _
     𝒞 = Category:IdxSet K ℓ₀
@@ -60,15 +74,15 @@ module _ {K : 𝒰₀} where
     Functor:TermZ : Functor 𝒞 𝒞
     ⟨ ⟨ Functor:TermZ ⟩ X ⟩ = TermZ σ ⟨ X ⟩
     IIdxSet.ISet:this (of ⟨ Functor:TermZ ⟩ z) = {!!}
-    IFunctor.map (of Functor:TermZ) = {!!}
+    ⟨ IFunctor.map (of Functor:TermZ) f ⟩ = map-TermZ ⟨ f ⟩
     IFunctor.functoriality-id (of Functor:TermZ) = {!!}
     IFunctor.functoriality-◆ (of Functor:TermZ) = {!!}
     IFunctor.functoriality-≣ (of Functor:TermZ) = {!!}
 
     Monad:TermZ : Monad 𝒞
     ⟨ Monad:TermZ ⟩ = Functor:TermZ
-    ⟨ IMonad.return (of Monad:TermZ) ⟩ _ x = valid (var x)
-    ⟨ IMonad.join (of Monad:TermZ) ⟩ _ = join-TermZ
+    ⟨ IMonad.return (of Monad:TermZ) ⟩ x = valid (var x)
+    ⟨ IMonad.join (of Monad:TermZ) ⟩ = join-TermZ
     IMonad.INatural:return (of Monad:TermZ) = {!!}
     IMonad.INatural:join (of Monad:TermZ) = {!!}
     IMonad.unit-l-join (of Monad:TermZ) = {!!}
