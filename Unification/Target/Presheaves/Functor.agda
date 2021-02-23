@@ -94,23 +94,6 @@ module _ {𝒞 : Category 𝑖} {T : Monad 𝒞} {D : Functor 𝒞 𝒞} (δ : N
 --     edge : ∀ {a b} -> E a b -> Edge₊ (just a) (just b)
 --     zedge : ∀{a} -> Edge₊ nothing (just a)
 
-instance
-  Cast:≡Str : ∀{X : 𝒰 𝑖} -> ∀{a b : X} -> Cast (a ≡-Str b) IAnything (a ≡ b)
-  Cast.cast Cast:≡Str refl-StrId = refl
-
-≡-Str→≡ : ∀{X : 𝒰 𝑖} -> ∀{a b : X} -> (a ≡-Str b) -> (a ≡ b)
-≡-Str→≡ refl-StrId = refl
-
-≡→≡-Str : ∀{X : 𝒰 𝑖} -> ∀{a b : X} -> (a ≡ b) -> (a ≡-Str b)
-≡→≡-Str {a = a} {b} p = transport (λ i -> a ≡-Str (p i)) refl-StrId
-
-cong-Str : ∀{A : 𝒰 𝑖} {B : 𝒰 𝑗} {a b : A} -> (f : A -> B) -> (a ≡-Str b) -> (f a ≡-Str f b)
-cong-Str f refl-StrId = refl-StrId
-
--- right≢left-Str : ∀{a : A}
-
-≡-change-iso : ∀{X : 𝒰 𝑖} -> ∀{a b : X} -> (p : a ≡-Str b) -> (≡→≡-Str (≡-Str→≡ p) ≡ p)
-≡-change-iso refl-StrId = transportRefl refl-StrId
 
 module _ {A : 𝒰 𝑖} {a b : A} (P : isSet A) where
   isSet-Str : ∀(p q : a ≡-Str b) -> p ≡ q

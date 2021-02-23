@@ -5,6 +5,8 @@ module Verification.Conventions.Prelude.Classes.EquivalenceRelation where
 
 open import Verification.Conventions.Proprelude
 open import Verification.Conventions.Prelude.Classes.Operators.Unary
+open import Verification.Conventions.Prelude.Classes.Cast
+open import Verification.Conventions.Prelude.Classes.Anything
 open import Verification.Conventions.Prelude.Data.StrictId
 
 
@@ -80,6 +82,24 @@ instance
   (IEquiv:StrId IEquiv.∙ refl-StrId) q = q
 
 _≡-Str_ = StrId
+
+instance
+  Cast:≡Str : ∀{X : 𝒰 𝑖} -> ∀{a b : X} -> Cast (a ≡-Str b) IAnything (a ≡ b)
+  Cast.cast Cast:≡Str refl-StrId = refl
+
+≡-Str→≡ : ∀{X : 𝒰 𝑖} -> ∀{a b : X} -> (a ≡-Str b) -> (a ≡ b)
+≡-Str→≡ refl-StrId = refl
+
+≡→≡-Str : ∀{X : 𝒰 𝑖} -> ∀{a b : X} -> (a ≡ b) -> (a ≡-Str b)
+≡→≡-Str {a = a} {b} p = transport (λ i -> a ≡-Str (p i)) refl-StrId
+
+cong-Str : ∀{A : 𝒰 𝑖} {B : 𝒰 𝑗} {a b : A} -> (f : A -> B) -> (a ≡-Str b) -> (f a ≡-Str f b)
+cong-Str f refl-StrId = refl-StrId
+
+-- right≢left-Str : ∀{a : A}
+
+≡-change-iso : ∀{X : 𝒰 𝑖} -> ∀{a b : X} -> (p : a ≡-Str b) -> (≡→≡-Str (≡-Str→≡ p) ≡ p)
+≡-change-iso refl-StrId = transportRefl refl-StrId
 
 --------------------------------------------------------------------------------
 -- === path syntax

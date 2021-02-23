@@ -21,10 +21,12 @@ instance
   IDiscreteStr:ℕ : IDiscreteStr ℕ
   IDiscreteStr:ℕ = {!!}
 
+_≢-Str_ : ∀{A : 𝒰 𝑖} -> (a b : A) -> 𝒰 𝑖
+_≢-Str_ a b = ¬ a ≡-Str b
 
 module _ {K : 𝒰₀} {{_ : IDiscreteStr K}} where
 
-  module _ {σ : Signature} where
+  module _ (σ : Signature) (isInhabited:σ : isInhabited-Sig σ) where
     private
       variable k : K
                ks : Vec K n
@@ -39,10 +41,29 @@ module _ {K : 𝒰₀} {{_ : IDiscreteStr K}} where
     -- data SigEdge : (a b : Maybe K) -> 𝒰₀ where
     --   e-arg : ∀ {k} {ks : Vec K (suc n)} -> (i : Fin-R n) -> σ k ks -> SigEdge (just (lookup i ks)) (just k)
     --   e-noarg : ∀{k} -> σ k [] -> SigEdge nothing (just k)
+      data isDecomposableP-Term {k : K} {X : K -> 𝒰₀} : TermZ2 σ X k -> 𝒰₀ where
+        isTe : ∀{ks : Vec K (suc n)} -> (s : σ k ks) -> (ts : TermsZ2 σ X ks) -> isDecomposableP-Term (te s ts)
+
+      data isPureP-Term {k : K} {X : K -> 𝒰₀} : TermZ2 σ X k -> 𝒰₀ where
+        isVar : ∀(x : ⇈ X k) -> isPureP-Term (var x)
+
+      decideDecompose-Term : ∀{k} {X : K -> 𝒰₀} -> ∀ (x : TermZ2 σ X k) -> isPureP-Term x +-𝒰 isDecomposableP-Term x
+      decideDecompose-Term (te x x₁) = right (isTe _ _)
+      decideDecompose-Term (var x) = left (isVar _)
 
       data SigEdge : (a b : K) -> 𝒰₀ where
         edge : ∀ {k} {ks : Vec K (suc n)} -> (i : Fin-R (suc n)) -> σ k ks -> SigEdge (lookup i ks) k
         fail : ∀{a : K} -> SigEdge a a
+
+      get-a1-k : K -> K
+      get-a1-k k =
+        let _ , ks , _ = isInhabited:σ k
+        in lookup zero ks
+
+      get-a1 : (k : K) -> SigEdge (get-a1-k k) k
+      get-a1 k =
+        let _ , ks , x = isInhabited:σ k
+        in edge zero x
 
       𝑄 : Quiver ⊥
       ⟨ 𝑄 ⟩ = K
@@ -52,19 +73,29 @@ module _ {K : 𝒰₀} {{_ : IDiscreteStr K}} where
 
       -- compare-sig : ∀{k j₁ j₂ : K} -> {n₁ n₂ : ℕ} -> (s )
 
+      pattern failv = var (left (↥ tt))
+
       module _ {V : K -> 𝒰₀} where
         lookup-Term : ∀{ks : Vec K (n)} -> (i : Fin-R (n)) -> Terms σ V ks -> Term σ V (lookup i ks)
         lookup-Term zero    (t ∷ ts) = t
         lookup-Term (suc i) (t ∷ ts) = lookup-Term i ts
 
-        lookup-Term-try : ∀{n₁ n₂ : ℕ} {ks₁ : Vec K (suc n₁)} {ks₂ : Vec K (suc n₂)} (s₁ : σ k ks₁) (s₂ : σ k ks₂) (i : Fin-R (suc n₂)) (ts : Terms σ V ks₁) -> Maybe (Term σ V (lookup i ks₂))
+      module _ {V : K -> 𝒰₀} where
+        lookup-Term-try : ∀{n₁ n₂ : ℕ} {ks₁ : Vec K (suc n₁)} {ks₂ : Vec K (suc n₂)} (s₁ : σ k ks₁) (s₂ : σ k ks₂) (i : Fin-R (suc n₂)) (ts : TermsZ2 σ V ks₁) -> (TermZ2 σ V (lookup i ks₂))
         lookup-Term-try {n₁ = n₁} {n₂} {ks₁} {ks₂} s₁ s₂ i ts with (n₁ ≟-Str n₂)
-        ... | no ¬p = nothing
+        ... | no ¬p = failv
         ... | yes refl-StrId with (ks₁ ≟-Str ks₂)
-        ... | no ¬p = nothing
+        ... | no ¬p = failv
         ... | yes refl-StrId with (s₁ ≟-Str s₂)
-        ... | no ¬p = nothing
-        ... | yes refl-StrId = right ((lookup-Term i ts))
+        ... | no ¬p = failv
+        ... | yes refl-StrId = ((lookup-Term i ts))
+        -- ... | no ¬p = nothing
+        -- ... | yes refl-StrId with (ks₁ ≟-Str ks₂)
+        -- ... | no ¬p = nothing
+        -- ... | yes refl-StrId with (s₁ ≟-Str s₂)
+        -- ... | no ¬p = nothing
+        -- ... | yes refl-StrId = right ((lookup-Term i ts))
+
 
       -- module _ {X Y : K -> 𝒰₀} where
       --   naturality-lookup-Term : (f : ∀{k} -> X k -> Y k) -> ∀{ks : Vec K (n)} -> (i : Fin-R (n)) -> (ts : Terms σ X ks) -> (map-Term f (lookup-Term i ts)) ≡ (lookup-Term i (map-Terms f ts))
@@ -84,7 +115,7 @@ module _ {K : 𝒰₀} {{_ : IDiscreteStr K}} where
                             (s₂ : σ k ks₂) ->
                             (ts  : Terms σ (⇈ ⟨ X ⟩) ks₁) →
                             (i : Fin-R (suc n₁)) ->
-                            map-Maybe (map-TermZ2 f) (lookup-Term-try s₁ s₂ i ts) ≡
+                            (map-TermZ2 f) (lookup-Term-try s₁ s₂ i ts) ≡
                                   lookup-Term-try s₁ s₂ i (map-TermsZ2 f ts)
         naturality-lookup-Term-try f {k} {n} {n₁} {ks₁} {ks₂} s₁ s₂ ts i with (n ≟-Str n₁)
         ... | no ¬p = refl
@@ -92,17 +123,16 @@ module _ {K : 𝒰₀} {{_ : IDiscreteStr K}} where
         ... | no ¬p = refl
         ... | yes refl-StrId with (s₁ ≟-Str s₂)
         ... | no ¬p = refl
-        ... | yes refl-StrId = λ j -> just ((naturality-lookup-Term f i ts j))
+        ... | yes refl-StrId = λ j -> ((naturality-lookup-Term f i ts j))
 
       -- [Theorem]
       -- | The |Monad:TermZ| is recursively accessible.
 
-      pattern failv = var (left (↥ tt))
 
       -- | First we build the decomposition function:
       decomp : {k : K} {V : K -> 𝒰₀} -> Term σ (⇈ V) k -> (∀{j : K} -> SigEdge j k -> Maybe (Term σ (⇈ V) j))
       decomp t fail = right (failv)
-      decomp ((te s₁ ts)) (edge i s₂) = lookup-Term-try s₁ s₂ i ts
+      decomp ((te s₁ ts)) (edge i s₂) = just (lookup-Term-try s₁ s₂ i ts)
       decomp (var v) (edge i x) = nothing
       -- decomp _ fail = right fail
       -- decomp fail (edge _ _) = right fail
@@ -115,7 +145,7 @@ module _ {K : 𝒰₀} {{_ : IDiscreteStr K}} where
                             ∀{j} -> (e : SigEdge j k) ->
                             map-Maybe (map-TermZ2 f) (decomp t e) ≡ decomp (map-TermZ2 f t) e
         naturality-decomp f t fail = refl
-        naturality-decomp f (te s₁ ts) (edge i s₂) = naturality-lookup-Term-try f s₁ s₂ ts i
+        naturality-decomp f (te s₁ ts) (edge i s₂) = cong right (naturality-lookup-Term-try f s₁ s₂ ts i)
         naturality-decomp f (var x₁) (edge i x) = refl
 
       -- module lem-20 {X : K -> 𝒰₀} where
@@ -163,7 +193,6 @@ module _ {K : 𝒰₀} {{_ : IDiscreteStr K}} where
                 (⌘_ (Term σ (λ k → Lift 𝟙-𝒰 +-𝒰 ⟨ Y ⟩ k))))
                 (⌘ (λ {k} a → left a)) (⌘ (λ {k} a → just (⟨ f ⟩ a)))
                 ⟩ ts))
-
           ζ : ∀ {n} -> ∀ {ks₁ : Vec K (n)} ->
                             -- (t : TermZ σ X k) →
                             (ts  : TermsZ2 σ ⟨ X ⟩ ks₁) → _ -- TermsZ2 σ ⟨ X ⟩ ks₁
@@ -200,9 +229,8 @@ module _ {K : 𝒰₀} {{_ : IDiscreteStr K}} where
                             (ts  : TermsZ2 σ ⟨ X ⟩ ks₁) →
                             (i : Fin-R (suc n₁)) ->
                             -- (decomp t e ≢ nothing) ->
-                            (lookup-Term-try s₁ s₂ i ts ≢ nothing) ->
-                            map-Maybe (λ a → join-TermZ2 {V = Y} (map-TermZ2 f a))
-                                  (lookup-Term-try s₁ s₂ i ts)
+                            -- (lookup-Term-try s₁ s₂ i ts ≢ nothing) ->
+                            join-TermZ2 {V = Y} (map-TermZ2 f (lookup-Term-try s₁ s₂ i ts))
                                   ≡
                                   lookup-Term-try s₁ s₂ i
                                   (join-Terms
@@ -227,17 +255,21 @@ module _ {K : 𝒰₀} {{_ : IDiscreteStr K}} where
                                     ⟩
                                     ts)))
 
-          P0 {k} {n₁} {n₂} {ks₁} {ks₂} s₁ s₂ ts i P with (n₁ ≟-Str n₂)
-          ... | no ¬p = 𝟘-rec (P refl)
+          P0 {k} {n₁} {n₂} {ks₁} {ks₂} s₁ s₂ ts i with (n₁ ≟-Str n₂)
+          ... | no ¬p = refl
           ... | yes refl-StrId with (ks₁ ≟-Str ks₂)
-          ... | no ¬p = 𝟘-rec (P refl)
+          ... | no ¬p = refl
           ... | yes refl-StrId with (s₁ ≟-Str s₂)
-          ... | no ¬p = 𝟘-rec (P refl)
-          ... | yes refl-StrId = cong just (P1 ts i)
+          ... | no ¬p = refl
+          ... | yes refl-StrId = (P1 ts i)
 
-          proof (edge i s₂) (te s₁ ts) P = P0 s₁ s₂ ts i P
+          proof (edge i s₂) (te s₁ ts) P = cong right (P0 s₁ s₂ ts i)
           proof (edge i x) (var x₁) P = 𝟘-rec (P refl)
           proof fail t P = refl
+
+          -- proof (edge i s₂) (te s₁ ts) P = P0 s₁ s₂ ts i P
+          -- proof (edge i x) (var x₁) P = 𝟘-rec (P refl)
+          -- proof fail t P = refl
 
                             -- map-Maybe (λ a -> join-TermZ (map-TermZ f a)) (lookup-Term-try s₁ s₂ i ts) ≡
                             --       decomp (join-Term (te s₁ (map-Terms f ts))) (edge i s₂)
@@ -256,6 +288,59 @@ module _ {K : 𝒰₀} {{_ : IDiscreteStr K}} where
           -- proof (edge i x) (valid (te s (ts))) P = P0 s x ts i P
           -- proof (edge i x) (valid (var x₁)) P = 𝟘-rec (P refl)
 
+      module lem-30 {k} {X : K -> 𝒰₀} {x : TermZ2 σ X k} where
+        proof : isDecomposableP-Term x → {j : K} (e : SigEdge j k) → ∑ (λ y → decomp x e ≡-Str just y)
+        proof (isTe s ts) (edge i x) = _ , refl
+        proof (isTe s ts) fail = _ , refl
+
+      module lem-40 {k} {X : K -> 𝒰₀} {x : TermZ2 σ X k} where
+        proof : isPureP-Term x →
+                (decomp x (get-a1 k) ≡-Str nothing) ×-𝒰
+                ((x ≡-Str failv) +-𝒰
+                (∑ (λ x' → x ≡-Str (var (right x' )))))
+        proof (isVar (left (↥ tt))) = refl , (left refl)
+        proof (isVar (just x)) = refl , right (_ , refl)
+
+      module lem-60 {k} {X : K -> 𝒰₀} where
+        proof : (x y : TermZ2 σ X k) →
+              isDecomposableP-Term x →
+              isDecomposableP-Term y →
+              ({j : K} (e : SigEdge j k) → decomp x e ≡ decomp y e) → x ≡ y
+
+        P0 :  ∀ {n₁ n₂} -> ∀ {ks₁ : Vec K (suc n₁)} {ks₂ : Vec K (suc n₂)} ->
+             (s₁ : σ k ks₁) ->
+             (s₂ : σ k ks₂) ->
+             (ts  : TermsZ2 σ X ks₁) →
+             (n₁ ≢-Str n₂) ->
+             (i : Fin-R (suc n₂)) -> lookup-Term-try s₁ s₂ i ts ≡ failv
+        P0 = {!!}
+
+        P1 :   ∀ {n₁} -> ∀ {ks₁ : Vec K (suc n₁)}
+             (s₁ : σ k ks₁) ->
+             -- (s₂ : σ k ks₂) ->
+             (ts  : TermsZ2 σ X ks₁) →
+             (i : Fin-R (suc n₁)) -> lookup-Term-try s₁ s₁ i ts ≡ lookup-Term i ts
+        P1 = {!!}
+
+        failv≢var : ∀{x : X k} -> Path (TermZ2 σ X k) failv (var (right x)) -> 𝟘-𝒰
+        failv≢var p with ≡→≡-Str p
+        ... | ()
+
+        compare : (x y : TermZ2 σ X k) ->
+              isDecomposableP-Term x →
+              isDecomposableP-Term y →
+              (∑ λ j -> ∑ λ (e : SigEdge j k) -> decomp x e ≡ decomp y e -> 𝟘-𝒰) +-𝒰 (x ≡ y)
+        compare (te {n₁} {ks₁} s₁ ts₁) (te {n₂} {ks₂} s₂ ts₂) (isTe s₁ ts₁) (isTe s₂ ts₂) with n₁ ≟-Str n₂
+        ... | no ¬p = left (_ , (edge zero s₂) ,
+                      λ p -> let Q1 = (P0 s₁ s₂ ts₁ ¬p zero ⁻¹)
+                                 Q2 = isInjective:right p
+                                 Q3 = P1 s₂ ts₂ zero
+                             in {!!}
+                      )
+        ... | yes p = {!!}
+
+        proof = {!!}
+
 
       -- | For this we take the following:
       RecAccessible:TermZ : IRecAccessible (Monad:TermZ2 σ)
@@ -272,16 +357,17 @@ module _ {K : 𝒰₀} {{_ : IDiscreteStr K}} where
       INatural.naturality (of IRecAccessible.pts RecAccessible:TermZ) _ _ = refl
       IRecAccessible.a0 RecAccessible:TermZ = fail
       IRecAccessible.a0-adsorb RecAccessible:TermZ _ = refl
-      IRecAccessible.k-a1 RecAccessible:TermZ = {!!}
-      IRecAccessible.a1 RecAccessible:TermZ = {!!}
-      IRecAccessible.isDecomposableP RecAccessible:TermZ = {!!}
-      IRecAccessible.isPureP RecAccessible:TermZ = {!!}
-      IRecAccessible.decideDecompose RecAccessible:TermZ = {!!}
-      IRecAccessible.makeDec RecAccessible:TermZ = {!!}
-      IRecAccessible.makePure RecAccessible:TermZ = {!!}
+      IRecAccessible.k-a1 RecAccessible:TermZ = get-a1-k
+      IRecAccessible.a1 RecAccessible:TermZ = get-a1 _
+      IRecAccessible.isDecomposableP RecAccessible:TermZ = isDecomposableP-Term
+      IRecAccessible.isPureP RecAccessible:TermZ = isPureP-Term
+      IRecAccessible.decideDecompose RecAccessible:TermZ = decideDecompose-Term
+      IRecAccessible.makeDec RecAccessible:TermZ = lem-30.proof
+      IRecAccessible.makePure RecAccessible:TermZ = lem-40.proof
       IRecAccessible.isWellfounded::≺ RecAccessible:TermZ = {!!}
-      IRecAccessible.cancel-δ RecAccessible:TermZ = {!!}
+      IRecAccessible.cancel-δ RecAccessible:TermZ = lem-60.proof
 
+{-
 {-
         decomp : {k : K} -> Term σ V k -> V k +-𝒰 (∀(j : K) -> SigEdge j k -> Maybe (Term σ V j))
         decomp {k = k} (te {n = n₁} {ks = ks₁} s₁ ts) = right f
@@ -319,4 +405,5 @@ module _ {K : 𝒰₀} {{_ : IDiscreteStr K}} where
       IRecAccessible.wellfounded RecAccessible:Term = {!!}
 
 
+-}
 -}

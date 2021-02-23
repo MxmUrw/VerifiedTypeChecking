@@ -91,7 +91,7 @@ module _ {K : 𝒰 𝑖} where
     isDecomposable {k} x = ∀ {j} -> ∀ (e : Edge {{Dir}} j k) -> ∑ λ y -> δ x e ≡-Str just y
 
     isPure : ∀{k} {X} -> ⟨ ⟨ ⟨ T ⟩ ⟩ X ⟩ k -> 𝒰 _
-    isPure {k} {X} x = (δ x a1 ≡-Str nothing) ×-𝒰 (∑ λ (x' : ⟨ X ⟩ k) -> (x ≡-Str ⟨ return {{of T}} ⟩ x'))
+    isPure {k} {X} x = (δ x a1 ≡-Str nothing) ×-𝒰 ((x ≡-Str e0) +-𝒰 (∑ λ (x' : ⟨ X ⟩ k) -> (x ≡-Str ⟨ return {{of T}} ⟩ x')))
 
     field isDecomposableP : ∀{k} {X} -> ⟨ ⟨ ⟨ T ⟩ ⟩ X ⟩ k -> 𝒰 𝑖
           isPureP   : ∀{k} {X} -> ⟨ ⟨ ⟨ T ⟩ ⟩ X ⟩ k -> 𝒰 𝑖

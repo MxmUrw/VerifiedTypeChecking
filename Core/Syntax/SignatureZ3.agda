@@ -1,5 +1,5 @@
 
-module Verification.Core.Syntax.SignatureZ2 where
+module Verification.Core.Syntax.SignatureZ3 where
 
 open import Verification.Conventions hiding (k)
 open import Verification.Core.Category
@@ -16,24 +16,34 @@ module _ {K : 𝒰₀} where
   -- Symbol : 𝒰₀
   -- Symbol = ∑ λ (n : ℕ) -> K ×-𝒰 (Vec K n)
 
-  ⇈ : (K -> 𝒰₀) -> (K -> 𝒰₀)
-  ⇈ V k = Lift 𝟙-𝒰 +-𝒰 V k
-
   Signature : 𝒰₁
   Signature = {n : ℕ} -> K -> Vec K (suc n) -> 𝒰₀
 
   isInhabited-Sig : Signature -> 𝒰₀
   isInhabited-Sig σ = ∀ k -> ∑ λ n -> ∑ λ (ks : Vec K (suc n)) -> σ k ks
 
+  -- | TODO: Instead of isNotFail-Term/(-s) as a property, use them directly as non-failure data containers
+
   data Term (σ : Signature) (V : K -> 𝒰₀) (k : K) : 𝒰₀
   data Terms (σ : Signature) (V : K -> 𝒰₀) : {n : ℕ} (ks : Vec K n) -> 𝒰₀ where
     [] : Terms σ V []
     _∷_ : ∀{k} {ks : Vec K n} -> Term σ V k -> Terms σ V ks -> Terms σ V (k ∷ ks)
 
-  data Term σ V k where
-    te : ∀{ks : Vec K (suc n)} -> σ k ks -> Terms σ V ks -> Term σ V k
-    var : V k -> Term σ V k
+  data isNotFail-Term {σ : Signature} {V : K -> 𝒰₀} : {k : K} -> Term σ V k -> 𝒰₀ where
 
+  data isNotFail-Terms {σ : Signature} {V : K -> 𝒰₀} : {n : ℕ} {ks : Vec K n} -> Terms σ V ks -> 𝒰₀
+
+  data Term σ V k where
+    te : ∀{ks : Vec K (suc n)} -> σ k ks -> {ts : Terms σ V ks} -> isNotFail-Terms ts -> Term σ V k
+    var : V k -> Term σ V k
+    fail : Term σ V k
+
+  data isNotFail-Terms {σ} {V} where
+    valid : {k : K} -> (t : Term σ V k) -> (isNotFail-Term t) -> ∀{n} -> {ks : Vec K n} -> (ts : Terms σ V ks) -> isNotFail-Terms (t ∷ ts)
+
+
+
+{-
   module _ {σ : Signature} {V : K -> 𝒰₀} where
     join-Term : {k : K} -> Term σ (Term σ V) k -> Term σ V k
 
@@ -117,5 +127,4 @@ module _ {K : 𝒰₀} where
   module _ {σ : Signature} {V : IdxSet K ℓ₀} where
     join-TermZ2 : {k : K} -> TermZ2 σ (TermZ2 σ ⟨ V ⟩) k -> TermZ2 σ ⟨ V ⟩ k
     join-TermZ2 {k} x = ⟨ join {{of Monad:TermZ2 σ}} {A = V} ⟩ {k} x
-
-
+-}
