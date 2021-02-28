@@ -34,6 +34,7 @@ instance
   has∨-Preorder._∨_ has∨-Preorder:𝔏 = _⊔_
   has∨-Preorder.ι₀-∨ has∨-Preorder:𝔏 = refl
   has∨-Preorder.ι₁-∨ has∨-Preorder:𝔏 = refl
+  has∨-Preorder.[_,_]-∨ has∨-Preorder:𝔏 p q = {!!}
 
   has⊥-Preorder:𝔏 : has⊥-Preorder 𝔏
   has⊥-Preorder.⊥ has⊥-Preorder:𝔏 = ℓ₀

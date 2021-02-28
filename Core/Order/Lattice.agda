@@ -21,10 +21,16 @@ record has∨-Preorder (A : 𝒰 𝑖) {{_ : IPreorder A}} : 𝒰 𝑖 where
   field _∨_ : A -> A -> A
         ι₀-∨ : {a b : A} -> a ≤ a ∨ b
         ι₁-∨ : {a b : A} -> b ≤ a ∨ b
+        [_,_]-∨ : {a b c : A} -> a ≤ c -> b ≤ c -> a ∨ b ≤ c
 
   infixl 60 _∨_
 
 open has∨-Preorder {{...}} public
+
+module _ {A : 𝒰 𝑖} {{_ : IPreorder A}} {{_ : has⊥-Preorder A}} {{_ : has∨-Preorder A}} where
+  ⋁ : Vec A n -> A
+  ⋁ [] = ⊥
+  ⋁ (a ∷ as) = a ∨ (⋁ as)
 
 
 -- record IJoinLattice (A : 𝒰 𝑖) : 𝒰 (𝑖 ⁺) where

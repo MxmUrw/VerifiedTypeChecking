@@ -237,11 +237,11 @@ module _ {K : 𝒰 𝑖} (T' : Monad `(IdxSet K 𝑖)`) {{_ : IRecAccessible T'}
       ... | X | just (a , P) with split-+-Str (δ (⟨ map f ◆ join ⟩ {_} x) e)
       ... | left (tt , Q) =
         let R : map-Maybe (⟨ map f ◆ join ⟩ {_}) (just a) ≡ nothing
-            R = cong (map-Maybe (⟨ map f ◆ join ⟩ {_})) (≡-Str→≡ (P ⁻¹)) ∙ X ∙ ` Q `
+            R = cong (map-Maybe (⟨ map f ◆ join ⟩ {_})) (≡-Str→≡ (P ⁻¹)) ∙ X (λ P' -> right≢left (` P ⁻¹ ` ∙ P')) ∙ ` Q `
         in 𝟘-rec (right≢left R)
       ... | just (b , Q) =
         let R : map-Maybe (⟨ map f ◆ join ⟩ {_}) (just a) ≡ just b
-            R = cong (map-Maybe (⟨ map f ◆ join ⟩ {_})) (≡-Str→≡ (P ⁻¹)) ∙ X ∙ ` Q `
+            R = cong (map-Maybe (⟨ map f ◆ join ⟩ {_})) (≡-Str→≡ (P ⁻¹)) ∙ X (λ P' -> right≢left (` P ⁻¹ ` ∙ P')) ∙ ` Q `
 
         in λ i -> (_ , id-Q , isInjective:right R i)
 
@@ -255,12 +255,12 @@ module _ {K : 𝒰 𝑖} (T' : Monad `(IdxSet K 𝑖)`) {{_ : IRecAccessible T'}
       ... | just (a , P) | left (tt , Q) =
         -- NOTE: here we do the same as in the `last e` case above
         let R : map-Maybe (⟨ map f ◆ join ⟩ {_}) (just a) ≡ nothing
-            R = cong (map-Maybe (⟨ map f ◆ join ⟩ {_})) (≡-Str→≡ (P ⁻¹)) ∙ δ-comm f e x' ∙ ` Q `
+            R = cong (map-Maybe (⟨ map f ◆ join ⟩ {_})) (≡-Str→≡ (P ⁻¹)) ∙ δ-comm f e x' (λ P' -> right≢left (` P ⁻¹ ` ∙ P')) ∙ ` Q `
         in 𝟘-rec (right≢left R)
         -- NOTE: here we do the same as in the `last e` case above
       ... | just (a , P) | just (b , Q) =
         let R : map-Maybe (⟨ map f ◆ join ⟩ {_}) (just a) ≡ just b
-            R = cong (map-Maybe (⟨ map f ◆ join ⟩ {_})) (≡-Str→≡ (P ⁻¹)) ∙ δ-comm f e x' ∙ ` Q `
+            R = cong (map-Maybe (⟨ map f ◆ join ⟩ {_})) (≡-Str→≡ (P ⁻¹)) ∙ δ-comm f e x' (λ P' -> right≢left (` P ⁻¹ ` ∙ P')) ∙ ` Q `
         in λ i -> (_ , id-Q , isInjective:right R i)
 
       ... | left (tt , Q) | Z with split-+-Str (δ (⟨ map f ◆ join ⟩ {_} x') e)
@@ -332,9 +332,6 @@ module _ {K : 𝒰 𝑖} (T' : Monad `(IdxSet K 𝑖)`) {{_ : IRecAccessible T'}
 
       mModNormal : ∀ k j p x -> ⟨ Mod X k ⟩
       mModNormal k j p x = (j , p , x)
-
-      _≢-Str_ : ∀{X : 𝒰 𝑙} -> (a b : X) -> 𝒰 𝑙
-      a ≢-Str b = ¬ StrId a b
 
       QPath-break : ∀{k l1 l2 j} -> {e : Edge {{of Q}} k l1} {f : Edge {{of Q}} k l2} {p : QPath {{of Q}} l1 j} {q : QPath {{of Q}} l2 j} -> _≡-Str_ {A = QPath k j} (e ∷ p) (f ∷ q) -> (QQ : l1 ≡ l2)
                   -> transport (λ i -> QPath {{of Q}} (QQ i) j) p ≡ q
@@ -485,16 +482,18 @@ module _ {K : 𝒰 𝑖} (T' : Monad `(IdxSet K 𝑖)`) {{_ : IRecAccessible T'}
         proof id-Q by-id = refl
         proof (some p) = P0 p
 
-      module lem-02 {k} (x : ⟨ ⟨ T ⟩ X ⟩ k) {j} (e : Edge {{of Q}} j k) (D : isDecomposable x) where
+      module lem-02 {k} (x : ⟨ ⟨ T ⟩ X ⟩ k) (x≢e0 : x ≢-Str e0) {j} (e : Edge {{of Q}} j k) (D : isDecomposable x) where
         proof : ∑ λ y -> (` e ` ↷ ι x ≡ ι y) ×-𝒰 ((_ , y) ≺ (_ , x))
         proof with split-+-Str (δ x e) | D e
         ... | left (a , P) | y , Q = 𝟘-rec (right≢left `(Q ⁻¹ ∙ P)`)
         ... | just (a , P) | y , Q with P ⁻¹ ∙ Q
-        ... | refl-StrId = y , refl , (e , P)
+        ... | refl-StrId = y , refl , (x≢e0 , (e , P))
+
 
 
     module _ {X Y : IdxSet K 𝑖} (α : 𝑺 X ⟶ 𝑺 Y) where
       -- lem-1 : ∀{k : K} -> {} -> ⟨ ⟨ α ⟩ ⟩ (ι {k = k} e0) ≡ ι e0
+
 
       module lem-1 {k : K} (x : ⟨ ⟨ T ⟩ X ⟩ k) where
         α' = ⟨ ⟨ α ⟩ {k} ⟩
@@ -521,6 +520,15 @@ module _ {K : 𝒰 𝑖} (T' : Monad `(IdxSet K 𝑖)`) {{_ : IRecAccessible T'}
         ... | (_ , some p' , x') , N   | Q with ν-impl p' x' | ν-idempotent-impl p' x' N
         ... | .(_ , some p' , x') , N2 | refl-StrId with ν-impl p' x' | ν-idempotent-impl p' x' N2
         proof | (_ , some p' , x') , N | () | .(_ , some p' , x') , N2 | refl-StrId | .(_ , some p' , x') , snd₁ | refl-StrId
+
+      module lem-15 {k : K} where
+        α' = ⟨ ⟨ α ⟩ {k} ⟩
+        proof : α' (ι e0) ≡ ι e0
+        proof = α' (ι e0) ≡[ i ]⟨ α' ((lem-0 e0 ⁻¹) i) ⟩
+                α' (` a0 ` ↷ ι e0) ≡⟨ naturality {{of α}} ` a0 ` (ι e0) ⁻¹ ⟩
+                ` a0 ` ↷ α' (ι e0) ≡[ i ]⟨ ` a0 ` ↷ lem-1.proof e0 .snd i ⟩
+                ` a0 ` ↷ (ι _)     ≡⟨ lem-0 _ ⟩
+                ι e0 ∎
 
 
   module _ {X Y : IdxSet K 𝑖} where
@@ -564,27 +572,32 @@ module _ {K : 𝒰 𝑖} (T' : Monad `(IdxSet K 𝑖)`) {{_ : IRecAccessible T'}
                    (_ , id-Q , (lem-1.proof α (η' x) .fst))       ≡[ i ]⟨ lem-1.proof α (η' x) .snd (~ i) .fst ⟩
                    fst (⟨ ⟨ α ⟩ ⟩ (ι (η' x)))                      ∎
 
-      P3-step : ∀ (x : Ξ) -> (isDecomposable (snd x)) -> (∀ y -> y ≺ x -> 𝑃 y) -> 𝑃 x
-      P3-step (k , x) D Hyp = cancel-↷ (⟨ ⟨ β ⟩ ⟩ (ι x)) (⟨ ⟨ α ⟩ ⟩ (ι x)) P0
+      P3-step : ∀ (x : Ξ) -> (x .snd ≢-Str e0) -> (isDecomposable (snd x)) -> (∀ y -> y ≺ x -> 𝑃 y) -> 𝑃 x
+      P3-step (k , x) x≢e0 D Hyp = cancel-↷ (⟨ ⟨ β ⟩ ⟩ (ι x)) (⟨ ⟨ α ⟩ ⟩ (ι x)) P0
         where P0 : ∀{j} -> (e : Edge {{of Q}} j k) -> ` e ` ↷ ⟨ ⟨ β ⟩ ⟩ (ι x) ≡ ` e ` ↷ ⟨ ⟨ α ⟩ ⟩ (ι x)
               P0 e = ` e ` ↷ ⟨ ⟨ β ⟩ ⟩ (ι x) ≡⟨ naturality {{of β}} ` e ` (ι x) ⟩
-                     ⟨ ⟨ β ⟩ ⟩ (` e ` ↷ ι x) ≡[ i ]⟨ ⟨ ⟨ β ⟩ ⟩ (lem-02.proof x e D .snd .fst i) ⟩
-                     ⟨ ⟨ β ⟩ ⟩ (ι _)          ≡⟨ Hyp _ (lem-02.proof x e D .snd .snd) ⟩
-                     ⟨ ⟨ α ⟩ ⟩ (ι _)          ≡[ i ]⟨ ⟨ ⟨ α ⟩ ⟩ (lem-02.proof x e D .snd .fst (~ i)) ⟩
+                     ⟨ ⟨ β ⟩ ⟩ (` e ` ↷ ι x) ≡[ i ]⟨ ⟨ ⟨ β ⟩ ⟩  (lem-02.proof x x≢e0 e D .snd .fst i) ⟩
+                     ⟨ ⟨ β ⟩ ⟩ (ι _)          ≡⟨ Hyp _          (lem-02.proof x x≢e0 e D .snd .snd) ⟩
+                     ⟨ ⟨ α ⟩ ⟩ (ι _)          ≡[ i ]⟨ ⟨ ⟨ α ⟩ ⟩ (lem-02.proof x x≢e0 e D .snd .fst (~ i)) ⟩
                      ⟨ ⟨ α ⟩ ⟩ (` e ` ↷ ι x) ≡⟨ naturality {{of α}} ` e ` (ι x) ⁻¹ ⟩
                      ` e ` ↷ ⟨ ⟨ α ⟩ ⟩ (ι x) ∎
 
 
       P3 : ∀ x -> (∀ y -> y ≺ x -> 𝑃 y) -> 𝑃 x
       P3 (k , x) Q with decideDecompose x
-      ... | just D = P3-step (k , x) (makeDec D) Q
-      ... | left Px with makePure Px
+      ... | (right D) with decide-e0 x
+      ... | yes refl-StrId = lem-15.proof β ∙ lem-15.proof α ⁻¹
+      ... | no ¬p = P3-step (k , x) ¬p (makeDec D) Q
+      P3 (k , x) Q | (left Px) with makePure Px
       ... | (_ , (x' , refl-StrId)) = P3-base x'
+
+      P3' : ∀ x -> (∀ y -> y ≺P x -> 𝑃 y) -> 𝑃 x
+      P3' x P = P3 x (λ y y≺x -> P y (recreate-≺ y≺x))
 
 
       -- | Now we use well foundedness to conclude that the statement holds for all |x|.
       P2 : (k : K) (x : ⟨ ⟨ T ⟩ X ⟩ k) -> ⟨ ⟨ map-𝑺 (map⁻¹-𝑺 α) ⟩ ⟩ (ι x) ≡ ⟨ ⟨ α ⟩ ⟩ (ι x)
-      P2 k x = WFI.induction isWellfounded::≺ {P = 𝑃} P3 (k , x)
+      P2 k x = WFI.induction isWellfounded::≺P {P = 𝑃} P3' (k , x)
 
 
       P1 : (k : K) (j : K) -> (p : Hom {{of 𝔇}} k j) -> (x : ⟨ ⟨ T ⟩ X ⟩ j) -> (N : isNormal (j , p , x)) ->

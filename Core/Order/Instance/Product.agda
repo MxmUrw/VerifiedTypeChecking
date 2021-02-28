@@ -33,6 +33,7 @@ module _ {A B : 𝒰 𝑖} {{_ : IPreorder A}} {{_ : IPreorder B}} where
       has∨-Preorder._∨_ has∨-Preorder:× (a1 , a2) (b1 , b2) = (a1 ∨ b1 , a2 ∨ b2)
       has∨-Preorder.ι₀-∨ has∨-Preorder:× = (ι₀-∨ , ι₀-∨)
       has∨-Preorder.ι₁-∨ has∨-Preorder:× = (ι₁-∨ , ι₁-∨)
+      has∨-Preorder.[_,_]-∨ has∨-Preorder:× = {!!}
 
   module _ {{_ : has⊥-Preorder A}} {{_ : has⊥-Preorder B}} where
     instance

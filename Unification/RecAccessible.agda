@@ -67,22 +67,25 @@ module _ {K : 𝒰 𝑖} where
           {{IDiscreteStr:K}} : IDiscreteStr K
 
     field decompose : Natural ⟨ T ⟩ (⟨ T ⟩ ◆ Decomp Dir)
-          commutes:decompose : commutes-Nat (μ T) decompose
+          -- commutes:decompose : commutes-Nat (μ T) decompose
           -- {{IMono:decompose}} : IMono decompose
           -- wellfounded : WellFounded (λ (a b : K) -> QPath a b)
-          pts : Natural (Functor:∆ 𝟙) ⟨ T ⟩
+          -- pts : Natural (Functor:∆ 𝟙) ⟨ T ⟩
 
     δ : ∀{A} -> ∀{k} -> ∀(a : ⟨ ⟨ ⟨ T ⟩ ⟩ A ⟩ k) -> ∀{j} -> (e : Edge {{Dir}} j k) -> Maybe (⟨ ⟨ ⟨ T ⟩ ⟩ A ⟩ j)
     δ a e = ⟨ ⟨ decompose ⟩ ⟩ a e
 
     field δ-comm : ∀{X Y} -> ∀(f : X ⟶ ⟨ ⟨ T ⟩ ⟩ Y) -> ∀{j k} -> ∀(e : Edge {{Dir}} k j) (x : ⟨ ⟨ ⟨ T ⟩ ⟩ X ⟩ j) -> (δ x e ≢ nothing) -> map-Maybe (⟨ map f ◆ join {{of T}} ⟩ {_}) (δ x e) ≡ δ (⟨ map f ◆ join {{of T}} ⟩ x) e
 
-    e0 : ∀{k} {X : IdxSet K 𝑖} -> ⟨ ⟨ ⟨ T ⟩ ⟩ X ⟩ k
-    e0 {k} = ⟨ ⟨ pts ⟩ ⟩ (↥ tt)
+    field e0 : ∀{k} {X : IdxSet K 𝑖} -> ⟨ ⟨ ⟨ T ⟩ ⟩ X ⟩ k
+          -- e0-adsorb : ∀{k j : K} {X : IdxSet K 𝑖} -> (e : Edge {{Dir}} j k) -> δ (e0 {X = X}) e ≡ just e0
+          -- cancel-e0 : ∀{k : K} {X : IdxSet K 𝑖} -> (x : ⟨ ⟨ ⟨ T ⟩ ⟩ X ⟩ k) -> (∀{j} -> (e : Edge {{Dir}} j k) -> δ x e ≡ just x) -> x ≡ e0
+    -- e0 {k} = ⟨ ⟨ pts ⟩ ⟩ (↥ tt)
 
 
     field a0 : ∀{k : K} -> Edge {{Dir}} k k
           a0-adsorb : ∀{k : K} -> ∀{X} -> ∀(x : ⟨ ⟨ ⟨ T ⟩ ⟩ X ⟩ k ) -> δ x (a0 {k}) ≡ just e0
+          -- cancel-e0 : ∀{k : K} -> ∀{X} -> ∀(x : ⟨ ⟨ ⟨ T ⟩ ⟩ X ⟩ k ) -> (δ x (a0 {k}) ≡ just x) -> x ≡ e0
 
     field k-a1 : K -> K
           a1 : ∀{k} -> Edge {{Dir}} (k-a1 k) k
@@ -91,19 +94,22 @@ module _ {K : 𝒰 𝑖} where
     isDecomposable {k} x = ∀ {j} -> ∀ (e : Edge {{Dir}} j k) -> ∑ λ y -> δ x e ≡-Str just y
 
     isPure : ∀{k} {X} -> ⟨ ⟨ ⟨ T ⟩ ⟩ X ⟩ k -> 𝒰 _
-    isPure {k} {X} x = (δ x a1 ≡-Str nothing) ×-𝒰 ((x ≡-Str e0) +-𝒰 (∑ λ (x' : ⟨ X ⟩ k) -> (x ≡-Str ⟨ return {{of T}} ⟩ x')))
+    isPure {k} {X} x = (δ x a1 ≡-Str nothing) ×-𝒰 ((∑ λ (x' : ⟨ X ⟩ k) -> (x ≡-Str ⟨ return {{of T}} ⟩ x')))
 
     field isDecomposableP : ∀{k} {X} -> ⟨ ⟨ ⟨ T ⟩ ⟩ X ⟩ k -> 𝒰 𝑖
           isPureP   : ∀{k} {X} -> ⟨ ⟨ ⟨ T ⟩ ⟩ X ⟩ k -> 𝒰 𝑖
-          decideDecompose : ∀{k X} -> (x : ⟨ ⟨ ⟨ T ⟩ ⟩ X ⟩ k) -> isPureP x +-𝒰 isDecomposableP x
+          decideDecompose : ∀{k X} -> (x : ⟨ ⟨ ⟨ T ⟩ ⟩ X ⟩ k) -> (isPureP x +-𝒰 isDecomposableP x)
+          decide-e0 : ∀{k X} -> (x : ⟨ ⟨ ⟨ T ⟩ ⟩ X ⟩ k) -> Decision (x ≡-Str e0)
           makeDec : ∀{k X} -> {x : ⟨ ⟨ ⟨ T ⟩ ⟩ X ⟩ k} -> isDecomposableP x -> isDecomposable x
           makePure : ∀{k X} -> {x : ⟨ ⟨ ⟨ T ⟩ ⟩ X ⟩ k} -> isPureP x -> isPure x
 
     _≺_ : ∀{X} -> (∑ ⟨ ⟨ ⟨ T ⟩ ⟩ X ⟩) -> (∑ ⟨ ⟨ ⟨ T ⟩ ⟩ X ⟩) -> 𝒰 _
-    _≺_ = λ {(k , x) (j , y) -> ∑ λ (e : Edge {{Dir}} k j) -> δ y e ≡-Str just x}
+    _≺_ = λ {(k , x) (j , y) -> (y ≢-Str e0) ×-𝒰 (∑ λ (e : Edge {{Dir}} k j) -> δ y e ≡-Str just x)}
 
     -- field decideDecompose : ∀{k} {X} -> (x : ⟨ ⟨ ⟨ T ⟩ ⟩ X ⟩ k) -> isPure x +-𝒰 isDecomposable x
-    field isWellfounded::≺ : ∀{X} -> WellFounded (_≺_ {X})
+    field _≺P_ : ∀{X} -> (∑ ⟨ ⟨ ⟨ T ⟩ ⟩ X ⟩) -> (∑ ⟨ ⟨ ⟨ T ⟩ ⟩ X ⟩) -> 𝒰 𝑖
+          recreate-≺ : ∀{X} -> {x y : ∑ ⟨ ⟨ ⟨ T ⟩ ⟩ X ⟩} -> (x ≺ y) -> x ≺P y
+    field isWellfounded::≺P : ∀{X} -> WellFounded (_≺P_ {X})
     field cancel-δ : ∀{k} {X} -> (x y : ⟨ ⟨ ⟨ T ⟩ ⟩ X ⟩ k) -> isDecomposableP x -> isDecomposableP y -> (∀{j} -> ∀(e : Edge {{Dir}} j k) -> δ x e ≡ δ y e) -> x ≡ y
 
 

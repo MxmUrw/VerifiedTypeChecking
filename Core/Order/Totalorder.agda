@@ -23,7 +23,7 @@ open ITotalorder {{...}} public
 unquoteDecl Totalorder totalorder = #struct "TotOrd" (quote ITotalorder) "A" Totalorder totalorder
 
 record IDec-Totalorder (A : 𝒰 𝑖) {{_ : ITotalorder A}} : 𝒰 (𝑖 ⁺) where
-  field {{Impl2}} : ∀{a b : A} -> IDec (a ≤ b)
+  field _≤-?_ : ∀(a b : A) -> Decision (a ≤ b)
         {{Impl3}} : ∀{a b : A} -> IDec (a ≡ b)
 
 open IDec-Totalorder {{...}} public
@@ -39,7 +39,7 @@ open IDec-Totalorder {{...}} public
 
 instance
   IDec:< : ∀{A : 𝒰 𝑖} {{_ : ITotalorder A}} {{_ : IDec-Totalorder A}} -> {a b : A} -> IDec (a < b)
-  IDec.decide (IDec:< {a = a} {b = b}) with (a ≤ b) ？ | (a ≡ b) ？
+  IDec.decide (IDec:< {a = a} {b = b}) with (a ≤-? b) | (a ≡ b) ？
   ... | no x | no y = no (λ (p , q) -> x p)
   ... | no x | yes y = no (λ (p , q) -> q y)
   ... | yes x | no y = yes (x , y)
@@ -79,12 +79,12 @@ module _ {A B : 𝒰 𝑖} {{_ : ITotalorder A}} {{_ : ITotalorder B}}
                      {{_ : IDec-Totalorder A}} {{_ : IDec-Totalorder B}} where
 
   Impl2-⊕ : ∀{a b : A +-𝒰 B} -> IDec (a ≤-⊕ b)
-  IDec.decide (Impl2-⊕ {a = left x} {left y}) with x ≤ y ？
+  IDec.decide (Impl2-⊕ {a = left x} {left y}) with x ≤-? y
   ... | no P = no λ {(left-≤ q) → P q}
   ... | yes P = yes (left-≤ P)
   IDec.decide (Impl2-⊕ {a = left x} {right x₁}) = yes left-right-≤ -- right (lift tt)
   IDec.decide (Impl2-⊕ {a = right x} {left x₁}) = no (λ {()}) -- left lower
-  IDec.decide (Impl2-⊕ {a = right x} {right y}) with x ≤ y ？
+  IDec.decide (Impl2-⊕ {a = right x} {right y}) with x ≤-? y
   ... | no P = no λ {(right-≤ q) → P q}
   ... | yes P = yes (right-≤ P)
 
@@ -102,8 +102,9 @@ module _ {A B : 𝒰 𝑖} {{_ : ITotalorder A}} {{_ : ITotalorder B}}
   instance
     IDec-Totalorder:+ : IDec-Totalorder (A +-𝒰 B)
     -- IDec-Totalorder.Impl1 IDec-Totalorder:+ = ITotalorder:+
-    IDec-Totalorder.Impl2 IDec-Totalorder:+ {a = a} = Impl2-⊕ {a = a}
-    IDec-Totalorder.Impl3 IDec-Totalorder:+ = Impl3-⊕
+    IDec-Totalorder:+ = {!!}
+    -- IDec-Totalorder.Impl2 IDec-Totalorder:+ {a = a} = Impl2-⊕ {a = a}
+    -- IDec-Totalorder.Impl3 IDec-Totalorder:+ = Impl3-⊕
 
 -- _⊕-Totalorder⍮Dec_ : Totalorder⍮Dec 𝑖 -> Totalorder⍮Dec 𝑖 -> Totalorder⍮Dec 𝑖
 -- _⊕-Totalorder⍮Dec_ A B = totalorder⍮Dec (⟨ A ⟩ +-𝒰 ⟨ B ⟩)
@@ -120,8 +121,9 @@ instance
 instance
   IDec-Totalorder:𝟙-𝒰 : IDec-Totalorder (Lift {j = 𝑖} 𝟙-𝒰)
   -- IDec-Totalorder.Impl1 IDec-Totalorder:𝟙-𝒰 = ITotalorder:𝟙-𝒰
-  IDec.decide (IDec-Totalorder.Impl2 IDec-Totalorder:𝟙-𝒰) = yes (lift tt)
-  IDec.decide (IDec-Totalorder.Impl3 IDec-Totalorder:𝟙-𝒰 {a = (lift tt)} {lift tt}) = yes refl
+  IDec-Totalorder:𝟙-𝒰 = {!!}
+  -- IDec.decide (IDec-Totalorder.Impl2 IDec-Totalorder:𝟙-𝒰) = yes (lift tt)
+  -- IDec.decide (IDec-Totalorder.Impl3 IDec-Totalorder:𝟙-𝒰 {a = (lift tt)} {lift tt}) = yes refl
 
 --------------------------------------------------------------------
 -- == Computing minima
@@ -153,8 +155,14 @@ private
 
 instance
   IDec-Totalorder:ℕ : IDec-Totalorder ℕ
-  IDec.decide (IDec-Totalorder.Impl2 IDec-Totalorder:ℕ) = decide-≤ _ _
+  IDec-Totalorder._≤-?_ IDec-Totalorder:ℕ = decide-≤
   IDec.decide (IDec-Totalorder.Impl3 IDec-Totalorder:ℕ) = decide-≡ _ _
+  -- IDec.decide (IDec-Totalorder.Impl2 IDec-Totalorder:ℕ) = decide-≤ _ _
+  -- IDec.decide (IDec-Totalorder.Impl3 IDec-Totalorder:ℕ) = decide-≡ _ _
+
+  has⊥-Preorder:ℕ : has⊥-Preorder ℕ
+  has⊥-Preorder.⊥ has⊥-Preorder:ℕ = 0
+  has⊥-Preorder.initial-⊥ has⊥-Preorder:ℕ a = zero-≤
 
 instance
   has⊥:𝟙 : has⊥-Preorder (Lift {j = 𝑖} 𝟙-𝒰)
@@ -165,6 +173,7 @@ instance
   has∨-Preorder._∨_ has∨:𝟙 _ _ = ↥ tt
   has∨-Preorder.ι₀-∨ has∨:𝟙 = ↥ tt
   has∨-Preorder.ι₁-∨ has∨:𝟙 = ↥ tt
+  has∨-Preorder.[_,_]-∨ has∨:𝟙 _ _ = ↥ tt
 
 -- module _ {A B : Preorder 𝑖} where
 module _ {A : 𝒰 𝑖} {{_ : ITotalorder A}} {B : 𝒰 𝑖} {{_ : ITotalorder B}} where
@@ -189,19 +198,15 @@ module _ {A : 𝒰 𝑖} {{_ : IPreorder A}} where
   ≡→≤ : ∀{a b : A} -> (a ≡ b) -> a ≤ b
   ≡→≤ {a = a} {b} p = transport (λ i -> p (~ i) ≤ b) refl-≤
 
-abstract
-  ask : ∀{A : 𝒰 𝑘} -> A -> A
-  ask a = a
-
 module _ {A : 𝒰 𝑖} {{_ : ITotalorder A}} {{_ : IDec-Totalorder A}} where
   min : A -> A -> A
-  min a b with a ≤ b ？
+  min a b with a ≤-? b
   ... | no x = b
   ... | yes x = a
 
 
   max : A -> A -> A
-  max a b with ask (a ≤ b ？)
+  max a b with (a ≤-? b)
   ... | no x = a
   ... | yes x = b
 
@@ -216,17 +221,17 @@ module _ {A : 𝒰 𝑖} {{_ : ITotalorder A}} {{_ : IDec-Totalorder A}} where
 
 
   ι₀-max : ∀{a b : A} -> a ≤ max a b
-  ι₀-max {a} {b} with ask (((a ≤ b)) ？)
+  ι₀-max {a} {b} with (((a ≤-? b)))
   ... | no x = {!!}
   ... | yes x = {!!}
 
   ι₁-max : ∀{a b : A} -> b ≤ max a b
-  ι₁-max {a} {b} with ask (a ≤ b ？)
+  ι₁-max {a} {b} with (a ≤-? b)
   ... | no x = ≤-switch x
   ... | yes x = refl-≤
 
   sym-max : ∀{a b : A} -> max a b ≡ max b a
-  sym-max {a} {b} with ask ((a ≤ b) ？) | ask ((b ≤ a) ？)
+  sym-max {a} {b} with ((a ≤-? b)) | ((b ≤-? a))
   ... | no p | no q = antisym-≤ (≤-switch q) (≤-switch p)
   ... | no p | yes q = refl
   ... | yes p | no q = refl
@@ -244,4 +249,5 @@ module _ {A : 𝒰 𝑖} {{_ : ITotalorder A}} {{_ : IDec-Totalorder A}} where
     has∨-Preorder._∨_ has∨:Dec-Totalorder = max
     has∨-Preorder.ι₀-∨ has∨:Dec-Totalorder = ι₀-max
     has∨-Preorder.ι₁-∨ has∨:Dec-Totalorder = {!!}
+    has∨-Preorder.[_,_]-∨ has∨:Dec-Totalorder = max-initial
 

@@ -83,6 +83,9 @@ instance
 
 _≡-Str_ = StrId
 
+_≢-Str_ : ∀{X : 𝒰 𝑙} -> (a b : X) -> 𝒰 𝑙
+a ≢-Str b = ¬ StrId a b
+
 instance
   Cast:≡Str : ∀{X : 𝒰 𝑖} -> ∀{a b : X} -> Cast (a ≡-Str b) IAnything (a ≡ b)
   Cast.cast Cast:≡Str refl-StrId = refl
