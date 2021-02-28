@@ -108,21 +108,21 @@ module _ {K : 𝒰₀} where
       this : {k : K} -> {t : Term σ V k} -> ∀{n} -> {ks : Vec K n} -> {ts : Terms σ V ks} -> t ⊏-Terms (t ∷ ts)
       _∷_ : {k₁ k₂ : K} -> {t₁ : Term σ V k₁} -> (t₂ : Term σ V k₂)-> ∀{n} -> {ks : Vec K n} -> {ts : Terms σ V ks} -> t₁ ⊏-Terms ts -> t₁ ⊏-Terms (t₂ ∷ ts)
 
-    data _⊏-Termsᵥ_ : {k : K} -> ∀{n} -> {ks : Vec K n} -> (t : Term σ V k) -> (ts : Termsᵥ σ V ks) -> 𝒰₀ where
-      this : {k : K} -> (t : Termᵥ σ V k) -> (t' : Term σ V k) -> (forget-Term t ≡-Str t') -> ∀{n} -> {ks : Vec K n} -> {ts : Terms σ V ks} -> t' ⊏-Termsᵥ (t ∷ ts)
-      older : {k₁ k₂ : K} -> {t₁ : Term σ V k₁} -> (t₂ : Termᵥ σ V k₂) -> ∀{n} -> {ks : Vec K n} -> {ts : Terms σ V ks} -> t₁ ⊏-Terms ts -> t₁ ⊏-Termsᵥ (t₂ ∷ ts)
-      fail∷_ : ∀ {k} -> {k₁ : K} -> {t₁ : Term σ V k₁} -> ∀{n} -> {ks : Vec K n} -> {ts : Termsᵥ σ V ks} -> t₁ ⊏-Termsᵥ ts -> t₁ ⊏-Termsᵥ (fail∷_ {k = k} ts)
+    -- data _⊏-Termsᵥ_ : {k : K} -> ∀{n} -> {ks : Vec K n} -> (t : Term σ V k) -> (ts : Termsᵥ σ V ks) -> 𝒰₀ where
+    --   this : {k : K} -> (t : Termᵥ σ V k) -> (t' : Term σ V k) -> (forget-Term t ≡-Str t') -> ∀{n} -> {ks : Vec K n} -> {ts : Terms σ V ks} -> t' ⊏-Termsᵥ (t ∷ ts)
+    --   older : {k₁ k₂ : K} -> {t₁ : Term σ V k₁} -> (t₂ : Termᵥ σ V k₂) -> ∀{n} -> {ks : Vec K n} -> {ts : Terms σ V ks} -> t₁ ⊏-Terms ts -> t₁ ⊏-Termsᵥ (t₂ ∷ ts)
+    --   fail∷_ : ∀ {k} -> {k₁ : K} -> {t₁ : Term σ V k₁} -> ∀{n} -> {ks : Vec K n} -> {ts : Termsᵥ σ V ks} -> t₁ ⊏-Termsᵥ ts -> t₁ ⊏-Termsᵥ (fail∷_ {k = k} ts)
 
     data _⊏_ : {k₁ k₂ : K} -> (t₁ : Term σ V k₁) -> (t₂ : Term σ V k₂) -> 𝒰₀ where
       te : {k j : K} -> {t : Term σ V k} -> ∀{n} -> {ks : Vec K (suc n)} -> {s : σ j ks} -> {ts : Termsᵥ σ V ks} -> (t ⊏-Terms (forget-Terms ts)) -> t ⊏ te s (ts)
       fail : ∀{k j : K} -> {t : Term σ V k} -> (t ≢-Str fail) -> fail {k = j} ⊏ t
 
-    data _⊏-TermsO_ : {k : K} -> ∀{n} -> {ks : Vec K n} -> (t : TermO σ V k) -> (ts : TermsO σ V ks) -> 𝒰₀ where
-      this : {k : K} -> {t : TermO σ V k} -> ∀{n} -> {ks : Vec K n} -> {ts : TermsO σ V ks} -> t ⊏-TermsO (t ∷ ts)
-      _∷_ : {k₁ k₂ : K} -> {t₁ : TermO σ V k₁} -> (t₂ : TermO σ V k₂)-> ∀{n} -> {ks : Vec K n} -> {ts : TermsO σ V ks} -> t₁ ⊏-TermsO ts -> t₁ ⊏-TermsO (t₂ ∷ ts)
+    -- data _⊏-TermsO_ : {k : K} -> ∀{n} -> {ks : Vec K n} -> (t : TermO σ V k) -> (ts : TermsO σ V ks) -> 𝒰₀ where
+    --   this : {k : K} -> {t : TermO σ V k} -> ∀{n} -> {ks : Vec K n} -> {ts : TermsO σ V ks} -> t ⊏-TermsO (t ∷ ts)
+    --   _∷_ : {k₁ k₂ : K} -> {t₁ : TermO σ V k₁} -> (t₂ : TermO σ V k₂)-> ∀{n} -> {ks : Vec K n} -> {ts : TermsO σ V ks} -> t₁ ⊏-TermsO ts -> t₁ ⊏-TermsO (t₂ ∷ ts)
 
-    data _⊏O_ : {k₁ k₂ : K} -> (t₁ : TermO σ V k₁) -> (t₂ : TermO σ V k₂) -> 𝒰₀ where
-      te : {k : K} -> {t : TermO σ V k} -> ∀{n} -> {ks : Vec K (suc n)} -> {s : σ k ks} -> {ts : TermsO σ V ks} -> (t ⊏-TermsO ts) -> t ⊏O te s (ts)
+    -- data _⊏O_ : {k₁ k₂ : K} -> (t₁ : TermO σ V k₁) -> (t₂ : TermO σ V k₂) -> 𝒰₀ where
+    --   te : {k : K} -> {t : TermO σ V k} -> ∀{n} -> {ks : Vec K (suc n)} -> {s : σ k ks} -> {ts : TermsO σ V ks} -> (t ⊏-TermsO ts) -> t ⊏O te s (ts)
 
     _⊏'_ : (t s : ∑ Term σ V) -> 𝒰₀
     _⊏'_ (_ , t) (_ , s) = t ⊏ s
@@ -322,6 +322,15 @@ module _ {K : 𝒰₀} where
     split:join∣forget-Terms (t ∷ ts) i = split:join∣forget-Term t i ∷ join-Terms ts
     split:join∣forget-Terms (fail∷ ts) i = fail ∷ split:join∣forget-Terms ts i
 
+    reduce-isFail-Term : ∀{k} -> {t : Term σ V k} -> isFail-Term t -> ∑ λ x -> reduce-Term t ≡-Str left x
+    reduce-isFail-Term fail = _ , refl
+
+    reduce-isFail-Terms : {ks : Vec K n} -> {ts : Terms σ V ks} -> isFail-Terms ts -> ∑ λ x -> reduce-Terms ts ≡-Str left x
+    reduce-isFail-Terms {ts = .[]} [] = _ , refl
+    reduce-isFail-Terms {ts = (t ∷ ts)} (x ∷ P) with reduce-Term t | reduce-isFail-Term x
+    ... | left fail | .fail , refl-StrId with reduce-Terms ts | reduce-isFail-Terms P
+    ... | left x₁ | Y = _ , refl
+
 
   module _ (σ : Signature) where
     IdxTerm : IdxSet K ℓ₀ -> IdxSet K ℓ₀
@@ -358,6 +367,7 @@ module _ {K : 𝒰₀} where
     map-Term f (var x) = var (f x)
     map-Term f fail = fail
 
+
     commutes:map∣forget-Term : ∀{k} -> (f : ∀{k} -> V k -> W k) -> (t : Termᵥ σ V k) -> map-Term f (forget-Term t) ≡ (forget-Term (map-Termᵥ f t))
     commutes:map∣forget-Term f (te s ts) = refl
     commutes:map∣forget-Term f (var x) = refl
@@ -370,6 +380,111 @@ module _ {K : 𝒰₀} where
     map⊏-Terms f {k} {t} {.(t ∷ _)} this = this
     map⊏-Terms f {k} {t} {.(t₂ ∷ _)} (t₂ ∷ P) = _ ∷ map⊏-Terms f P
 
+    mapIsFail-Terms : {ks : Vec K n} -> (f : ∀{k} -> V k -> W k) -> {ts : Terms σ V ks} -> isFail-Terms ts -> isFail-Terms (map-Terms f ts)
+    mapIsFail-Terms f [] = []
+    mapIsFail-Terms f (fail ∷ P) = fail ∷ mapIsFail-Terms f P
+
+    map⁻¹-IsFail-Term : ∀{k} -> (f : ∀{k} -> V k -> W k) -> {t : Term σ V k} -> isFail-Term (map-Term f t) -> isFail-Term t
+    map⁻¹-IsFail-Term f {t = fail} P = fail
+
+    map⁻¹-IsFail-Terms : {ks : Vec K n} -> (f : ∀{k} -> V k -> W k) -> {ts : Terms σ V ks} -> isFail-Terms (map-Terms f ts) -> isFail-Terms ts
+    map⁻¹-IsFail-Terms f {ts = []} P = []
+    map⁻¹-IsFail-Terms f {ts = t ∷ ts} (x ∷ P) = map⁻¹-IsFail-Term f x ∷ map⁻¹-IsFail-Terms f P
+
+
+  module _ {σ : Signature} {V : K -> 𝒰₀} where
+
+    functoriality-id:map-Term : {k : K} -> (t : Term σ V k) -> map-Term id t ≡ t
+    functoriality-id:map-Termᵥ : {k : K} -> (t : Termᵥ σ V k) -> map-Termᵥ id t ≡ t
+    functoriality-id:map-Termsᵥ : {ks : Vec K n} -> (ts : Termsᵥ σ V ks) -> map-Termsᵥ id ts ≡ ts
+
+    functoriality-id:map-Termᵥ (te s ts) i = te s (functoriality-id:map-Termsᵥ ts i)
+    functoriality-id:map-Termᵥ (var x) = refl
+
+    functoriality-id:map-Terms : {ks : Vec K n} -> (ts : Terms σ V ks) -> map-Terms id ts ≡ ts
+    functoriality-id:map-Terms [] = refl
+    functoriality-id:map-Terms (t ∷ ts) i = functoriality-id:map-Term t i ∷ functoriality-id:map-Terms ts i
+
+    functoriality-id:map-Termsᵥ (x ∷ ts) i = functoriality-id:map-Termᵥ x i ∷ functoriality-id:map-Terms ts i
+    functoriality-id:map-Termsᵥ (fail∷ ts) i = fail∷ (functoriality-id:map-Termsᵥ ts i)
+
+    functoriality-id:map-Term (te s ts) i = te s (functoriality-id:map-Termsᵥ ts i)
+    functoriality-id:map-Term (var x) = refl
+    functoriality-id:map-Term fail = refl
+
+
+    ------
+
+  module _ {σ : Signature} {U V W : K -> 𝒰₀} where
+    functoriality-◆:map-Term   : (g : ∀{k} -> U k -> V k) (f : ∀{k} -> V k -> W k) {k : K} -> (t : Term σ U k)            -> map-Term f (map-Term g t)    ≡ map-Term (g ◆ f) t
+    functoriality-◆:map-Termᵥ  : (g : ∀{k} -> U k -> V k) (f : ∀{k} -> V k -> W k) {k : K} -> (t : Termᵥ σ U k)           -> map-Termᵥ f (map-Termᵥ g t)   ≡ map-Termᵥ (g ◆ f) t
+    functoriality-◆:map-Terms  : (g : ∀{k} -> U k -> V k) (f : ∀{k} -> V k -> W k) {ks : Vec K n} -> (ts : Terms σ U ks)  -> map-Terms f (map-Terms g ts)  ≡ map-Terms (g ◆ f) ts
+    functoriality-◆:map-Termsᵥ : (g : ∀{k} -> U k -> V k) (f : ∀{k} -> V k -> W k) {ks : Vec K n} -> (ts : Termsᵥ σ U ks) -> map-Termsᵥ f (map-Termsᵥ g ts) ≡ map-Termsᵥ (g ◆ f) ts
+
+    functoriality-◆:map-Termᵥ g f (te s ts) i = te s (functoriality-◆:map-Termsᵥ g f ts i)
+    functoriality-◆:map-Termᵥ g f (var x) = refl
+
+    functoriality-◆:map-Terms g f [] = refl
+    functoriality-◆:map-Terms g f (t ∷ ts) i = functoriality-◆:map-Term g f t i ∷ functoriality-◆:map-Terms g f ts i
+
+    functoriality-◆:map-Termsᵥ g f (x ∷ ts) i = functoriality-◆:map-Termᵥ g f x i ∷ functoriality-◆:map-Terms g f ts i
+    functoriality-◆:map-Termsᵥ g f (fail∷ ts) i = fail∷ (functoriality-◆:map-Termsᵥ g f ts i)
+
+    functoriality-◆:map-Term g f (te s ts) i = te s (functoriality-◆:map-Termsᵥ g f ts i)
+    functoriality-◆:map-Term g f (var x) = refl
+    functoriality-◆:map-Term g f fail = refl
+
+  module _ {σ : Signature} {V W : K -> 𝒰₀} where
+    natural:join-te : (f : ∀{k} -> V k -> W k) {ks : Vec K (suc n)} -> ∀{k} -> (s : σ k ks) -> (ts : Terms σ V ks) -> map-Term f (join-te s ts) ≡ join-te s (map-Terms f ts)
+    natural:join-te f s ts with split-+-Str (reduce-Terms ts) | split-+-Str (reduce-Terms (map-Terms f ts))
+    ... | left x | left x₁ = refl
+    ... | left (x , xP) | just ((y , yP) , yQ) =
+      let x1 : isFail-Terms (map-Terms f ts)
+          x1 = mapIsFail-Terms f x
+      in 𝟘-rec (left≢right (` reduce-isFail-Terms x1 .snd ⁻¹ ∙ yQ `))
+    ... | just ((x , xP) , xQ) | left (y , yP) =
+      let y1 = map⁻¹-IsFail-Terms f y
+      in 𝟘-rec (left≢right (` reduce-isFail-Terms y1 .snd ⁻¹ ∙ xQ `))
+    ... | just ((x , xP) , xQ) | just ((y , yP) , yQ) with ≡→≡-Str xP
+    ... | refl-StrId =
+      let Q1 = forget-Terms y ≡⟨ yP ⟩
+               map-Terms f (forget-Terms x) ≡⟨ commutes:map∣forget-Terms f x ⟩
+               forget-Terms (map-Termsᵥ f x) ∎
+          Q2 = isInjective:forget-Terms (≡→≡-Str Q1)
+      in λ i -> te s (≡-Str→≡ Q2 (~ i))
+
+    naturality:join-Term : (f : ∀{k} -> V k -> W k) {k : K} -> (t : Term σ (Term σ V) k) -> map-Term f (join-Term t) ≡ join-Term (map-Term (map-Term f) t)
+    naturality:join-Termsᵥ : (f : ∀{k} -> V k -> W k) {ks : Vec K (suc n)} -> ∀{k} -> (s : σ k ks) -> (ts : Termsᵥ σ (Term σ V) ks) -> map-Term f (join-te s (join-Termsᵥ ts)) ≡ join-te s (join-Termsᵥ (map-Termsᵥ (map-Term f) ts))
+
+    naturality:join-Termᵥ : (f : ∀{k} -> V k -> W k) {k : K} -> (t : Termᵥ σ (Term σ V) k) -> map-Term f (join-Termᵥ t) ≡ join-Termᵥ (map-Termᵥ (map-Term f) t)
+    naturality:join-Termᵥ f (te s ts) = naturality:join-Termsᵥ f s ts
+    naturality:join-Termᵥ f (var x) = refl
+
+    naturality:join-Terms : (f : ∀{k} -> V k -> W k) {ks : Vec K (n)} -> (ts : Terms σ (Term σ V) ks) -> map-Terms f (join-Terms ts) ≡ join-Terms (map-Terms (map-Term f) ts)
+    naturality:join-Terms f [] = refl
+    naturality:join-Terms f (t ∷ ts) i = naturality:join-Term f t i ∷ naturality:join-Terms f ts i
+
+    naturality:join-Termsᵥ2 : (f : ∀{k} -> V k -> W k) {ks : Vec K (n)} -> (ts : Termsᵥ σ (Term σ V) ks) -> map-Terms f (join-Termsᵥ ts) ≡ join-Termsᵥ (map-Termsᵥ (map-Term f) ts)
+    naturality:join-Termsᵥ2 f (x ∷ ts) i = naturality:join-Termᵥ f x i ∷ naturality:join-Terms f ts i
+    naturality:join-Termsᵥ2 f (fail∷ ts) i = fail ∷ naturality:join-Termsᵥ2 f ts i
+
+    naturality:join-Termsᵥ f s ts = map-Term f (join-te s (join-Termsᵥ ts)) ≡⟨ natural:join-te f s (join-Termsᵥ ts) ⟩
+                                    join-te s (map-Terms f (join-Termsᵥ ts)) ≡[ i ]⟨ join-te s (naturality:join-Termsᵥ2 f ts i) ⟩
+                                    join-te s (join-Termsᵥ (map-Termsᵥ (map-Term f) ts)) ∎
+
+
+-- with split-+-Str (reduce-Terms (join-Termsᵥ ts)) | split-+-Str (reduce-Terms (join-Termsᵥ (map-Termsᵥ (map-Term f) ts)))
+--     ... | left x | left x₁ = refl
+--     ... | left x | just x₁ = {!!}
+--     ... | just x | left x₁ = {!!}
+--     ... | just ((x , xP) , xQ) | just x₁ = {!!}
+
+
+    naturality:join-Term f (te s ts) = naturality:join-Termsᵥ f s ts
+    naturality:join-Term f (var t) = refl
+    naturality:join-Term f fail = refl
+
+
   private
     𝒞 : Category _
     𝒞 = Category:IdxSet K ℓ₀
@@ -380,18 +495,18 @@ module _ {K : 𝒰₀} where
     -- ⟨ ⟨ Functor:Term ⟩ X ⟩ = Term σ ⟨ X ⟩
     -- IIdxSet.ISet:this (of ⟨ Functor:Term ⟩ z) = {!!}
     ⟨ IFunctor.map (of Functor:Term) f ⟩ = map-Term ⟨ f ⟩
-    IFunctor.functoriality-id (of Functor:Term) = {!!}
-    IFunctor.functoriality-◆ (of Functor:Term) = {!!}
-    IFunctor.functoriality-≣ (of Functor:Term) = {!!}
+    IFunctor.functoriality-id (of Functor:Term) = functoriality-id:map-Term
+    IFunctor.functoriality-◆ (of Functor:Term) x = functoriality-◆:map-Term _ _ x ⁻¹
+    IFunctor.functoriality-≣ (of Functor:Term) p x i = map-Term (funExt p i) x
 
     Monad:Term : Monad 𝒞
     ⟨ Monad:Term ⟩ = Functor:Term
     ⟨ IMonad.return (of Monad:Term) ⟩ x = (var x)
     ⟨ IMonad.join (of Monad:Term) ⟩ = join-Term
-    IMonad.INatural:return (of Monad:Term) = {!!}
-    IMonad.INatural:join (of Monad:Term) = {!!}
-    IMonad.unit-l-join (of Monad:Term) = {!!}
-    IMonad.unit-r-join (of Monad:Term) = {!!}
+    INatural.naturality (IMonad.INatural:return (of Monad:Term)) f x = refl
+    INatural.naturality (IMonad.INatural:join (of Monad:Term)) f x = naturality:join-Term ⟨ f ⟩ x
+    IMonad.unit-l-join (of Monad:Term) x = refl
+    IMonad.unit-r-join (of Monad:Term) x = ? -- unit-r-join-Term x
     IMonad.assoc-join (of Monad:Term) = {!!}
 
 {-
