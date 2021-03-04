@@ -69,6 +69,8 @@ module _ {K : 𝒰₀} where
     map-Term₊ f (some (te x x₁)) = {!!}
     map-Term₊ f (some (var x)) = {!!}
 
+{-
+
     private
       𝒞 : Category _
       𝒞 = ` IdxSet (Maybe K) ℓ₀ `
@@ -134,6 +136,7 @@ module _ {K : 𝒰₀} where
 
 
 
+-}
 -}
 
 

@@ -91,7 +91,19 @@ instance
 byFirstP : ∀{A : 𝒰 𝑖} {B : A -> 𝒰 𝑗} {{_ : ∀{a : A} -> IHType 1 (B a)}}
            -> {a1 a2 : A} {b1 : B a1} {b2 : B a2} -> (p : a1 ≡ a2)
            -> PathP (λ i -> ∑ λ (a : A) -> B a) (a1 , b1) (a2 , b2)
-byFirstP = {!!}
+byFirstP {A = A} {B} {{P}} {a1} {a2} {b1} {b2} p =
+  let b1' = transport (λ i -> B (p i)) b1
+      P1 : b1' ≡ b2
+      P1 = hlevel {{P}} b1' b2
+      P2 : PathP (λ i -> (B (p i))) b1 b1'
+      P2 = transport-filler (λ i -> (B (p i))) b1
+      P3 : PathP (λ j → trans-Path (λ i → B (p i)) (λ i → B a2) j) b1 b2
+      P3 = compPathP P2 P1
+      P4 : trans-Path (λ i → B (p i)) (λ i → B a2) ≡ (λ i -> B (p i))
+      P4 = rUnit (λ i -> B (p i)) ⁻¹
+      P5 : PathP (λ i → B (p i)) b1 b2
+      P5 = transport (λ k -> PathP (λ i -> P4 k i) b1 b2) P3
+  in λ i -> p i , P5 i
 
 
 {-
