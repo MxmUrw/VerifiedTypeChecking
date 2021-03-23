@@ -31,6 +31,15 @@ record IMonoid (A : 𝒰 𝑖) : 𝒰 𝑖 where
   infixl 50 _⋅_
 -- //
 
+record isMonoidBase (A : 𝒰 𝑖) : 𝒰 𝑖 where
+  field _⋆_ : A -> A -> A
+        neutral : A
+open isMonoidBase {{...}} public
+
+record isMonoid (A : 𝒰 𝑖) {{_ : isMonoidBase A}} : 𝒰 𝑖 where
+  field unit-r-⋆ : ∀{a : A} -> a ⋆ neutral ≡ a
+        assoc-⋆ : ∀{a b c : A} -> (a ⋆ b) ⋆ c ≡ a ⋆ (b ⋆ c)
+
 
 -- [Hide]
 open IMonoid {{...}} public
