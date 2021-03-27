@@ -13,6 +13,7 @@ record ∑i_ {A : 𝒰 𝑖} (B : A -> 𝒰 𝑗) : 𝒰 (𝑖 ､ 𝑗) where
   field overlap {{isnd}} : B (ifst)
 open ∑i_ {{...}} public
 
+
 record hasU (A : 𝒰 𝑖) 𝑗 𝑘 : 𝒰 (𝑖 ､ 𝑗 ⁺ ､ 𝑘 ⁺) where
   field getU : 𝒰 𝑗
   field getP : getU -> 𝒰 𝑘
@@ -20,7 +21,6 @@ record hasU (A : 𝒰 𝑖) 𝑗 𝑘 : 𝒰 (𝑖 ､ 𝑗 ⁺ ､ 𝑘 ⁺) wh
   field destructEl : A -> getU
   field destructP : (a : A) -> getP (destructEl a)
 open hasU public
-
 
 
 record _:&_ (UU : 𝒰 𝑖) {{U : hasU UU 𝑘 𝑙}} (P : UU -> 𝒰 𝑗) : 𝒰 (𝑗 ､ 𝑘 ､ 𝑙) where
@@ -33,6 +33,28 @@ open _:&_ public using (⟨_⟩)
 
 -- pattern ′_′ = ′_′
 infixl 30 _:&_
+
+
+{-
+-- A test for getting a better syntax for casting, i.e., what we currently do with ′ ⟨ A ⟩ ′.
+-- But it doesn't work because we have to use an intermediary type result `resType`
+-- since we need to pattern-match on refl to get the proof that the two universes
+-- of U and of U2 are the same.
+-- But then at the call site the type `resType` does not match with the wanted
+-- actual type `... :& ...`
+resType : {UU : 𝒰 𝑖} {{U : hasU UU 𝑘 𝑙}} (a : UU)
+        -> (UU2 : 𝒰 𝑖₂) {{U2 : hasU UU2 𝑘 𝑙₂}} -> (P2 : UU2 -> 𝒰 𝑗₂) -> (getU U ≡-Str getU U2) -> 𝒰 _
+resType {UU = UU} {{U}} a UU2 {{U2}} P2 refl-StrId =
+        {{oldProof : getP U2 (destructEl U a)}}
+        -> {{_ : P2 (reconstruct U2 (destructEl U a , oldProof))}}
+        -> UU2 :& P2
+
+% : {UU : 𝒰 𝑖} {{U : hasU UU 𝑘 𝑙}} (a : UU)
+  -> {UU2 : 𝒰 𝑖₂} {{U2 : hasU UU2 𝑘 𝑙₂}} {P2 : UU2 -> 𝒰 𝑗₂}
+     -> {{pp : (getU U ≡-Str getU U2)}}
+     -> resType a UU2 P2 pp
+% {UU = UU} {{U}} a {UU2} {{U2}} {P2} {{refl-StrId}} {{oldProof}} {{newProof}} = ′ destructEl U a ′
+-}
 
 record _:>_ {UU : 𝒰 𝑖} {{U : hasU UU 𝑘 𝑙}} (P : UU -> 𝒰 𝑗) (Q : UU :& P -> 𝒰 𝑗₂) (a : UU) : 𝒰 (𝑗 ､ 𝑗₂ ､ 𝑘 ､ 𝑙) where
   field overlap {{Proof1}} : P (reconstruct U (destructEl U a , destructP U a))
