@@ -13,7 +13,7 @@ open import Agda.Primitive public using (lzero)
 open import Agda.Builtin.String public
 
 -- open import Verification.VHM2.Conventions.Base hiding (_==_ ; tail ; _∎ ; _∙_ ; cong) public
-open import Cubical.Core.Everything hiding (Type ; _∧_ ; _∨_)
+open import Cubical.Core.Everything hiding (Type ; _∧_ ; _∨_ ; isEquiv)
   public
 
 open import Cubical.Foundations.Prelude
@@ -44,6 +44,6 @@ open import Cubical.Data.List hiding ([_]) renaming (_++_ to _++-List_ ; length 
 open import Cubical.Data.Nat.Base renaming (_+_ to _+-ℕ_ ; _*_ to _*-ℕ_) public
 open import Cubical.Data.Nat.Properties renaming (znots to zero≢suc ; snotz to suc≢zero) public
 open import Cubical.Data.Nat.Order renaming (_≤_ to _≤-ℕ_ ; _<_ to _<-ℕ_ ; _≟_ to _≟-ℕ_ ; ≤-refl to refl-≤-ℕ ; ≤-trans to trans-≤-ℕ ; ≤-antisym to antisym-≤-ℕ) public
-open import Cubical.Data.Int renaming (Int to ℤ ; _+_ to _+-ℤ_ ; _-_ to _-ℤ_ ; +-assoc to +-ℤ-assoc ; +-comm to +-ℤ-comm) public
+open import Cubical.Data.Int renaming (Int to ℤ ; _+_ to _+-ℤ_ ; _-_ to _-ℤ_ ; +-assoc to assoc-+-ℤ ; +-comm to comm-+-ℤ) public
 open import Cubical.Data.Sum renaming (_⊎_ to _+-𝒰_ ; map to map-+-𝒰 ; rec to [_,_]-𝒰 ; elim to elim-+-𝒰 ; inl to left ; inr to right ) public
 open import Cubical.Induction.WellFounded hiding (Rel) public

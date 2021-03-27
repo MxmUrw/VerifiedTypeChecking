@@ -26,7 +26,7 @@ instance
   isPreorder.trans-≤ isPreorder:ℕ = trans-≤-ℕ
 
 Preorder:ℕ : Preorder _
-Preorder:ℕ = make& ℕ
+Preorder:ℕ = ′ ℕ ′
 
 {-
 unquoteDecl Preorder preorder = #struct "PreOrd" (quote isPreorder) "A" Preorder preorder

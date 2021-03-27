@@ -26,7 +26,7 @@ open import Verification.Conventions
 -- [Definition]
 -- | Given a type $𝒞$, whose elements we are going to call /objects/, we say that it has the structure of a category [...] if
 --   the following additional data is given:
-record ICategory (𝒞 : 𝒰 𝑖) (𝑗 : 𝔏 ^ 2) : 𝒰 (𝑖 ､ 𝑗 ⁺) where
+record isCategory (𝒞 : 𝒰 𝑖) (𝑗 : 𝔏 ^ 2) : 𝒰 (𝑖 ､ 𝑗 ⁺) where
 
 -- | 1. A type family [..], assigning to every pair of objects |a b : 𝒞|
 --      a type of /homomorphisms/ |Hom a b| between them.
@@ -37,7 +37,7 @@ record ICategory (𝒞 : 𝒰 𝑖) (𝑗 : 𝔏 ^ 2) : 𝒰 (𝑖 ､ 𝑗 ⁺)
 --      a type of equality proofs |f ≣ g| between them. This need not be the path equality |f ≡ g|,
 --      thus we require that the family is at least an equivalence relation:
         _≣_           : ∀{a b : 𝒞} -> Hom a b -> Hom a b -> 𝒰 (𝑗 ⌄ 1)
-        ⦃ IEquiv:≣ ⦄  : ∀{a b : 𝒞} -> IEquiv (_≣_ {a = a} {b = b})
+        ⦃ isEquivRel:≣ ⦄  : ∀{a b : 𝒞} -> isEquivRel (_≣_ {a = a} {b = b})
 
 -- | 3. An operation [..], assigning to every object |a| an identity morphism on this object.
         id : ∀{a : 𝒞} -> Hom a a
@@ -59,8 +59,8 @@ record ICategory (𝒞 : 𝒰 𝑖) (𝑗 : 𝔏 ^ 2) : 𝒰 (𝑖 ､ 𝑗 ⁺)
 -- //
 
 
-open ICategory ⦃...⦄ public
-unquoteDecl Category category = #struct "Cat" (quote ICategory) "𝒞" Category category
+open isCategory ⦃...⦄ public
+unquoteDecl Category category = #struct "Cat" (quote isCategory) "𝒞" Category category
 
 
 -- [Notation]
@@ -76,7 +76,7 @@ infixr 40 _⟶_
 -- | A small category is one where all objects, arrows, and equivalence relations live in $𝒰₀$
 SmallCategory = Category (ℓ₀ , ℓ₀ , ℓ₀)
 ISmallCategory : (𝒞 : 𝒰₀) -> 𝒰₁
-ISmallCategory 𝒞 = ICategory 𝒞 (ℓ₀ , ℓ₀)
+ISmallCategory 𝒞 = isCategory 𝒞 (ℓ₀ , ℓ₀)
 -- //
 
 

@@ -100,7 +100,7 @@ byFirstP {A = A} {B} {{P}} {a1} {a2} {b1} {b2} p =
       P3 : PathP (λ j → trans-Path (λ i → B (p i)) (λ i → B a2) j) b1 b2
       P3 = compPathP P2 P1
       P4 : trans-Path (λ i → B (p i)) (λ i → B a2) ≡ (λ i -> B (p i))
-      P4 = rUnit (λ i -> B (p i)) ⁻¹
+      P4 = sym-Path (rUnit (λ i -> B (p i)))
       P5 : PathP (λ i → B (p i)) b1 b2
       P5 = transport (λ k -> PathP (λ i -> P4 k i) b1 b2) P3
   in λ i -> p i , P5 i

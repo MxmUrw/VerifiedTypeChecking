@@ -5,6 +5,11 @@ module Verification.Core.Category.Instance.Type.Definition where
 open import Verification.Conventions
 open import Verification.Core.Category.Definition
 
+-- [Hide]
+private
+  instance _ = isEquivRel:Path
+-- //
+
 -------------------------
 -- The Category of Types
 
@@ -33,19 +38,19 @@ module _ {A : 𝒰 𝑖} {B : 𝒰 𝑗} {C : 𝒰 𝑘} where
 -- |   1. The underlying type is [..].
 ⟨ Category:𝒰 𝑖 ⟩ = 𝒰 𝑖
 -- |   2. The homs are [..].
-ICategory.Hom (of Category:𝒰 𝑖) = λ A B -> A -> B
-ICategory._≣_ (of Category:𝒰 𝑖) = _≡_
-ICategory.IEquiv:≣ (of Category:𝒰 𝑖) = IEquiv:Path
-ICategory.id (of Category:𝒰 𝑖) = id-𝒰
-ICategory._◆_ (of Category:𝒰 𝑖) = comp-𝒰
-ICategory.unit-l-◆ (of Category:𝒰 𝑖) = refl
-ICategory.unit-r-◆ (of Category:𝒰 𝑖) = refl
-ICategory.unit-2-◆ (of Category:𝒰 𝑖) = refl
-ICategory.assoc-l-◆ (of Category:𝒰 𝑖) = refl
-ICategory.assoc-r-◆ (of Category:𝒰 𝑖) = refl
-ICategory._◈_ (of Category:𝒰 𝑖) = λ p q i -> comp-𝒰 (p i) (q i)
+isCategory.Hom (of Category:𝒰 𝑖) = λ A B -> A -> B
+isCategory._≣_ (of Category:𝒰 𝑖) = _≡_
+isCategory.isEquivRel:≣ (of Category:𝒰 𝑖) = isEquivRel:Path
+isCategory.id (of Category:𝒰 𝑖) = id-𝒰
+isCategory._◆_ (of Category:𝒰 𝑖) = comp-𝒰
+isCategory.unit-l-◆ (of Category:𝒰 𝑖) = refl
+isCategory.unit-r-◆ (of Category:𝒰 𝑖) = refl
+isCategory.unit-2-◆ (of Category:𝒰 𝑖) = refl
+isCategory.assoc-l-◆ (of Category:𝒰 𝑖) = refl
+isCategory.assoc-r-◆ (of Category:𝒰 𝑖) = refl
+isCategory._◈_ (of Category:𝒰 𝑖) = λ p q i -> comp-𝒰 (p i) (q i)
 -- //
-instance ICategory:𝒰 = #openstruct Category:𝒰
+instance isCategory:𝒰 = #openstruct Category:𝒰
 
 
 
@@ -67,5 +72,5 @@ instance ICategory:𝒰 = #openstruct Category:𝒰
 
 -- Universe : ℕ -> 
 
--- ICategory:𝒰∞ : ICategory 𝒰∞ ?
--- ICategory:𝒰∞ = ?
+-- isCategory:𝒰∞ : isCategory 𝒰∞ ?
+-- isCategory:𝒰∞ = ?
