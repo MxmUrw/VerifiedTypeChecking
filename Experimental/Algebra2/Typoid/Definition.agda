@@ -1,0 +1,73 @@
+
+module Verification.Experimental.Algebra2.Typoid.Definition where
+
+open import Verification.Conventions hiding (⟪_⟫ ; Structure ; ′_′ ; ⟨_⟩)
+open import Verification.Experimental.Meta.Structure5
+
+-- data RR {A : 𝒰 𝑖} (R : A -> A -> 𝒰 𝑗) : (a : A) (b : A) -> 𝒰 (𝑖 ､ 𝑗) where
+--   inclr : ∀ {a b} -> R a b -> RR R a b -- a ∼[ R ] b
+
+data RR {A : 𝒰 𝑖} (R : A -> A -> 𝒰 𝑗) (a : A) (b : A) : 𝒰 (𝑖 ､ 𝑗) where
+  inclr : R a b -> RR R a b -- a ∼[ R ] b
+
+
+record isTypoid 𝑗 A {{_ : From (𝒰 𝑖) A}} : 𝒰 (𝑖 ､ 𝑗 ⁺) where
+  field myRel : A -> A -> 𝒰 𝑗
+  _∼_ : A -> A -> 𝒰 (𝑖 ､ 𝑗)
+  _∼_ = RR myRel -- _∼[ myRel ]_
+
+  -- field _∼_ : A -> A -> 𝒰 𝑗
+  field {{isEquivRel:∼}} : isEquivRel _∼_
+open isTypoid {{...}} public
+
+Typoid : (𝑗 : 𝔏 ^ 2) -> 𝒰 _
+Typoid 𝑗 = Structure (From (𝒰 (𝑗 ⌄ 0)) :> isTypoid (𝑗 ⌄ 1))
+-- 𝒰 (𝑗 ⌄ 0) :& isTypoid (𝑗 ⌄ 1)
+
+-- record isTypoidHom A B {{_ : Typoid 𝑖 on A}} {{_ : Typoid 𝑗 on B}} (f : A -> B) : 𝒰 (𝑖 ､ 𝑗) where
+--   field preserves-∼ : ∀{a b} -> a ∼ b -> f a ∼ f b
+-- open isTypoidHom {{...}} public
+
+record isTypoidHom (A : Typoid 𝑖) (B : Typoid 𝑗) (f : ⟨ A ⟩ -> ⟨ B ⟩) : 𝒰 (𝑖 ､ 𝑗) where
+  field preserves-∼ : ∀{a b} -> a ∼ b -> f a ∼ f b
+open isTypoidHom {{...}} public
+
+
+{-
+instance
+  -- isTypoid:𝒫 : ∀{A : 𝒰 𝑖} -> {{_ : _on_ (Typoid 𝑗) {{{!!}}} A}} -> {P : 𝒫 A} -> isTypoid _ ⦋ P ⦌
+  isTypoid:𝒫 : ∀{A : 𝒰 𝑖} -> {{_ : (From _ :> isTypoid 𝑗) A}} -> {P : 𝒫 A} -> isTypoid _ ⦋ P ⦌
+  isTypoid._∼_ isTypoid:𝒫 (a ∈ _) (b ∈ _) = a ∼ b
+  isEquivRel.refl (isTypoid.isEquivRel:∼ isTypoid:𝒫) {x = a ∈ x} = refl
+  isEquivRel.sym (isTypoid.isEquivRel:∼ isTypoid:𝒫) {a ∈ x} {a₁ ∈ x₁} p = sym p
+  isEquivRel._∙_ (isTypoid.isEquivRel:∼ isTypoid:𝒫) {a ∈ x} {a₁ ∈ x₁} {a₂ ∈ x₂} p q = p ∙ q
+  -}
+
+record isSubtypoid {A} {{_ : Typoid 𝑗 on A}} P {{_ : From (𝒫 A) P}} : 𝒰 𝑗 where
+  field transp-Subtypoid : ∀{a b} -> a ∼ b -> P a -> P b
+
+open isSubtypoid {{...}} public
+
+
+data _/-𝒰_ (A : 𝒰 𝑖) (R : A -> A -> 𝒰 𝑗) : 𝒰 (𝑖 ) where
+  [_] : A -> A /-𝒰 R
+
+
+instance
+  isFrom:/-𝒰 : {A : 𝒰 𝑖} -> {R : A -> A -> 𝒰 𝑘} -> {{_ : isEquivRel R}} -> From _ (A /-𝒰 R)
+  isFrom:/-𝒰 = record {}
+
+  isTypoid:/-𝒰 : {A : 𝒰 𝑖} -> {R : A -> A -> 𝒰 𝑘} -> {{_ : isEquivRel R}} -> isTypoid _ (A /-𝒰 R)
+  isTypoid.myRel (isTypoid:/-𝒰 {R = R}) [ a ] [ b ] = R a b
+  isEquivRel.refl (isTypoid.isEquivRel:∼ isTypoid:/-𝒰) {x = [ x ]} = inclr refl
+  isEquivRel.sym (isTypoid.isEquivRel:∼ isTypoid:/-𝒰) {x = [ x ]} {y = [ y ]} (inclr p) = (inclr (sym p))
+  isEquivRel._∙_ (isTypoid.isEquivRel:∼ isTypoid:/-𝒰) {x = [ x ]} {y = [ y ]} {z = [ z ]} (inclr p) (inclr q) = inclr (p ∙ q)
+
+  isTypoidOn:/-𝒰 : {A : 𝒰 𝑖} -> {R : A -> A -> 𝒰 𝑘} -> {{_ : isEquivRel R}} -> (_ :> isTypoid _) (A /-𝒰 R)
+  _:>_.Proof1 isTypoidOn:/-𝒰 = record {}
+  _:>_.Proof2 isTypoidOn:/-𝒰 = it
+
+{-
+-}
+
+

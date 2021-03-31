@@ -26,7 +26,8 @@ open hasU public
 record _:&_ (UU : 𝒰 𝑖) {{U : hasU UU 𝑘 𝑙}} (P : UU -> 𝒰 𝑗) : 𝒰 (𝑗 ､ 𝑘 ､ 𝑙) where
   constructor ′_′
   field ⟨_⟩ : getU U
-  field overlap {{oldProof}} : getP U ⟨_⟩
+  -- field overlap {{oldProof}} : getP U ⟨_⟩
+  field {oldProof} : getP U ⟨_⟩
   field overlap {{Proof}} : P (reconstruct U (⟨_⟩ , oldProof))
 open _:&_ {{...}} public hiding (⟨_⟩)
 open _:&_ public using (⟨_⟩)
@@ -57,8 +58,9 @@ resType {UU = UU} {{U}} a UU2 {{U2}} P2 refl-StrId =
 -}
 
 record _:>_ {UU : 𝒰 𝑖} {{U : hasU UU 𝑘 𝑙}} (P : UU -> 𝒰 𝑗) (Q : UU :& P -> 𝒰 𝑗₂) (a : UU) : 𝒰 (𝑗 ､ 𝑗₂ ､ 𝑘 ､ 𝑙) where
+  instance constructor make:>
   field overlap {{Proof1}} : P (reconstruct U (destructEl U a , destructP U a))
-  field overlap {{Proof2}} : Q (′_′ (destructEl U a) {{destructP U a}} {{Proof1}})
+  field overlap {{Proof2}} : Q (′_′ (destructEl U a) {destructP U a} {{Proof1}})
 
 -- record _:&2_:∣_ (UU : 𝒰 𝑖) {{U : hasU UU 𝑘 𝑙}} (P : UU -> 𝒰 𝑗) (Q : UU -> 𝒰 𝑗₂) : 𝒰 (𝑗 ､ 𝑗₂ ､ 𝑘 ､ 𝑙) where
 --   constructor ′_′2
@@ -75,7 +77,7 @@ record _:>_ {UU : 𝒰 𝑖} {{U : hasU UU 𝑘 𝑙}} (P : UU -> 𝒰 𝑗) (Q 
 --   ElPrev : (UU : 𝒰 𝑖) {{U : hasU UU 𝑘 𝑙}} (P : UU -> 𝒰 𝑗) -> 
 
 record _:,_ {UU : 𝒰 𝑖} {{U : hasU UU 𝑘 𝑙}} (P : UU -> 𝒰 𝑗) (Q : UU -> 𝒰 𝑗₂) (a : UU) : 𝒰 (𝑗 ､ 𝑗₂) where
-  constructor make,
+  instance constructor make,
   field overlap {{Proof1}} : P a
   field overlap {{Proof2}} : Q a
 
@@ -112,9 +114,9 @@ instance
   hasU:& : {UU : 𝒰 𝑖} {{U : hasU UU 𝑘 𝑙}} {P : UU -> 𝒰 𝑗} -> hasU (UU :& P) _ _
   getU (hasU:& {UU = A} {{U}}) = getU U
   getP (hasU:& {UU = A} {{U}} {P = P}) a = ∑i λ (p1 : getP U a) -> P (reconstruct U (a , p1))
-  reconstruct (hasU:& {UU = A} {{U}} {P = P}) (a , pa) = ′_′ a {{pa .ifst}} {{pa .isnd}}
+  reconstruct (hasU:& {UU = A} {{U}} {P = P}) (a , pa) = ′_′ a {pa .ifst} {{pa .isnd}}
   destructEl (hasU:& {UU = A} ⦃ U ⦄ {P = P}) (′_′ a) = a
-  destructP (hasU:& {UU = A} {{U}} {P = P}) (′_′ a) = make∑i {ifst = it}
+  destructP (hasU:& {UU = A} {{U}} {P = P}) (′_′ a {pold}) = make∑i {ifst = pold}
 
 _on_ : (UU : 𝒰 𝑖) {{U : hasU UU 𝑘 𝑙}} -> (a : getU U) -> 𝒰 _
 _on_ UU {{U}} a = getP U a

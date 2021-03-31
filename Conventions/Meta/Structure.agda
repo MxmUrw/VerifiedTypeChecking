@@ -469,8 +469,8 @@ module TestInstancing where
      let varmatches2 = (varg (var 1) ∷ iarg (var 0) ∷ []) -- THIS IS THE CORRECT LINE
      let varmatches-ctor = liftPats (liftPats varmatches) <> varmatches2
 
-     -- let term-ctor = con (quote ⌘_) ((varg (var 1 []) ∷ varg (var 0 []) ∷ []))
-     let term-ctor = con (quote ⌘_) ((varg (var 1 []) ∷ iarg (var 0 []) ∷ [])) -- CORRECT LINE
+     -- let term-ctor = con (quote ′_′) ((varg (var 1 []) ∷ varg (var 0 []) ∷ []))
+     let term-ctor = con (quote ′_′) ((varg (var 1 []) ∷ iarg (var 0 []) ∷ [])) -- CORRECT LINE
      let clause-ctor = clause tele-ctor varmatches-ctor term-ctor
 
      -- printErr ("varsOfMain is: " <> show varsOfMain)

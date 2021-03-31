@@ -1,32 +1,36 @@
 
-module Verification.Experimental.Algebra.Group.Definition where
+module Verification.Experimental.Algebra2.Group.Definition where
 
-open import Verification.Conventions
-open import Verification.Experimental.Meta.Structure
-open import Verification.Experimental.Algebra.Setoid.Definition
-open import Verification.Experimental.Algebra.Monoid.Definition
+-- open import Verification.Conventions
+open import Verification.Conventions hiding (⟪_⟫ ; Structure ; ′_′)
+open import Verification.Experimental.Meta.Structure5
+open import Verification.Experimental.Algebra2.Typoid.Definition
+open import Verification.Experimental.Algebra2.Monoid.Definition
 
 
-record isGroup (A : Monoid 𝑗) : 𝒰 𝑗 where
-  field ◡_ : ⟨ A ⟩ -> ⟨ A ⟩
+record isGroup A {{_ : Monoid 𝑗 on A}} : 𝒰 𝑗 where
+  field ◡_ : A -> A
         inv-l-⋆ : ∀{a} -> ◡ a ⋆ a ∼ ◌
         inv-r-⋆ : ∀{a} -> a ⋆ ◡ a ∼ ◌
         cong-◡_ : ∀{a₀ a₁} -> a₀ ∼ a₁ -> ◡ a₀ ∼ ◡ a₁
-  ◡≀_ = cong-◡_
-  infix 100 ◡_ ◡≀_
+  infix 100 ◡_
 open isGroup {{...}} public
 
 Group : (𝑗 : 𝔏 ^ 2) -> 𝒰 _
-Group 𝑗 = Monoid 𝑗 :& isGroup
+Group 𝑗 = Structure (is Monoid 𝑗 :> isGroup)
+-- Monoid 𝑗 :& isGroup
 
 
-record isSubgroup {A} {{_ : Group 𝑗 on A}} (P : 𝒫 A :& isSubsetoid :& isSubmonoid) : 𝒰 𝑗 where
-  field closed-◡ : ∀{a} -> ⟨ P ⟩ a -> ⟨ P ⟩ (◡ a)
+record isSubgroup {A} {{_ : Group 𝑗 on A}}
+       (P : 𝒫 A) {{_ : (_ :> isSubmonoid) P}}
+       : 𝒰 𝑗 where
+  field closed-◡ : ∀{a} -> P a -> P (◡ a)
 open isSubgroup {{...}} public
 
 
 Subgroup : (G : Group 𝑗) -> 𝒰 _
-Subgroup G = 𝒫 ⟨ G ⟩ :& isSubsetoid :& isSubmonoid :& isSubgroup
+Subgroup G = Structure (_ :> isSubgroup {{of G}})
+-- 𝒫 ⟨ G ⟩ :& isSubsetoid :& isSubmonoid :& isSubgroup
 
 
 data RelSubgroup {G : Group 𝑗} (H : Subgroup G) (a : ⟨ G ⟩) (b : ⟨ G ⟩) : 𝒰 (𝑗 ⌄ 0) where
@@ -61,19 +65,7 @@ module _ {A : 𝒰 𝑖} {{_ : Group (𝑖 , 𝑗) on A}} where
     ◌           ≣⟨ inv-l-⋆ ⁻¹ ⟩
     ◡ a ⋆ a     ∎
 
-  unique-inverse-⋆-r : ∀{a b : A} -> a ⋆ b ∼ ◌ -> ◡ a ∼ b
-  unique-inverse-⋆-r {a} {b} p =
-    let P₀ : a ⋆ b ∼ a ⋆ ◡ a
-        P₀ = a ⋆ b   ≣⟨ p ⟩
-             ◌       ≣⟨ inv-r-⋆ ⁻¹ ⟩
-             a ⋆ ◡ a ∎
-    in sym (cancel-l-⋆ P₀)
-
-  reduce-◡◌ : ◡ ◌ ∼ ◌
-  reduce-◡◌ = ◡ ◌     ≣⟨ unit-r-⋆ ⁻¹ ⟩
-              ◡ ◌ ⋆ ◌ ≣⟨ inv-l-⋆ ⟩
-              ◌       ∎
-
-
+{-
+-}
 
 

@@ -13,7 +13,8 @@ record isMonoid (A : Setoid 𝑗) : 𝒰 (𝑗) where
         assoc-l-⋆ : ∀{a b c} -> (a ⋆ b) ⋆ c ∼ a ⋆ (b ⋆ c)
         assoc-r-⋆ : ∀{a b c} -> a ⋆ (b ⋆ c) ∼ (a ⋆ b) ⋆ c
         _`cong-⋆`_ : ∀{a₀ a₁ b₀ b₁} -> a₀ ∼ a₁ -> b₀ ∼ b₁ -> a₀ ⋆ b₀ ∼ a₁ ⋆ b₁
-  infixl 50 _⋆_ _`cong-⋆`_
+  _≀⋆≀_ = _`cong-⋆`_
+  infixl 50 _⋆_ _`cong-⋆`_ _≀⋆≀_
 open isMonoid {{...}} public
 
 Monoid : (𝑗 : 𝔏 ^ 2) -> 𝒰 _

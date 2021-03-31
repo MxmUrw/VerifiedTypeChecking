@@ -148,7 +148,14 @@ module TypeNotation where
 𝒫 : (A : 𝒰 𝑖) -> 𝒰 (𝑖 ⁺)
 𝒫 {𝑖} A = A -> 𝒰 𝑖
 
-data ⦋_⦌ {U : 𝒰 𝑖} (P : 𝒫 U) : 𝒰 𝑖 where
-  _∈_ : (a : U) -> P a -> ⦋ P ⦌
+record ⦋_⦌ {U : 𝒰 𝑖} (P : 𝒫 U) : 𝒰 𝑖 where
+  constructor _∈_
+  field ⟨_⟩ : U
+  field Proof : P ⟨_⟩
+open ⦋_⦌ public
+
+  -- _∈_ : (a : U) -> P a -> ⦋ P ⦌
+
+infix 60 _∈_
 
 

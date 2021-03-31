@@ -27,7 +27,7 @@ instance
 
 instance
   Cast:Structure : ∀{A : 𝒰 𝑖} {P : A -> 𝒰 𝑗} -> Cast A P (Structure P)
-  Cast.cast Cast:Structure a = ⌘ a
+  Cast.cast Cast:Structure a = ′ a ′
 
 
 

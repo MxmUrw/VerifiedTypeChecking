@@ -6,6 +6,7 @@ open import Verification.Experimental.Meta.Structure
 open import Verification.Experimental.Algebra.Setoid.Definition
 open import Verification.Experimental.Algebra.Monoid.Definition
 open import Verification.Experimental.Algebra.Group.Definition
+open import Verification.Experimental.Algebra.Abelian.Definition
 
 
 record isSemiring (A : Monoid 𝑗 :& isCommutative) : 𝒰 𝑗 where
@@ -16,7 +17,9 @@ record isSemiring (A : Monoid 𝑗 :& isCommutative) : 𝒰 𝑗 where
         assoc-l-⋅ : ∀{a b c} -> (a ⋅ b) ⋅ c ∼ a ⋅ (b ⋅ c)
         distr-l-⋅ : ∀{a b c : ⟨ A ⟩} -> a ⋅ (b ⋆ c) ∼ a ⋅ b ⋆ a ⋅ c
         distr-r-⋅ : ∀{a b c : ⟨ A ⟩} -> (b ⋆ c) ⋅ a ∼ b ⋅ a ⋆ c ⋅ a
-  infixl 80 _⋅_
+        _`cong-⋅`_ : ∀{a₀ a₁ b₀ b₁} -> a₀ ∼ a₁ -> b₀ ∼ b₁ -> a₀ ⋅ b₀ ∼ a₁ ⋅ b₁
+  _≀⋅≀_ = _`cong-⋅`_
+  infixl 80 _⋅_ _`cong-⋅`_ _≀⋅≀_
 open isSemiring {{...}} public
 
 Semiring : (𝑗 : 𝔏 ^ 2) -> 𝒰 _
@@ -28,18 +31,65 @@ record isRing (A : Monoid 𝑗 :& (isCommutative :> isSemiring) :, isGroup) : �
 Ring : (𝑗 : 𝔏 ^ 2) -> 𝒰 _
 Ring 𝑗 = (Monoid 𝑗 :& (isCommutative :> isSemiring) :, isGroup) :& isRing
 
+record isCRing (R : Ring 𝑗) : 𝒰 𝑗 where
+  field comm-⋅ : ∀{a b : ⟨ R ⟩} -> a ⋅ b ∼ b ⋅ a
+open isCRing {{...}} public
+
+CRing : (𝑗 : 𝔏 ^ 2) -> 𝒰 _
+CRing 𝑗 = (Ring 𝑗) :& isCRing
+
+module _ {R : 𝒰 _} {{_ : Ring 𝑗 on R}} where
+  assoc-r-⋅ : ∀{a b c : R} -> a ⋅ (b ⋅ c) ∼ a ⋅ b ⋅ c
+  assoc-r-⋅ = assoc-l-⋅ ⁻¹
+
+  reduce-⋅◌-r : ∀{a : R} -> a ⋅ ◌ ∼ ◌
+  reduce-⋅◌-r {a} =
+    let P : a ⋅ ◌ ⋆ a ⋅ ◌ ∼ a ⋅ ◌ ⋆ ◌
+        P = a ⋅ ◌ ⋆ a ⋅ ◌     ≣⟨ distr-l-⋅ ⁻¹ ⟩
+            a ⋅ (◌ ⋆ ◌)      ≣⟨ refl `cong-⋅` unit-r-⋆ ⟩
+            a ⋅ ◌            ≣⟨ unit-r-⋆ ⁻¹ ⟩
+            a ⋅ ◌ ⋆ ◌        ∎
+    in cancel-l-⋆ P
+
+  reduce-⋅◌-l : ∀{a : R} -> ◌ ⋅ a ∼ ◌
+  reduce-⋅◌-l {a} =
+    let P : ◌ ⋅ a ⋆ ◌ ⋅ a ∼ ◌ ⋅ a ⋆ ◌
+        P = ◌ ⋅ a ⋆ ◌ ⋅ a ≣⟨ distr-r-⋅ ⁻¹ ⟩
+            (◌ ⋆ ◌) ⋅ a   ≣⟨ unit-r-⋆ `cong-⋅` refl ⟩
+            ◌ ⋅ a         ≣⟨ unit-r-⋆ ⁻¹ ⟩
+            ◌ ⋅ a ⋆ ◌     ∎
+    in cancel-l-⋆ P
+
+  switch-◡-⋅-l : ∀{a b : R} -> ◡ (a ⋅ b) ∼ ◡ a ⋅ b
+  switch-◡-⋅-l {a} {b} =
+    let P₀ : (a ⋅ b) ⋆ (◡ a ⋅ b) ∼ ◌
+        P₀ = (a ⋅ b) ⋆ (◡ a ⋅ b) ≣⟨ distr-r-⋅ ⁻¹ ⟩
+             (a ⋆ ◡ a) ⋅ b       ≣⟨ inv-r-⋆ `cong-⋅` refl ⟩
+             ◌ ⋅ b              ≣⟨ reduce-⋅◌-l ⟩
+             ◌                  ∎
+    in unique-inverse-⋆-r P₀
+
+  switch-◡-⋅-r : ∀{a b : R} -> ◡ (a ⋅ b) ∼ a ⋅ ◡ b
+  switch-◡-⋅-r {a} {b} =
+    let P₀ : (a ⋅ b) ⋆ (a ⋅ ◡ b) ∼ ◌
+        P₀ = (a ⋅ b) ⋆ (a ⋅ ◡ b)    ≣⟨ distr-l-⋅ ⁻¹ ⟩
+             a ⋅ (b ⋆ ◡ b)         ≣⟨ refl `cong-⋅` inv-r-⋆ ⟩
+             a ⋅ ◌                 ≣⟨ reduce-⋅◌-r ⟩
+             ◌                     ∎
+    in unique-inverse-⋆-r P₀
 
 --------------------------------------------------------------------------------
 -- Ideals
 
 
-record isIdeal {A} {{_ : Ring 𝑗 on A}} (P : 𝒫 A :& isSubsetoid :& isSubmonoid :& isSubgroup) : 𝒰 𝑗 where
+-- record isIdeal {A} {{_ : Ring 𝑗 on A}} (P : 𝒫 A :& isSubsetoid :& isSubmonoid :& isSubgroup :& isSubabelian {A = ′ A ′}) : 𝒰 𝑗 where
+record isIdeal {A : Ring 𝑗} (P : 𝒫 ⟨ A ⟩ :& isSubsetoid :& isSubmonoid :& isSubgroup :& isSubabelian {A = ′ ⟨ A ⟩ ′}) : 𝒰 𝑗 where
   field ideal-l-⋅ : ∀{a b} -> ⟨ P ⟩ b -> ⟨ P ⟩ (a ⋅ b)
         ideal-r-⋅ : ∀{a b} -> ⟨ P ⟩ a -> ⟨ P ⟩ (a ⋅ b)
 open isIdeal {{...}} public
 
 Ideal : (R : Ring 𝑗) -> 𝒰 _
-Ideal R = Subgroup ′ ⟨ R ⟩ ′ :& isIdeal
+Ideal R = Subabelian ′ ⟨ R ⟩ ′ :& isIdeal {A = R}
 
 module _ {R : Ring 𝑗} where
   RelIdeal : Ideal R -> ⟨ R ⟩ -> ⟨ R ⟩ -> 𝒰 _
@@ -51,5 +101,7 @@ record isPrime {R : Ring 𝑗} (I : Ideal R) : 𝒰 𝑗 where
   field prime : ∀{a b} -> ⟨ I ⟩ (a ⋅ b) -> ⟨ I ⟩ a +-𝒰 ⟨ I ⟩ b
 
 
+{-
+-}
 
 
