@@ -155,6 +155,9 @@ instance
   IShow.show IShow:Sort (set t) = "𝒰 (" <> show t <> ")"
   IShow.show IShow:Sort (lit n) = "𝒰 " <> show n
   IShow.show IShow:Sort unknown = "?"
+  IShow.show IShow:Sort (prop t) = "prop"
+  IShow.show IShow:Sort (propLit n) = "propLit"
+  IShow.show IShow:Sort (inf n) = "inf"
 
   IShow.show IShow:Term (var x args) = "(var " <> show x <> ")" <> showListSpace args
   IShow.show IShow:Term (con c args) = "ctor:" <> show c <> showListSpace args
@@ -242,6 +245,9 @@ lowerAtSort : ℕ -> Sort -> Sort
 lowerAtSort i (set t) = set (lowerAt i t)
 lowerAtSort i (lit n) = lit n
 lowerAtSort i unknown = unknown
+lowerAtSort i (prop t) = prop (lowerAt i t)
+lowerAtSort i (propLit n) = propLit n
+lowerAtSort i (inf n) = inf n
 
 lowerAt i (var x args) = let (x , args) = lowerAtVar i (x , args) in var x args
 lowerAt i (con c args) = con c (map-List (map-Arg (lowerAt i)) args)
@@ -271,6 +277,9 @@ liftFromTillSort : ℕ -> ℕ -> Sort -> Sort
 liftFromTillSort k i (set t) = set (liftFromTill k i t)
 liftFromTillSort k i (lit n) = lit n
 liftFromTillSort k i unknown = unknown
+liftFromTillSort k i (prop t) = prop (liftFromTill k i t)
+liftFromTillSort k i (propLit n) = propLit n
+liftFromTillSort k i (inf n) = inf n
 
 liftFromTill k i (var x args) = let (x , args) = liftFromTillVar k i (x , args) in var x args
 liftFromTill k i (con c args) = con c (map-List (map-Arg (liftFromTill k i)) args)
@@ -306,6 +315,9 @@ liftFromSort : ℕ -> Sort -> Sort
 liftFromSort i (set t) = set (liftFrom i t)
 liftFromSort i (lit n) = lit n
 liftFromSort i unknown = unknown
+liftFromSort i (prop t) = prop (liftFrom i t)
+liftFromSort i (propLit n) = propLit n
+liftFromSort i (inf n) = inf n
 
 liftFrom i (var x args) = let (x , args) = liftFromVar i (x , args) in var x args
 liftFrom i (con c args) = con c (map-List (map-Arg (liftFrom i)) args)
@@ -348,6 +360,9 @@ liftManySort : ℕ -> Sort -> Sort
 liftManySort i (set t) = set (liftMany i t)
 liftManySort i (lit n) = lit n
 liftManySort i unknown = unknown
+liftManySort i (prop t) = prop (liftMany i t)
+liftManySort i (propLit n) = propLit n
+liftManySort i (inf n) = inf n
 
 liftMany i (var x args) = let (x , args) = liftManyVar i (x , args) in var x args
 liftMany i (con c args) = con c (map-List (map-Arg (liftMany i)) args)
@@ -405,6 +420,9 @@ getVarsSort : Visibility -> Sort -> List ℕ
 getVarsSort v (set t) = getVars v t
 getVarsSort v (lit n) = []
 getVarsSort v unknown = []
+getVarsSort v (prop t) = getVars v t
+getVarsSort v (propLit n) = []
+getVarsSort v (inf n) = []
 
 getVars v (var x args) = η x <> μ (map-List (getVarsArg v) args)
 getVars v (con c args) = μ (map-List (getVarsArg v) args)
@@ -439,6 +457,9 @@ replaceSort : SSub -> Sort -> Sort
 replaceSort i (set t) = set (replace i t)
 replaceSort i (lit n) = lit n
 replaceSort i unknown = unknown
+replaceSort i (prop t) = prop (replace i t)
+replaceSort i (propLit n) = propLit n
+replaceSort i (inf n) = inf n
 
 replace i (var x args) = replaceVar i (x , args)
 replace i (con c args) = con c (map-List (map-Arg (replace i)) args)
@@ -471,6 +492,9 @@ tesubstSort : SSub -> Sort -> Sort
 tesubstSort i (set t) = set (tesubst i t)
 tesubstSort i (lit n) = lit n
 tesubstSort i unknown = unknown
+tesubstSort i (prop t) = prop (tesubst i t)
+tesubstSort i (propLit n) = propLit n
+tesubstSort i (inf n) = inf n
 
 tesubst i (var x args) = tesubstVar i (x , args)
 tesubst i (con c args) = con c (map-List (map-Arg (tesubst i)) args)

@@ -33,8 +33,8 @@ module _ {X : 𝒰 𝑖} {_≣_ : X -> X -> 𝒰 𝑗} {{_ : isEquivRel _≣_}} 
     Notation-Inverse:Equiv Notation-Inverse.⁻¹ = sym
 
 
--- instance
-module _ where
+instance
+-- module _ where
   isEquivRel:Path : {X : 𝒰 𝑖} -> isEquivRel (λ (x y : X) -> x ≡ y)
   isEquivRel.refl  isEquivRel:Path = refl-Path
   isEquivRel.sym   isEquivRel:Path = sym-Path
@@ -52,8 +52,8 @@ module _ {X : 𝒰 𝑖} {_∼_ : X -> X -> 𝒰 𝑗} {{_ : isEquivRel _∼_}} 
 trans-Id : ∀{X : 𝒰 𝑖} {x y z : X} -> Id x y -> Id y z -> Id x z
 trans-Id {x = x} {y} {z} p q = J-Id (λ z _ -> Id x z) p q
 
--- instance
-module _ where
+instance
+-- module _ where
   isEquivRel:Id : {X : 𝒰 𝑖} -> isEquivRel (λ (x y : X) -> Id x y)
   isEquivRel.refl isEquivRel:Id = refl-Id
   isEquivRel.sym isEquivRel:Id = sym-Id
@@ -76,8 +76,8 @@ cong₂-Id-helper f = J-∀Id (J-∀Id refl-Id)
 cong₂-Id : ∀{A : 𝒰 𝑖} {B : 𝒰 𝑗} {C : 𝒰 𝑘} -> {a1 a2 : A} {b1 b2 : B} -> (f : A -> B -> C) -> (Id a1 a2) -> (Id b1 b2) -> Id (f a1 b1) (f a2 b2)
 cong₂-Id f p q = cong₂-Id-helper f .getProof p .getProof q
 
--- instance
-module _ where
+instance
+-- module _ where
   isEquivRel:StrId : {X : 𝒰 𝑖} -> isEquivRel (λ (x y : X) -> StrId x y)
   isEquivRel.refl isEquivRel:StrId = refl-StrId
   isEquivRel.sym isEquivRel:StrId refl-StrId = refl-StrId
@@ -121,3 +121,22 @@ module _ {A : 𝒰 𝑖} {_≣_ : A -> A -> 𝒰 𝑗} {{_ : isEquivRel _≣_}} 
 
   _∎ : (x : A) → x ≣ x
   _ ∎ = refl
+
+
+-- new syntax with ∼
+module _ {A : 𝒰 𝑖} {_∼_ : A -> A -> 𝒰 𝑗} {{_ : isEquivRel _∼_}} where
+  _⟨_⟩-∼_ : (x : A) {y : A} {z : A} → x ∼ y → y ∼ z → x ∼ z
+  _ ⟨ x≡y ⟩-∼ y≡z = x≡y ∙ y≡z
+
+  ⟨⟩-∼-syntax : (x : A) {y z : A} → x ∼ y → y ∼ z → x ∼ z
+  ⟨⟩-∼-syntax = _⟨_⟩-∼_
+  infixr 2 ⟨⟩-∼-syntax
+  infixr 2 _⟨_⟩-∼_
+
+  infix  3 _∎-∼
+
+  _∎-∼ : (x : A) → x ∼ x
+  _ ∎-∼ = refl
+
+
+

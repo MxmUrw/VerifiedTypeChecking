@@ -16,7 +16,7 @@ open import Verification.Experimental.Algebra.Ring.Localization.Instance.Setoid
 
 ─ = refl
 
-module _ {R : CRing 𝑖} {M : MCS R} where
+module _ {𝑖 : 𝔏 ^ 2} {R : CRing 𝑖} {M : MCS R} where
   -- mytest2 : isRing ′ ⟨ R ⟩ ′
   -- mytest2 = it
 

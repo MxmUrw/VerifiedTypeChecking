@@ -14,7 +14,7 @@ open import Verification.Experimental.Algebra.Ring.Localization.Instance.Setoid
 open import Verification.Experimental.Algebra.Ring.Localization.Instance.Monoid
 
 
-module _ {R : CRing 𝑖} {M : MCS R} where
+module _ {𝑖 : 𝔏 ^ 2} {R : CRing 𝑖} {M : MCS R} where
   private
     ◡-Loc : Localize R M -> Localize R M
     ◡-Loc (a / da) = ◡ a / da

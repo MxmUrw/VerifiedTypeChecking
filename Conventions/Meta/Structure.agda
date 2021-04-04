@@ -156,18 +156,20 @@ mergeLevelVars (x ∷ y ∷ tele) with isDefInTele x (quote 𝔏) and isDefInTel
 
 
 
+getLevelN : ℕ -> TC Term
+getLevelN zero = quoteTC (ℓ₀)
+getLevelN (suc i) = do
+  l <- (getLevelN i)
+  val <- (unquoteTC l)
+  quoteTC (val ⁺')
 
 sortIntoLevelTerm : Sort -> TC Term
 sortIntoLevelTerm unknown = return unknown
 sortIntoLevelTerm (set t) = return t
 sortIntoLevelTerm (lit n) = getLevelN n
-  where
-    getLevelN : ℕ -> TC Term
-    getLevelN zero = quoteTC (ℓ₀)
-    getLevelN (suc i) = do
-      l <- (getLevelN i)
-      val <- (unquoteTC l)
-      quoteTC (val ⁺')
+sortIntoLevelTerm (prop t) = return t
+sortIntoLevelTerm (propLit n) = getLevelN n
+sortIntoLevelTerm (inf n) = return unknown -- TODO: What do we actually have to do here?
 
 
 extractSort : Term -> Maybe Sort

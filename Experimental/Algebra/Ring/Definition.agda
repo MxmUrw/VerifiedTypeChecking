@@ -9,7 +9,7 @@ open import Verification.Experimental.Algebra.Group.Definition
 open import Verification.Experimental.Algebra.Abelian.Definition
 
 
-record isSemiring (A : Monoid 𝑗 :& isCommutative) : 𝒰 𝑗 where
+record isSemiring {𝑗 : 𝔏 ^ 2} (A : Monoid 𝑗 :& isCommutative) : 𝒰 𝑗 where
   field _⋅_ : ⟨ A ⟩ -> ⟨ A ⟩ -> ⟨ A ⟩
         ⨡ : ⟨ A ⟩
         unit-l-⋅ : ∀{a} -> ⨡ ⋅ a ∼ a
@@ -26,19 +26,27 @@ Semiring : (𝑗 : 𝔏 ^ 2) -> 𝒰 _
 Semiring 𝑗 = (Monoid 𝑗 :& isCommutative) :& isSemiring
 
 
-record isRing (A : Monoid 𝑗 :& (isCommutative :> isSemiring) :, isGroup) : 𝒰 𝑗 where
+record isRing {𝑗 : 𝔏 ^ 2}(A : Monoid 𝑗 :& (isCommutative :> isSemiring) :, isGroup) : 𝒰 𝑗 where
 
 Ring : (𝑗 : 𝔏 ^ 2) -> 𝒰 _
 Ring 𝑗 = (Monoid 𝑗 :& (isCommutative :> isSemiring) :, isGroup) :& isRing
 
-record isCRing (R : Ring 𝑗) : 𝒰 𝑗 where
+-- instance
+--   isRing:Any : ∀{A : Monoid 𝑗 :& (isCommutative :> isSemiring) :, isGroup} -> isRing A
+--   isRing:Any = record {}
+
+record isCRing {𝑗 : 𝔏 ^ 2} (R : Ring 𝑗) : 𝒰 𝑗 where
   field comm-⋅ : ∀{a b : ⟨ R ⟩} -> a ⋅ b ∼ b ⋅ a
 open isCRing {{...}} public
 
 CRing : (𝑗 : 𝔏 ^ 2) -> 𝒰 _
 CRing 𝑗 = (Ring 𝑗) :& isCRing
 
-module _ {R : 𝒰 _} {{_ : Ring 𝑗 on R}} where
+module _ {𝑗 : 𝔏 ^ 2} {R : 𝒰 _} {{_ : Ring 𝑗 on R}} where
+-- module _ {𝑗 : 𝔏 ^ 2} {R' : Ring 𝑗} where
+--   private
+--     R = ⟨ R' ⟩
+
   assoc-r-⋅ : ∀{a b c : R} -> a ⋅ (b ⋅ c) ∼ a ⋅ b ⋅ c
   assoc-r-⋅ = assoc-l-⋅ ⁻¹
 
@@ -49,7 +57,7 @@ module _ {R : 𝒰 _} {{_ : Ring 𝑗 on R}} where
             a ⋅ (◌ ⋆ ◌)      ≣⟨ refl `cong-⋅` unit-r-⋆ ⟩
             a ⋅ ◌            ≣⟨ unit-r-⋆ ⁻¹ ⟩
             a ⋅ ◌ ⋆ ◌        ∎
-    in cancel-l-⋆ P
+    in cancel-⋆-l P
 
   reduce-⋅◌-l : ∀{a : R} -> ◌ ⋅ a ∼ ◌
   reduce-⋅◌-l {a} =
@@ -58,7 +66,7 @@ module _ {R : 𝒰 _} {{_ : Ring 𝑗 on R}} where
             (◌ ⋆ ◌) ⋅ a   ≣⟨ unit-r-⋆ `cong-⋅` refl ⟩
             ◌ ⋅ a         ≣⟨ unit-r-⋆ ⁻¹ ⟩
             ◌ ⋅ a ⋆ ◌     ∎
-    in cancel-l-⋆ P
+    in cancel-⋆-l P
 
   switch-◡-⋅-l : ∀{a b : R} -> ◡ (a ⋅ b) ∼ ◡ a ⋅ b
   switch-◡-⋅-l {a} {b} =
@@ -83,7 +91,7 @@ module _ {R : 𝒰 _} {{_ : Ring 𝑗 on R}} where
 
 
 -- record isIdeal {A} {{_ : Ring 𝑗 on A}} (P : 𝒫 A :& isSubsetoid :& isSubmonoid :& isSubgroup :& isSubabelian {A = ′ A ′}) : 𝒰 𝑗 where
-record isIdeal {A : Ring 𝑗} (P : 𝒫 ⟨ A ⟩ :& isSubsetoid :& isSubmonoid :& isSubgroup :& isSubabelian {A = ′ ⟨ A ⟩ ′}) : 𝒰 𝑗 where
+record isIdeal {𝑗 : 𝔏 ^ 2} {A : Ring 𝑗} (P : 𝒫 ⟨ A ⟩ :& isSubsetoid :& isSubmonoid :& isSubgroup :& isSubabelian {A = ′ ⟨ A ⟩ ′}) : 𝒰 𝑗 where
   field ideal-l-⋅ : ∀{a b} -> ⟨ P ⟩ b -> ⟨ P ⟩ (a ⋅ b)
         ideal-r-⋅ : ∀{a b} -> ⟨ P ⟩ a -> ⟨ P ⟩ (a ⋅ b)
 open isIdeal {{...}} public
@@ -91,13 +99,13 @@ open isIdeal {{...}} public
 Ideal : (R : Ring 𝑗) -> 𝒰 _
 Ideal R = Subabelian ′ ⟨ R ⟩ ′ :& isIdeal {A = R}
 
-module _ {R : Ring 𝑗} where
+module _ {𝑗 : 𝔏 ^ 2} {R : Ring 𝑗} where
   RelIdeal : Ideal R -> ⟨ R ⟩ -> ⟨ R ⟩ -> 𝒰 _
   RelIdeal I = RelSubgroup ′ ⟨ I ⟩ ′
 
 
 
-record isPrime {R : Ring 𝑗} (I : Ideal R) : 𝒰 𝑗 where
+record isPrime {𝑗 : 𝔏 ^ 2} {R : Ring 𝑗} (I : Ideal R) : 𝒰 𝑗 where
   field prime : ∀{a b} -> ⟨ I ⟩ (a ⋅ b) -> ⟨ I ⟩ a +-𝒰 ⟨ I ⟩ b
 
 

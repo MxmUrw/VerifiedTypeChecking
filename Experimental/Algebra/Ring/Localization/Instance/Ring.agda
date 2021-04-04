@@ -17,7 +17,7 @@ open import Verification.Experimental.Algebra.Ring.Localization.Instance.Group
 
 
 
-module _ {R : CRing 𝑖} {M : MCS R} where
+module _ {𝑖 : 𝔏 ×-𝒰 𝔏} {R : CRing 𝑖} {M : MCS R} where
   private
     _⋅-Loc_ : (a b : Localize R M) -> Localize R M
     _⋅-Loc_ (a / da) (b / db) = (a ⋅ b) / (da ⋅-MCS db)

@@ -15,7 +15,7 @@ open import Verification.Experimental.Algebra.Ring.Definition
 
 
 -- module _ {R : 𝒰 _} {I : 𝒫 R} {{_ : Ring 𝑗 on R}} {{_ : Ideal ′ R ′ on I}} where
-module _ {R : Ring 𝑗} {I : Ideal R} where
+module _ {𝑗 : 𝔏 ^ 2} {R : Ring 𝑗} {I : Ideal R} where
   -- blabla : isCommutative ′ ⟨ R ⟩ ′
   -- blabla = it
   -- X = ⟨ (′ ⟨ R ⟩ ′) /-Abelian ′ ⟨ I ⟩ ′ ⟩

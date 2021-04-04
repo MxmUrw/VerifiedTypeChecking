@@ -148,7 +148,7 @@ module TypeNotation where
 𝒫 : (A : 𝒰 𝑖) -> 𝒰 (𝑖 ⁺)
 𝒫 {𝑖} A = A -> 𝒰 𝑖
 
-record ⦋_⦌ {U : 𝒰 𝑖} (P : 𝒫 U) : 𝒰 𝑖 where
+record ⦋_⦌ {U : 𝒰 𝑖} (P : U -> 𝒰 𝑗) : 𝒰 (𝑖 ⊔ 𝑗) where
   constructor _∈_
   field ⟨_⟩ : U
   field Proof : P ⟨_⟩

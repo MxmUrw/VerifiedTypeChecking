@@ -6,28 +6,138 @@ open import Verification.Core.Category.Definition
 open import Verification.Core.Category.Instance.Set.Definition
 -- open import Verification.Core.Type
 open import Verification.Experimental.Meta.Structure
+open import Verification.Experimental.Algebra.Setoid.Definition
 
 --------------------------------------------------------------------
 -- == Preorder
 
-record isPreorder (A : 𝒰 𝑖) : 𝒰 (𝑖 ⁺) where
-  field _≤_ : A -> A -> 𝒰 𝑖
-        refl-≤ : {a : A} -> a ≤ a
-        trans-≤ : {a b c : A} -> a ≤ b -> b ≤ c -> a ≤ c
+data LE {A : 𝒰 𝑖} (R : A -> A -> 𝒰 𝑗) (a b : A) : 𝒰 𝑗 where
+  incl : (R a b) -> LE R a b
+
+record isPreorder 𝑘 (A : 𝒰 𝑖 :& isSetoid 𝑗) : 𝒰 (𝑘 ⁺ ､ 𝑗 ､ 𝑖) where
+  field myLE : ⟨ A ⟩ -> ⟨ A ⟩ -> 𝒰 𝑘
+  _≤_ : ⟨ A ⟩ -> ⟨ A ⟩ -> 𝒰 𝑘
+  _≤_ = LE myLE
+
+  field refl-≤ : {a : ⟨ A ⟩} -> a ≤ a
+        _∙-≤_ : {a b c : ⟨ A ⟩} -> a ≤ b -> b ≤ c -> a ≤ c
+        transp-≤ : ∀{a₀ a₁ b₀ b₁ : ⟨ A ⟩} -> a₀ ∼ a₁ -> b₀ ∼ b₁ -> a₀ ≤ b₀ -> a₁ ≤ b₁
+  infixl 40 _≤_
+
 open isPreorder {{...}} public
 
-Preorder : ∀ 𝑖 -> 𝒰 (𝑖 ⁺)
-Preorder 𝑖 = 𝒰 𝑖 :& isPreorder
+Preorder : ∀ (𝑖 : 𝔏 ^ 3) -> 𝒰 (𝑖 ⁺)
+Preorder 𝑖 = 𝒰 (𝑖 ⌄ 0) :& isSetoid (𝑖 ⌄ 1) :& isPreorder (𝑖 ⌄ 2)
 
-instance
-  isPreorder:ℕ : isPreorder ℕ
-  isPreorder._≤_ isPreorder:ℕ = _≤-ℕ_
-  isPreorder.refl-≤ isPreorder:ℕ = refl-≤-ℕ
-  isPreorder.trans-≤ isPreorder:ℕ = trans-≤-ℕ
 
-Preorder:ℕ : Preorder _
-Preorder:ℕ = ′ ℕ ′
+module _ {𝑖 : 𝔏 ^ 3} {A : 𝒰 _} {{_ : Preorder 𝑖 on A}} where
 
+  -- _<_ : A -> A -> 𝒰 _
+  -- a < b = a ≤ b ×-𝒰 (a ∼ b -> 𝟘-𝒰)
+
+  _≰_ : A -> A -> 𝒰 _
+  a ≰ b = ¬ a ≤ b
+
+{-
+  record _<_ (a b : A) : 𝒰 𝑖 where
+    constructor _,_
+    field π-≤ : a ≤ b
+    field π-≁ : ¬ a ∼ b
+
+  open _<_ public
+-}
+  -- a < b = a ≤ b ×-𝒰 (a ∼ b -> 𝟘-𝒰)
+
+
+
+module _ {𝑗 : 𝔏 ^ 3} {A : 𝒰 _} {{_ : Preorder 𝑗 on A}} where
+  by-∼-≤_ : {a b : A} -> (a ∼ b) -> a ≤ b
+  by-∼-≤_ p = transp-≤ refl p refl-≤
+
+  infixl 10 by-∼-≤_
+
+  _⟨_⟩-≤_ : (x : A) {y : A} {z : A} → x ≤ y → y ≤ z → x ≤ z
+  _ ⟨ x≤y ⟩-≤ y≤z = x≤y ∙-≤ y≤z
+
+  ⟨⟩-≤-syntax : (x : A) {y z : A} → x ≤ y → y ≤ z → x ≤ z
+  ⟨⟩-≤-syntax = _⟨_⟩-≤_
+  infixr 2 ⟨⟩-≤-syntax
+  infix  3 _∎-≤
+  infixr 2 _⟨_⟩-≤_
+
+  _∎-≤ : (x : A) → x ≤ x
+  _ ∎-≤ = refl-≤
+
+  _⟨_⟩-∼-≤_ : (x : A) {y : A} {z : A} → x ∼ y → y ≤ z → x ≤ z
+  _ ⟨ x≤y ⟩-∼-≤ y≤z = {!!} -- x≤y ∙-≤ y≤z
+
+  ⟨⟩-∼-≤-syntax : (x : A) {y z : A} → x ∼ y → y ≤ z → x ≤ z
+  ⟨⟩-∼-≤-syntax = _⟨_⟩-∼-≤_
+  infixr 2 ⟨⟩-∼-≤-syntax
+  infixr 2 _⟨_⟩-∼-≤_
+
+  _⟨_⟩-≤-∼_ : (x : A) {y : A} {z : A} → x ≤ y → y ∼ z → x ≤ z
+  _ ⟨ x≤y ⟩-≤-∼ y≤z = {!!} -- x≤y ∙-≤ y≤z
+
+  ⟨⟩-≤-∼-syntax : (x : A) {y z : A} → x ≤ y → y ∼ z → x ≤ z
+  ⟨⟩-≤-∼-syntax = _⟨_⟩-≤-∼_
+  infixr 2 ⟨⟩-≤-∼-syntax
+  infixr 2 _⟨_⟩-≤-∼_
+
+
+
+
+
+
+
+
+
+
+{-
+  _⟨_⟩-≤_ : (x : A) {y : A} {z : A} → x ≤ y → y ≤ z → x ≤ z
+  _ ≤⟨ x≤y ⟩ y≤z = x≤y ∙-≤ y≤z
+
+  ≤⟨⟩-syntax : (x : A) {y z : A} → x ≤ y → y ≤ z → x ≤ z
+  ≤⟨⟩-syntax = _⟨_⟩-≤_
+  infixr 2 ≤⟨⟩-syntax
+  infix  3 _∎-≤
+  infixr 2 _⟨_⟩-≤_
+
+  _∎-≤ : (x : A) → x ≤ x
+  _ ∎-≤ = refl-≤
+
+  _⟨_⟩-∼-≤_ : (x : A) {y : A} {z : A} → x ∼ y → y ≤ z → x ≤ z
+  _ ∼⟨ x≤y ⟩≤ y≤z = {!!} -- x≤y ∙-≤ y≤z
+
+  ⟨⟩-∼-≤-syntax : (x : A) {y z : A} → x ∼ y → y ≤ z → x ≤ z
+  ⟨⟩-∼-≤-syntax = _⟨_⟩-∼-≤_
+  infixr 2 ⟨⟩-∼-≤-syntax
+  infixr 2 _⟨_⟩-∼-≤_
+
+  _⟨_⟩-≤-∼_ : (x : A) {y : A} {z : A} → x ≤ y → y ∼ z → x ≤ z
+  _ ≤⟨ x≤y ⟩∼ y≤z = {!!} -- x≤y ∙-≤ y≤z
+
+  ⟨⟩-≤-∼-syntax : (x : A) {y z : A} → x ≤ y → y ∼ z → x ≤ z
+  ⟨⟩-≤-∼-syntax = _⟨_⟩-≤-∼_
+  infixr 2 ⟨⟩-≤-∼-syntax
+  infixr 2 _⟨_⟩-≤-∼_
+-}
+
+
+
+
+  -- _∼⟨_⟩-≤_ : (x : A) {y : A} {z : A} → x ∼ y → y ≤ z → x ≤ z
+  -- _ ∼≤⟨ x≤y ⟩ y≤z = {!!} -- x≤y ∙-≤ y≤z
+
+  -- ∼≤⟨⟩-syntax : (x : A) {y z : A} → x ∼ y → y ≤ z → x ≤ z
+  -- ∼≤⟨⟩-syntax = _∼⟨_⟩-≤_
+  -- infixr 2 ∼≤⟨⟩-syntax
+  -- -- infix  3 _∎-≤
+  -- infixr 2 _∼⟨_⟩-≤_
+
+
+
+{-
 {-
 unquoteDecl Preorder preorder = #struct "PreOrd" (quote isPreorder) "A" Preorder preorder
 
@@ -40,6 +150,7 @@ unquoteDecl Preorder preorder = #struct "PreOrd" (quote isPreorder) "A" Preorder
 record isMonotone {A : 𝒰 𝑖} {B : 𝒰 𝑗} {{_ : Preorder 𝑖 on A}} {{_ : Preorder 𝑗 on B}} (f : A -> B) : 𝒰 (𝑖 ､ 𝑗) where
   field monotone : ∀{a b : A} -> (a ≤ b) -> f a ≤ f b
 
+-}
 
 {-
 record isMonotone {A : 𝒰 𝑖} {B : 𝒰 𝑗} {{_ : isPreorder A}} {{_ : isPreorder B}} (f : A -> B) : 𝒰 (𝑖 ､ 𝑗) where

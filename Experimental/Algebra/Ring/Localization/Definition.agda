@@ -20,9 +20,17 @@ open isMCS {{...}} public
 MCS : CRing 𝑖 -> 𝒰 _
 MCS R = 𝒫 ⟨ R ⟩ :& isSubsetoid :& isMCS R
 
+module _ {𝑖 : 𝔏 ^ 2} {R : CRing 𝑖} where
+  record hasNotZero-MCS (M : MCS R) : 𝒰 𝑖 where
+    field isNotZero-MCS : ∀{a : ⟨ R ⟩} -> ⟨ M ⟩ a -> a ≁ ◌
 
-data Localize (R : CRing 𝑖) (M : MCS R) : 𝒰 𝑖 where
-  _/_ : ⟨ R ⟩ -> ⦋ ⟨ M ⟩ ⦌ -> Localize R M
+  open hasNotZero-MCS {{...}} public
+
+record Localize (R : CRing 𝑖) (M : MCS R) : 𝒰 𝑖 where
+  constructor _/_
+  field loc↑ : ⟨ R ⟩
+  field loc↓ : ⦋ ⟨ M ⟩ ⦌
+open Localize public
 
 module _ {R : 𝒰 _} {M : 𝒫 R} {{_ : CRing 𝑖 on R}} {{_ : MCS ′ R ′ on M}} where
   _⋅-MCS_ : ⦋ M ⦌ -> ⦋ M ⦌ -> ⦋ M ⦌

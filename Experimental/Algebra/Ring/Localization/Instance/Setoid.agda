@@ -12,7 +12,8 @@ open import Verification.Experimental.Algebra.Ring.Definition
 open import Verification.Experimental.Algebra.Ring.Localization.Definition
 
 
-module _ {R : CRing 𝑖} {M : MCS R} where
+
+module _ {𝑖 : 𝔏 ^ 2} {R : CRing 𝑖} {M : MCS R} where
   LocRel : Localize R M -> Localize R M -> 𝒰 _
   LocRel (a / da) (b / db) = ∑ λ (t : ⦋ ⟨ M ⟩ ⦌) -> (a ⋅ ⟨ db ⟩ ⋅ ⟨ t ⟩) ∼ (b ⋅ ⟨ da ⟩ ⋅ ⟨ t ⟩)
 

@@ -18,11 +18,11 @@ Abelian 𝑗 = Monoid 𝑗 :& (isGroup :, isCommutative)
 -- Subabelian A = Subgroup ′ ⟨ A ⟩ ′
 
 -- record isSubabelian {A} {{_ : Abelian 𝑗 on A}} (P : 𝒫 A :& isSubsetoid :& isSubmonoid :& isSubgroup) : 𝒰 𝑗 where
-record isSubabelian {A : Abelian 𝑗} (P : 𝒫 ⟨ A ⟩ :& isSubsetoid :& isSubmonoid :& isSubgroup) : 𝒰 𝑗 where
+record isSubabelian {𝑗 : 𝔏 ^ 2} {A : Abelian 𝑗} (P : 𝒫 ⟨ A ⟩ :& isSubsetoid :& isSubmonoid :& isSubgroup) : 𝒰 𝑗 where
 open isSubabelian {{...}} public
 
 
-Subabelian : (A : Abelian 𝑗) -> 𝒰 _
+Subabelian : {𝑗 : 𝔏 ^ 2} (A : Abelian 𝑗) -> 𝒰 _
 Subabelian A = Subgroup ′ ⟨ A ⟩ ′ :& isSubabelian {A = A}
 
 
@@ -48,7 +48,7 @@ Subabelian A = Subgroup ′ ⟨ A ⟩ ′ :& isSubabelian {A = A}
 --       in P₁
 
 -- private
-module _ {A : Group 𝑗} {B : Subgroup A} {{_ : isCommutative ′ ⟨ A ⟩ ′}} where
+module _ {𝑗 : 𝔏 ^ 2} {A : Group 𝑗} {B : Subgroup A} {{_ : isCommutative ′ ⟨ A ⟩ ′}} where
   instance
     isNormal:Subabelian : isNormal ′ ⟨ B ⟩ ′
     isNormal.normal isNormal:Subabelian a {b} b∈B =
@@ -65,7 +65,7 @@ module _ {A : Group 𝑗} {B : Subgroup A} {{_ : isCommutative ′ ⟨ A ⟩ ′
 -- module _ {A : Abelian 𝑗} {B : Subabelian A} where
 -- module _ {A : 𝒰 _} {B : 𝒫 A} {{_ : Abelian 𝑗 on A}} {{_ : Subabelian ′ A ′ on B}} where
 -- module _ {A : Abelian 𝑗} {B : Subgroup ′ ⟨ A ⟩ ′} where
-module _ {A : Group 𝑗} {{_ : isCommutative ′ ⟨ A ⟩ ′}} {B : Subgroup A} where
+module _ {𝑗 : 𝔏 ^ 2} {A : Group 𝑗} {{_ : isCommutative ′ ⟨ A ⟩ ′}} {B : Subgroup A} where
 
   instance
     isCommutative:AbelianQuot : isCommutative (′ ⟨ ′ ⟨ A ⟩ ′ /-Group ′ ⟨ B ⟩ ′ ⟩ ′)
@@ -77,7 +77,7 @@ module _ {A : Group 𝑗} {{_ : isCommutative ′ ⟨ A ⟩ ′}} {B : Subgroup 
 
 -- RelSubabelian : {G : Abelian 𝑗} (H : Subabelian G) (a : ⟨ G ⟩) (b : ⟨ G ⟩) : 𝒰 (𝑗 ⌄ 0) where
 
-_/-Abelian_ : (A : Abelian 𝑗) -> (B : Subabelian A) -> Abelian _
+_/-Abelian_ : {𝑗 : 𝔏 ^ 2} (A : Abelian 𝑗) -> (B : Subabelian A) -> Abelian _
 -- _/-Abelian_ A B = ′ ⟨ ′ ⟨ A ⟩ ′ /-Group ′ ⟨ B ⟩ ′ ⟩ ′
 _/-Abelian_ A B = ′ ⟨ A ⟩ /-𝒰 RelSubgroup ′ ⟨ B ⟩ ′ ′
 

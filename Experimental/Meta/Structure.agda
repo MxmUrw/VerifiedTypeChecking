@@ -80,6 +80,7 @@ record _:,_ {UU : 𝒰 𝑖} {{U : hasU UU 𝑘 𝑙}} (P : UU -> 𝒰 𝑗) (Q 
   instance constructor make,
   field overlap {{Proof1}} : P a
   field overlap {{Proof2}} : Q a
+open _:,_ {{...}} public
 
 infixr 80 _:,_
 
@@ -116,7 +117,7 @@ instance
   getP (hasU:& {UU = A} {{U}} {P = P}) a = ∑i λ (p1 : getP U a) -> P (reconstruct U (a , p1))
   reconstruct (hasU:& {UU = A} {{U}} {P = P}) (a , pa) = ′_′ a {pa .ifst} {{pa .isnd}}
   destructEl (hasU:& {UU = A} ⦃ U ⦄ {P = P}) (′_′ a) = a
-  destructP (hasU:& {UU = A} {{U}} {P = P}) (′_′ a {pold}) = make∑i {ifst = pold}
+  destructP (hasU:& {UU = A} {{U}} {P = P}) (′_′ a ) = make∑i -- {ifst = pold}
 
 _on_ : (UU : 𝒰 𝑖) {{U : hasU UU 𝑘 𝑙}} -> (a : getU U) -> 𝒰 _
 _on_ UU {{U}} a = getP U a

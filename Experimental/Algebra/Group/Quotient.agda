@@ -7,7 +7,7 @@ open import Verification.Experimental.Algebra.Setoid.Definition
 open import Verification.Experimental.Algebra.Monoid.Definition
 open import Verification.Experimental.Algebra.Group.Definition
 
-module _ {G : Group 𝑗} where
+module _ {𝑗 : 𝔏 ^ 2} {G : Group 𝑗} where
   record isNormal (H : Subgroup G) : 𝒰 𝑗 where
     field normal : ∀ a -> ∀{b : ⟨ G ⟩} -> ⟨ H ⟩ b -> ⟨ H ⟩ (a ⋆ b ⋆ ◡ a)
 
@@ -15,7 +15,7 @@ module _ {G : Group 𝑗} where
 
 module _ where
 -- private
-  module _ {G : Group 𝑗} {H : Subgroup G} {{_ : isNormal H}} where
+  module _ {𝑗 : 𝔏 ^ 2} {G : Group 𝑗} {H : Subgroup G} {{_ : isNormal H}} where
 
     private
       lem-10 : ∀{a : ⟨ G ⟩} -> RelSubgroup H a a
@@ -107,6 +107,6 @@ module _ where
             P₄ = transp-Subsetoid P₃ P₂
         in incl (incl P₄)
 
-_/-Group_ : (G : Group 𝑗) -> (H : Subgroup G) {{_ : isNormal H}} -> Group _
+_/-Group_ : {𝑗 : 𝔏 ^ 2} (G : Group 𝑗) -> (H : Subgroup G) {{_ : isNormal H}} -> Group _
 _/-Group_ G H = ′ ⟨ G ⟩ /-𝒰 RelSubgroup H ′
 
