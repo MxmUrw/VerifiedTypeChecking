@@ -66,7 +66,18 @@ module _ {𝑖 : 𝔏 ^ 2} {𝑗 : 𝔏} where
 
     cancel-⋅-<-r : ∀{a b c : ⟨ R ⟩} -> a ⋅ c < b ⋅ c -> isPositive c -> a < b
     cancel-⋅-<-r = {!!}
-      -- let P₀ : 
+
+    -- module _ {R : Ring 𝑖}
+    --         -- {{_ : isDomain R}}
+    --         {{_ : isOrderedRing 𝑗 R}} where
+    --   instance
+
+
+    -- NOTE: We do not make this an instance, since not every domain structures comes from an ordered ring structure.
+    isDomain:OrderedRing : isDomain R
+    isDomain.domain isDomain:OrderedRing = {!!}
+
+
 
 {-
 

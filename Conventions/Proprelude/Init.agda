@@ -158,4 +158,14 @@ open ⦋_⦌ public
 
 infix 60 _∈_
 
+case_of : ∀{A : 𝒰 𝑖} {B : 𝒰 𝑗} {C : 𝒰 𝑘} (a : A +-𝒰 B) -> (A -> C) -> (B -> C) -> C
+case left x of f g = f x
+case right x of f g = g x
 
+_⊆_ : ∀{A : 𝒰 𝑖} -> (P Q : A -> 𝒰 𝑗) -> 𝒰 _
+_⊆_ P Q = ∀ {a} -> P a -> Q a
+
+_⫗_ : ∀{A : 𝒰 𝑖} -> (P Q : A -> 𝒰 𝑗) -> 𝒰 _
+_⫗_ P Q = P ⊆ Q ×-𝒰 Q ⊆ P
+
+infix 40 _⊆_ _⫗_

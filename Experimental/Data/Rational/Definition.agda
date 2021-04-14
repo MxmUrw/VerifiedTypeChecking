@@ -11,19 +11,23 @@ open import Verification.Experimental.Algebra.Ring
 open import Verification.Experimental.Algebra.Ring.Localization
 
 private
-  NZ : 𝒫 ℤ
-  NZ a = ∑ λ b -> a ≡-Str (pos (suc b))
+  ℤ⁺ : 𝒫 ℤ
+  ℤ⁺ a = ∑ λ b -> a ≡-Str (pos (suc b))
 
-  instance
-    isSubsetoid:NZ : isSubsetoid NZ
-    isSubsetoid.transp-Subsetoid isSubsetoid:NZ (incl p) (b , refl-StrId) = {!!} , {!!}
+instance
+  isSubsetoid:ℤ⁺ : isSubsetoid ℤ⁺
+  isSubsetoid.transp-Subsetoid isSubsetoid:ℤ⁺ (incl p) (b , refl-StrId) = {!!} , {!!}
 
-  instance
-    isMCS:NZ : isMCS ′ ℤ ′ ′ NZ ′
-    isMCS.closed-⋅ isMCS:NZ = {!!}
-    isMCS.closed-⨡ isMCS:NZ = {!!}
+instance
+  isMCS:ℤ⁺ : isMCS ′ ℤ ′ ′ ℤ⁺ ′
+  isMCS.closed-⋅ isMCS:ℤ⁺ = {!!}
+  isMCS.closed-⨡ isMCS:ℤ⁺ = {!!}
 
-ℚ = Localize ′ ℤ ′ ′ NZ ′
+instance
+  hasNotZero-MCS:ℤ⁺ : hasNotZero-MCS ′ ℤ⁺ ′
+  hasNotZero-MCS:ℤ⁺ = {!!}
+
+ℚ = Localize ′ ℤ ′ ′ ℤ⁺ ′
 
 -- ta tb : ℚ
 -- ta = pos 1 / (pos 2 ∈ (1 , it))

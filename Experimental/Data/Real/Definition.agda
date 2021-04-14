@@ -10,19 +10,16 @@ open import Verification.Experimental.Algebra.Monoid
 open import Verification.Experimental.Algebra.Group
 open import Verification.Experimental.Algebra.Ring
 open import Verification.Experimental.Order.Linearorder
+open import Verification.Experimental.Order.DedekindCompletion.Definition3
+-- open import Verification.Experimental.Order.DedekindCompletion.Instance.Linearorder
 open import Verification.Experimental.Algebra.Ring.Localization.Instance.Linearorder
 
--- mostly from https://ncatlab.org/nlab/show/real+number
+FFF : Linearorder (ℓ₀ , ℓ₀ , ℓ₀)
+FFF = ′ ℚ ′
 
+ℝ = Cut ′ ℚ ′ ℓ₀
 
-
-record Cut (L U : 𝒫 ℚ) : 𝒰₀ where
-  field elA : ∑ λ a -> L a
-  field elB : ∑ λ b -> U b
-  field downclosed-L : ∀{a b : ℚ} -> a < b -> L b -> L a
-
-
--- ℝ : 𝒰₁
--- ℝ = ∑ λ A -> ∑ λ B -> Cut A B
+-- mytest2 : ℝ -> ℝ -> 𝒰₀
+-- mytest2 a b = a < b
 
 

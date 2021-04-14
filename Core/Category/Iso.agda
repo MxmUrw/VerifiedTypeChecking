@@ -8,7 +8,7 @@ open import Verification.Core.Category.Definition
 -- open import Verification.Core.Category.Instance.Cat
 open import Verification.Core.Category.Instance.Type.Definition
 
-module _ {X : 𝒰 𝑖} {{_ : ICategory X 𝑗}} where
+module _ {X : 𝒰 𝑖} {{_ : isCategory X 𝑗}} where
 
   record IIso (a b : X) (f : a ⟶ b) : 𝒰 (𝑗 ⌄ 0 ⊔ 𝑗 ⌄ 1) where
     field inverse : b ⟶ a
@@ -54,7 +54,7 @@ module _ {a : 𝒰 𝑖} {b : 𝒰 𝑗} where
 -- open Abstract {{...}} public
 
 
-record ILiftHom {X : 𝒰 𝑖} {{_ : ICategory X 𝑗}} (a b : X) (A : 𝒰 𝑘) : 𝒰 (𝑗 ､ 𝑖 ､ 𝑘) where
+record ILiftHom {X : 𝒰 𝑖} {{_ : isCategory X 𝑗}} (a b : X) (A : 𝒰 𝑘) : 𝒰 (𝑗 ､ 𝑖 ､ 𝑘) where
   field liftHom : A ≅-𝒰 (Hom a b)
 open ILiftHom {{...}} public
 

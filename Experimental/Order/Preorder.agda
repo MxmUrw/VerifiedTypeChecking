@@ -6,21 +6,24 @@ open import Verification.Core.Category.Definition
 open import Verification.Core.Category.Instance.Set.Definition
 -- open import Verification.Core.Type
 open import Verification.Experimental.Meta.Structure
-open import Verification.Experimental.Algebra.Setoid.Definition
+open import Verification.Experimental.Set.Setoid.Definition
+open import Verification.Experimental.Data.Universe.Definition
 
 --------------------------------------------------------------------
 -- == Preorder
 
-data LE {A : 𝒰 𝑖} (R : A -> A -> 𝒰 𝑗) (a b : A) : 𝒰 𝑗 where
-  incl : (R a b) -> LE R a b
+record ≤-Base {A : 𝒰 𝑖} (R : A -> A -> 𝒰 𝑗) (a b : A) : 𝒰 𝑗 where
+  constructor incl
+  field ⟨_⟩ : (R a b)
+open ≤-Base public
 
 record isPreorder 𝑘 (A : 𝒰 𝑖 :& isSetoid 𝑗) : 𝒰 (𝑘 ⁺ ､ 𝑗 ､ 𝑖) where
-  field myLE : ⟨ A ⟩ -> ⟨ A ⟩ -> 𝒰 𝑘
+  field _≤'_ : ⟨ A ⟩ -> ⟨ A ⟩ -> 𝒰 𝑘
   _≤_ : ⟨ A ⟩ -> ⟨ A ⟩ -> 𝒰 𝑘
-  _≤_ = LE myLE
+  _≤_ = ≤-Base _≤'_
 
-  field refl-≤ : {a : ⟨ A ⟩} -> a ≤ a
-        _∙-≤_ : {a b c : ⟨ A ⟩} -> a ≤ b -> b ≤ c -> a ≤ c
+  field reflexive : {a : ⟨ A ⟩} -> a ≤ a
+        _⟡_ : {a b c : ⟨ A ⟩} -> a ≤ b -> b ≤ c -> a ≤ c
         transp-≤ : ∀{a₀ a₁ b₀ b₁ : ⟨ A ⟩} -> a₀ ∼ a₁ -> b₀ ∼ b₁ -> a₀ ≤ b₀ -> a₁ ≤ b₁
   infixl 40 _≤_
 
@@ -30,13 +33,30 @@ Preorder : ∀ (𝑖 : 𝔏 ^ 3) -> 𝒰 (𝑖 ⁺)
 Preorder 𝑖 = 𝒰 (𝑖 ⌄ 0) :& isSetoid (𝑖 ⌄ 1) :& isPreorder (𝑖 ⌄ 2)
 
 
-module _ {𝑖 : 𝔏 ^ 3} {A : 𝒰 _} {{_ : Preorder 𝑖 on A}} where
 
-  -- _<_ : A -> A -> 𝒰 _
-  -- a < b = a ≤ b ×-𝒰 (a ∼ b -> 𝟘-𝒰)
+
+
+module _ {𝑖 : 𝔏 ^ 3} {A : 𝒰 _} {{_ : Preorder 𝑖 on A}} where
 
   _≰_ : A -> A -> 𝒰 _
   a ≰ b = ¬ a ≤ b
+
+----------------------------------------------------------
+-- Derived instances
+
+module _ {A : 𝒰 𝑖} {{_ : isSetoid 𝑗 A}} {{_ : isPreorder 𝑘 ′ A ′}} where
+  instance
+    isPreorder:Family : ∀{I : 𝒰 𝑙} -> isPreorder _ (′ (I -> A) ′)
+    isPreorder._≤'_      isPreorder:Family f g = ∀{a} -> f a ≤ g a
+    isPreorder.reflexive isPreorder:Family = incl reflexive
+    isPreorder._⟡_       isPreorder:Family (incl f) (incl g) = incl (f ⟡ g)
+    isPreorder.transp-≤  isPreorder:Family (incl p) (incl q) f = incl (transp-≤ p q ⟨ f ⟩)
+
+
+
+
+
+
 
 {-
   record _<_ (a b : A) : 𝒰 𝑖 where
@@ -49,15 +69,16 @@ module _ {𝑖 : 𝔏 ^ 3} {A : 𝒰 _} {{_ : Preorder 𝑖 on A}} where
   -- a < b = a ≤ b ×-𝒰 (a ∼ b -> 𝟘-𝒰)
 
 
+{-
 
 module _ {𝑗 : 𝔏 ^ 3} {A : 𝒰 _} {{_ : Preorder 𝑗 on A}} where
   by-∼-≤_ : {a b : A} -> (a ∼ b) -> a ≤ b
-  by-∼-≤_ p = transp-≤ refl p refl-≤
+  by-∼-≤_ p = transp-≤ refl p reflexive
 
   infixl 10 by-∼-≤_
 
   _⟨_⟩-≤_ : (x : A) {y : A} {z : A} → x ≤ y → y ≤ z → x ≤ z
-  _ ⟨ x≤y ⟩-≤ y≤z = x≤y ∙-≤ y≤z
+  _ ⟨ x≤y ⟩-≤ y≤z = x≤y ⟡ y≤z
 
   ⟨⟩-≤-syntax : (x : A) {y z : A} → x ≤ y → y ≤ z → x ≤ z
   ⟨⟩-≤-syntax = _⟨_⟩-≤_
@@ -66,10 +87,10 @@ module _ {𝑗 : 𝔏 ^ 3} {A : 𝒰 _} {{_ : Preorder 𝑗 on A}} where
   infixr 2 _⟨_⟩-≤_
 
   _∎-≤ : (x : A) → x ≤ x
-  _ ∎-≤ = refl-≤
+  _ ∎-≤ = reflexive
 
   _⟨_⟩-∼-≤_ : (x : A) {y : A} {z : A} → x ∼ y → y ≤ z → x ≤ z
-  _ ⟨ x≤y ⟩-∼-≤ y≤z = {!!} -- x≤y ∙-≤ y≤z
+  _ ⟨ x≤y ⟩-∼-≤ y≤z = {!!} -- x≤y ⟡ y≤z
 
   ⟨⟩-∼-≤-syntax : (x : A) {y z : A} → x ∼ y → y ≤ z → x ≤ z
   ⟨⟩-∼-≤-syntax = _⟨_⟩-∼-≤_
@@ -77,7 +98,7 @@ module _ {𝑗 : 𝔏 ^ 3} {A : 𝒰 _} {{_ : Preorder 𝑗 on A}} where
   infixr 2 _⟨_⟩-∼-≤_
 
   _⟨_⟩-≤-∼_ : (x : A) {y : A} {z : A} → x ≤ y → y ∼ z → x ≤ z
-  _ ⟨ x≤y ⟩-≤-∼ y≤z = {!!} -- x≤y ∙-≤ y≤z
+  _ ⟨ x≤y ⟩-≤-∼ y≤z = {!!} -- x≤y ⟡ y≤z
 
   ⟨⟩-≤-∼-syntax : (x : A) {y z : A} → x ≤ y → y ∼ z → x ≤ z
   ⟨⟩-≤-∼-syntax = _⟨_⟩-≤-∼_
@@ -85,6 +106,7 @@ module _ {𝑗 : 𝔏 ^ 3} {A : 𝒰 _} {{_ : Preorder 𝑗 on A}} where
   infixr 2 _⟨_⟩-≤-∼_
 
 
+-}
 
 
 
@@ -95,7 +117,7 @@ module _ {𝑗 : 𝔏 ^ 3} {A : 𝒰 _} {{_ : Preorder 𝑗 on A}} where
 
 {-
   _⟨_⟩-≤_ : (x : A) {y : A} {z : A} → x ≤ y → y ≤ z → x ≤ z
-  _ ≤⟨ x≤y ⟩ y≤z = x≤y ∙-≤ y≤z
+  _ ≤⟨ x≤y ⟩ y≤z = x≤y ⟡ y≤z
 
   ≤⟨⟩-syntax : (x : A) {y z : A} → x ≤ y → y ≤ z → x ≤ z
   ≤⟨⟩-syntax = _⟨_⟩-≤_
@@ -104,10 +126,10 @@ module _ {𝑗 : 𝔏 ^ 3} {A : 𝒰 _} {{_ : Preorder 𝑗 on A}} where
   infixr 2 _⟨_⟩-≤_
 
   _∎-≤ : (x : A) → x ≤ x
-  _ ∎-≤ = refl-≤
+  _ ∎-≤ = reflexive
 
   _⟨_⟩-∼-≤_ : (x : A) {y : A} {z : A} → x ∼ y → y ≤ z → x ≤ z
-  _ ∼⟨ x≤y ⟩≤ y≤z = {!!} -- x≤y ∙-≤ y≤z
+  _ ∼⟨ x≤y ⟩≤ y≤z = {!!} -- x≤y ⟡ y≤z
 
   ⟨⟩-∼-≤-syntax : (x : A) {y z : A} → x ∼ y → y ≤ z → x ≤ z
   ⟨⟩-∼-≤-syntax = _⟨_⟩-∼-≤_
@@ -115,7 +137,7 @@ module _ {𝑗 : 𝔏 ^ 3} {A : 𝒰 _} {{_ : Preorder 𝑗 on A}} where
   infixr 2 _⟨_⟩-∼-≤_
 
   _⟨_⟩-≤-∼_ : (x : A) {y : A} {z : A} → x ≤ y → y ∼ z → x ≤ z
-  _ ≤⟨ x≤y ⟩∼ y≤z = {!!} -- x≤y ∙-≤ y≤z
+  _ ≤⟨ x≤y ⟩∼ y≤z = {!!} -- x≤y ⟡ y≤z
 
   ⟨⟩-≤-∼-syntax : (x : A) {y z : A} → x ≤ y → y ∼ z → x ≤ z
   ⟨⟩-≤-∼-syntax = _⟨_⟩-≤-∼_
@@ -127,7 +149,7 @@ module _ {𝑗 : 𝔏 ^ 3} {A : 𝒰 _} {{_ : Preorder 𝑗 on A}} where
 
 
   -- _∼⟨_⟩-≤_ : (x : A) {y : A} {z : A} → x ∼ y → y ≤ z → x ≤ z
-  -- _ ∼≤⟨ x≤y ⟩ y≤z = {!!} -- x≤y ∙-≤ y≤z
+  -- _ ∼≤⟨ x≤y ⟩ y≤z = {!!} -- x≤y ⟡ y≤z
 
   -- ∼≤⟨⟩-syntax : (x : A) {y z : A} → x ∼ y → y ≤ z → x ≤ z
   -- ∼≤⟨⟩-syntax = _∼⟨_⟩-≤_
@@ -183,7 +205,7 @@ module _ {A : 𝒰 𝑖} {{_ : isPreorder A}} where
 
   instance
     Cast:≡→≤ : ∀{a b : A} -> Cast (a ≡ b) IAnything (a ≤ b)
-    Cast.cast (Cast:≡→≤ {a = a} {b}) e = transport (λ i -> e (~ i) ≤ b) refl-≤
+    Cast.cast (Cast:≡→≤ {a = a} {b}) e = transport (λ i -> e (~ i) ≤ b) reflexive
 
 
 -- record isPreorderHom {A B : Preorder} (f : ⟨ A ⟩ -> ⟨ B ⟩) : 𝒰₀ where
@@ -201,7 +223,7 @@ instance
 
   isPreorder:ℕ : isPreorder ℕ
   isPreorder._≤_ isPreorder:ℕ = _≤-ℕ_
-  isPreorder.refl-≤ isPreorder:ℕ = refl-≤-ℕ
+  isPreorder.reflexive isPreorder:ℕ = reflexive-ℕ
   isPreorder.trans-≤ isPreorder:ℕ = trans-≤-ℕ
 
 
@@ -224,15 +246,15 @@ module _ {A : 𝒰 𝑖} {B : 𝒰 𝑖} {{_ : isPreorder A}} {{_ : isPreorder B
   trans-≤-⊕ (right-≤ p) (right-≤ q) = right-≤ (trans-≤ p q)
   trans-≤-⊕ left-right-≤ (right-≤ x) = left-right-≤
 
-  refl-≤-⊕ : ∀{a} -> (a ≤-⊕ a)
-  refl-≤-⊕ {left x} = left-≤ refl-≤
-  refl-≤-⊕ {just x} = right-≤ refl-≤
+  reflexive-⊕ : ∀{a} -> (a ≤-⊕ a)
+  reflexive-⊕ {left x} = left-≤ reflexive
+  reflexive-⊕ {just x} = right-≤ reflexive
 
 
   instance
     isPreorder:+ : isPreorder (A +-𝒰 B)
     isPreorder._≤_ isPreorder:+ = _≤-⊕_
-    isPreorder.refl-≤ isPreorder:+ {a = a} = refl-≤-⊕ {a}
+    isPreorder.reflexive isPreorder:+ {a = a} = reflexive-⊕ {a}
     isPreorder.trans-≤ isPreorder:+ {a = a} = trans-≤-⊕ {a = a}
 
 
@@ -250,7 +272,7 @@ instance
 instance
   isPreorder:⊤ : ∀{𝑖} -> isPreorder (Lift {j = 𝑖} 𝟙-𝒰)
   isPreorder._≤_ isPreorder:⊤ a b = `𝟙`
-  isPreorder.refl-≤ isPreorder:⊤ = lift tt
+  isPreorder.reflexive isPreorder:⊤ = lift tt
   isPreorder.trans-≤ isPreorder:⊤ a b = lift tt
 
 -}

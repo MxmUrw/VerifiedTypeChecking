@@ -18,8 +18,9 @@ open import Verification.Experimental.Order.Totalorder
 private
   ⊥ = 𝟘-𝒰
 
-data Base< {A : 𝒰 𝑖} (R : A -> A -> 𝒰 𝑗) (a b : A) : 𝒰 𝑗 where
-  incl : (R a b) -> Base< R a b
+record Base< {A : 𝒰 𝑖} (R : A -> A -> 𝒰 𝑗) (a b : A) : 𝒰 𝑗 where
+  constructor incl
+  field Proof : (R a b)
 
 record isLinearorder 𝑘 (A : 𝒰 𝑖 :& isSetoid 𝑗) : 𝒰 (𝑘 ⁺ ､ 𝑗 ､ 𝑖) where
   field my< : ⟨ A ⟩ -> ⟨ A ⟩ -> 𝒰 𝑘
@@ -42,6 +43,14 @@ open isLinearorder {{...}} public
 Linearorder : ∀ (𝑖 : 𝔏 ^ 3) -> 𝒰 (𝑖 ⁺)
 Linearorder 𝑖 = 𝒰 (𝑖 ⌄ 0) :& isSetoid (𝑖 ⌄ 1) :& isLinearorder (𝑖 ⌄ 2)
 
+record isUnbound {𝑖 : 𝔏 ^ 3} (L : Linearorder 𝑖) : 𝒰 𝑖 where
+  field getLess     : (a : ⟨ L ⟩) -> ⦋ _< a ⦌
+  field getGreater  : (a : ⟨ L ⟩) -> ⦋ a <_ ⦌
+open isUnbound {{...}} public
+
+record isDense {𝑖 : 𝔏 ^ 3} (L : Linearorder 𝑖) : 𝒰 𝑖 where
+  field between : {a b : ⟨ L ⟩} -> a < b -> ⦋ (λ x -> a < x ×-𝒰 x < b) ⦌
+open isDense {{...}} public
 
 --------------------------------------------------------------------
 -- as Totalorder⁻
