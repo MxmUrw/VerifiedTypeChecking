@@ -18,6 +18,15 @@ record INotation:Union (A : 𝒰 𝑖) : 𝒰 𝑖 where
         ∅ : A
 open INotation:Union {{...}} public
 
+--------------------------------------------------------------------
+-- Restriction
+
+record Notation-Restriction (A : 𝒰 𝑖) (B : 𝒰 𝑗) (C : 𝒰 𝑘) : (𝒰 (𝑖 ⊔ 𝑗 ⊔ 𝑘)) where
+  field _∣_ : A -> B -> C
+  infix 90 _∣_
+
+open Notation-Restriction {{...}} public
+
 
 --------------------------------------------------------------------
 -- ====* Accessing tuples

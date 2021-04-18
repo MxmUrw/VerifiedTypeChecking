@@ -27,7 +27,6 @@ module _ {A : 𝒰 ℓ} {B : 𝒰 ℓ'} where
   either f g (left x) = f x
   either f g (just x) = g x
 
-{-
 _≢_ : ∀{A : 𝒰 ℓ} (a b : A) -> 𝒰 ℓ
 a ≢ b = (a ≡ b) -> 𝟘-𝒰
 
@@ -41,6 +40,7 @@ module _ {A : 𝒰 ℓ} {B : 𝒰 ℓ'} where
   right≢left : ∀{a : A}{b : B} -> right b ≢ left a
   right≢left = λ p -> left≢right (sym p)
 
+{-
   isInjective:left : ∀{a b : A} -> left {B = B} a ≡ left b -> a ≡ b
   isInjective:left {a = a} p = cong (cancel-left a) p
 

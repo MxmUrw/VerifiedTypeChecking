@@ -57,33 +57,33 @@ module _ {𝒞 : Category 𝑖} {𝒟 : Category 𝑗} where
 
 Category:Category : (𝑖 : 𝔏 ^ 3) -> Category _
 ⟨ Category:Category 𝑖 ⟩ = Category 𝑖
-ICategory.Hom (of Category:Category 𝑖) = Functor
-ICategory._≣_ (of Category:Category 𝑖) = ≣-Functor
-ICategory.IEquiv:≣ (of Category:Category 𝑖) = {!!}
-ICategory.id (of Category:Category 𝑖) = id-Cat
-ICategory._◆_ (of Category:Category 𝑖) = comp-Cat
-ICategory.unit-l-◆ (of Category:Category 𝑖) = {!!}
-ICategory.unit-r-◆ (of Category:Category 𝑖) = {!!}
-ICategory.unit-2-◆ (of Category:Category 𝑖) = {!!}
-ICategory.assoc-l-◆ (of Category:Category 𝑖) = {!!}
-ICategory.assoc-r-◆ (of Category:Category 𝑖) = {!!}
-ICategory._◈_ (of Category:Category 𝑖) = {!!}
+isCategory.Hom (of Category:Category 𝑖) = Functor
+isCategory._≣_ (of Category:Category 𝑖) = ≣-Functor
+isCategory.isEquivRel:≣ (of Category:Category 𝑖) = {!!}
+isCategory.id (of Category:Category 𝑖) = id-Cat
+isCategory._◆_ (of Category:Category 𝑖) = comp-Cat
+isCategory.unit-l-◆ (of Category:Category 𝑖) = {!!}
+isCategory.unit-r-◆ (of Category:Category 𝑖) = {!!}
+isCategory.unit-2-◆ (of Category:Category 𝑖) = {!!}
+isCategory.assoc-l-◆ (of Category:Category 𝑖) = {!!}
+isCategory.assoc-r-◆ (of Category:Category 𝑖) = {!!}
+isCategory._◈_ (of Category:Category 𝑖) = {!!}
 
-instance ICategory:Category = #openstruct Category:Category
+instance isCategory:Category = #openstruct Category:Category
 
 -- instance
---   ICategory:Category : ICategory (Category 𝑖) _
---   ICategory.Hom ICategory:Category = Functor
---   ICategory._≣_ ICategory:Category F G = ∑ λ (p : ⟨ F ⟩ ≡ ⟨ G ⟩) -> ∀{a b} -> ∀(f : Hom a b) -> PathP (λ i -> Hom (p i a) (p i b)) (map f) (map f)
---   ICategory.IEquiv:≣ ICategory:Category = {!!}
---   ICategory.id ICategory:Category = Functor:id-Cat
---   ICategory._◆_ ICategory:Category = Functor:comp-Cat
---   ICategory._◈_ ICategory:Category = {!!}
---   ICategory.unit-l-◆ ICategory:Category = {!!}
---   ICategory.unit-r-◆ ICategory:Category = {!!}
---   ICategory.unit-2-◆ ICategory:Category = {!!}
---   ICategory.assoc-l-◆ ICategory:Category = {!!}
---   ICategory.assoc-r-◆ ICategory:Category = {!!}
+--   isCategory:Category : isCategory (Category 𝑖) _
+--   isCategory.Hom isCategory:Category = Functor
+--   isCategory._≣_ isCategory:Category F G = ∑ λ (p : ⟨ F ⟩ ≡ ⟨ G ⟩) -> ∀{a b} -> ∀(f : Hom a b) -> PathP (λ i -> Hom (p i a) (p i b)) (map f) (map f)
+--   isCategory.isEquivRel:≣ isCategory:Category = {!!}
+--   isCategory.id isCategory:Category = Functor:id-Cat
+--   isCategory._◆_ isCategory:Category = Functor:comp-Cat
+--   isCategory._◈_ isCategory:Category = {!!}
+--   isCategory.unit-l-◆ isCategory:Category = {!!}
+--   isCategory.unit-r-◆ isCategory:Category = {!!}
+--   isCategory.unit-2-◆ isCategory:Category = {!!}
+--   isCategory.assoc-l-◆ isCategory:Category = {!!}
+--   isCategory.assoc-r-◆ isCategory:Category = {!!}
 
 
 {-
@@ -92,22 +92,22 @@ LiftCategory : Category 𝑖 -> (J : ULevel ^ 3) -> 𝒰 (J ⌄ ₀ ⊔ 𝑖 ⌄
 LiftCategory X J = Lift {j = J ⌄ ₀} ⟨ X ⟩
 
 instance
-  ICategory:LiftCategory : ∀{C : Category 𝑖} -> ICategory (LiftCategory C 𝑗) _
-  ICategory.Hom (ICategory:LiftCategory {𝑗 = J} {C = C}) (lift a) (lift b) = Lift {j = J ⌄ ₁} (Hom a b)
-  ICategory._≣_ (ICategory:LiftCategory {𝑗 = J} {C = C}) (lift f) (lift g) = Lift {j = J ⌄ ₂} (f ≣ g)
-  ICategory.IEquiv:≣ (ICategory:LiftCategory {𝑗 = J} {C = C}) = {!!}
-  ICategory.id (ICategory:LiftCategory {𝑗 = J} {C = C}) = {!!}
-  ICategory._◆_ (ICategory:LiftCategory {𝑗 = J} {C = C}) = {!!}
-  ICategory._◈_ (ICategory:LiftCategory {𝑗 = J} {C = C}) = {!!}
-  ICategory.unit-l-◆ (ICategory:LiftCategory {C}) = {!!}
-  ICategory.unit-r-◆ (ICategory:LiftCategory {C}) = {!!}
-  ICategory.unit-2-◆ (ICategory:LiftCategory {C}) = {!!}
-  ICategory.assoc-l-◆ (ICategory:LiftCategory {C}) = {!!}
-  ICategory.assoc-r-◆ (ICategory:LiftCategory {C}) = {!!}
+  isCategory:LiftCategory : ∀{C : Category 𝑖} -> isCategory (LiftCategory C 𝑗) _
+  isCategory.Hom (isCategory:LiftCategory {𝑗 = J} {C = C}) (lift a) (lift b) = Lift {j = J ⌄ ₁} (Hom a b)
+  isCategory._≣_ (isCategory:LiftCategory {𝑗 = J} {C = C}) (lift f) (lift g) = Lift {j = J ⌄ ₂} (f ≣ g)
+  isCategory.isEquivRel:≣ (isCategory:LiftCategory {𝑗 = J} {C = C}) = {!!}
+  isCategory.id (isCategory:LiftCategory {𝑗 = J} {C = C}) = {!!}
+  isCategory._◆_ (isCategory:LiftCategory {𝑗 = J} {C = C}) = {!!}
+  isCategory._◈_ (isCategory:LiftCategory {𝑗 = J} {C = C}) = {!!}
+  isCategory.unit-l-◆ (isCategory:LiftCategory {C}) = {!!}
+  isCategory.unit-r-◆ (isCategory:LiftCategory {C}) = {!!}
+  isCategory.unit-2-◆ (isCategory:LiftCategory {C}) = {!!}
+  isCategory.assoc-l-◆ (isCategory:LiftCategory {C}) = {!!}
+  isCategory.assoc-r-◆ (isCategory:LiftCategory {C}) = {!!}
 
 
 Category:LiftCategory : ∀(C : Category 𝑖) {𝑗 : ULevel ^ 3} -> Category (𝑖 ⌄ ₀ ⊔ 𝑗 ⌄ ₀ , 𝑖 ⌄ ₁ ⊔ 𝑗 ⌄ ₁ , 𝑖 ⌄ ₂ ⊔ 𝑗 ⌄ ₂)
-Category:LiftCategory C {j} = category (LiftCategory C j) {{ICategory:LiftCategory {𝑗 = j} {C = C}}}
+Category:LiftCategory C {j} = category (LiftCategory C j) {{isCategory:LiftCategory {𝑗 = j} {C = C}}}
 
 
 instance

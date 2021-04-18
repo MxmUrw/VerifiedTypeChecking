@@ -27,15 +27,15 @@ open import Verification.Core.Category.Instance.Cat.Definition
 
 _×-Cat_ : Category 𝑖 -> Category 𝑗 -> Category (𝑖 ∨ 𝑗)
 ⟨ 𝒞 ×-Cat 𝒟 ⟩ = ⟨ 𝒞 ⟩ ×-𝒰 ⟨ 𝒟 ⟩
-ICategory.Hom (of (𝒞 ×-Cat 𝒟)) (a₁ , a₂) (b₁ , b₂) = a₁ ⟶ b₁ ×-𝒰 a₂ ⟶ b₂
-ICategory._≣_ (of (𝒞 ×-Cat 𝒟)) (f₁ , f₂) (g₁ , g₂) = (f₁ ≣ g₁) ×-𝒰 (f₂ ≣ g₂)
-ICategory.IEquiv:≣ (of (𝒞 ×-Cat 𝒟)) = {!!}
-ICategory.id (of (𝒞 ×-Cat 𝒟)) = (id , id)
-ICategory._◆_ (of (𝒞 ×-Cat 𝒟)) (f₁ , f₂) (g₁ , g₂) = (f₁ ◆ g₁ , f₂ ◆ g₂)
-ICategory.unit-l-◆ (of (𝒞 ×-Cat 𝒟)) = {!!}
-ICategory.unit-r-◆ (of (𝒞 ×-Cat 𝒟)) = {!!}
-ICategory.unit-2-◆ (of (𝒞 ×-Cat 𝒟)) = {!!}
-ICategory.assoc-l-◆ (of (𝒞 ×-Cat 𝒟)) = {!!}
-ICategory.assoc-r-◆ (of (𝒞 ×-Cat 𝒟)) = {!!}
-ICategory._◈_ (of (𝒞 ×-Cat 𝒟)) = {!!}
+isCategory.Hom (of (𝒞 ×-Cat 𝒟)) (a₁ , a₂) (b₁ , b₂) = a₁ ⟶ b₁ ×-𝒰 a₂ ⟶ b₂
+isCategory._≣_ (of (𝒞 ×-Cat 𝒟)) (f₁ , f₂) (g₁ , g₂) = (f₁ ≣ g₁) ×-𝒰 (f₂ ≣ g₂)
+isCategory.isEquivRel:≣ (of (𝒞 ×-Cat 𝒟)) = {!!}
+isCategory.id (of (𝒞 ×-Cat 𝒟)) = (id , id)
+isCategory._◆_ (of (𝒞 ×-Cat 𝒟)) (f₁ , f₂) (g₁ , g₂) = (f₁ ◆ g₁ , f₂ ◆ g₂)
+isCategory.unit-l-◆ (of (𝒞 ×-Cat 𝒟)) = {!!}
+isCategory.unit-r-◆ (of (𝒞 ×-Cat 𝒟)) = {!!}
+isCategory.unit-2-◆ (of (𝒞 ×-Cat 𝒟)) = {!!}
+isCategory.assoc-l-◆ (of (𝒞 ×-Cat 𝒟)) = {!!}
+isCategory.assoc-r-◆ (of (𝒞 ×-Cat 𝒟)) = {!!}
+isCategory._◈_ (of (𝒞 ×-Cat 𝒟)) = {!!}
 

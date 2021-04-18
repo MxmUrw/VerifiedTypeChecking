@@ -6,7 +6,7 @@ open import Verification.Core.Category.Definition
 open import Verification.Core.Category.Instance.Cat
 
 
-module _ {X : 𝒰 𝑖} {{_ : ICategory X 𝑗}} where
+module _ {X : 𝒰 𝑖} {{_ : isCategory X 𝑗}} where
   record isCoequalizer {a b : X} (f g : a ⟶ b) (x : X) : 𝒰 (𝑖 ､ 𝑗) where
     field π-Coeq : b ⟶ x
           ≣-Coeq : f ◆ π-Coeq ≣ g ◆ π-Coeq

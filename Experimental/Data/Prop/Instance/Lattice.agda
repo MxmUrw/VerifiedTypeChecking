@@ -25,3 +25,12 @@ instance
   hasFiniteJoins.ι₁-∨      hasFiniteJoins:Prop = incl right
   hasFiniteJoins.[_,_]-∨   hasFiniteJoins:Prop f g = incl $ either ⟨ f ⟩ ⟨ g ⟩
 
+
+instance
+  hasFiniteMeets:Prop : hasFiniteMeets ′ Prop 𝑖 ′
+  hasFiniteMeets.⊤          hasFiniteMeets:Prop = ∣ ⊤-𝒰 ∣
+  hasFiniteMeets.terminal-⊤ hasFiniteMeets:Prop = incl (λ _ -> tt)
+  hasFiniteMeets._∧_        hasFiniteMeets:Prop = λ a b -> ∣ ⟨ a ⟩ ×-𝒰 ⟨ b ⟩ ∣
+  hasFiniteMeets.π₀-∧       hasFiniteMeets:Prop = incl fst
+  hasFiniteMeets.π₁-∧       hasFiniteMeets:Prop = incl snd
+  hasFiniteMeets.⟨_,_⟩-∧    hasFiniteMeets:Prop f g = incl (λ a -> ⟨ f ⟩ a , ⟨ g ⟩ a)

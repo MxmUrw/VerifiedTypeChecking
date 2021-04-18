@@ -37,7 +37,12 @@ open isSetoid {{...}} public
 Setoid : (𝑗 : 𝔏 ^ 2) -> 𝒰 _
 Setoid 𝑗 = 𝒰 (𝑗 ⌄ 0) :& isSetoid (𝑗 ⌄ 1)
 
-record isSetoidHom {𝑖 𝑗 : 𝔏 ^ 2} (A : Setoid 𝑖) (B : Setoid 𝑗) (f : ⟨ A ⟩ -> ⟨ B ⟩) : 𝒰 (𝑖 ､ 𝑗) where
+-- record isSetoidHom {𝑖 𝑗 : 𝔏 ^ 2} (A : Setoid 𝑖) (B : Setoid 𝑗) (f : ⟨ A ⟩ -> ⟨ B ⟩) : 𝒰 (𝑖 ､ 𝑗) where
+--   field preserves-∼ : ∀{a b} -> a ∼ b -> f a ∼ f b
+-- open isSetoidHom {{...}} public
+
+-- {𝑖 𝑗 : 𝔏 ^ 2} {A : Setoid 𝑖} {B : Setoid 𝑗} (f : ⟨ A ⟩ -> ⟨ B ⟩) : 𝒰 (𝑖 ､ 𝑗) where
+record isSetoidHom {𝑖 𝑗 : 𝔏 ^ 2} {A : 𝒰 _} {B : 𝒰 _} {{_ : Setoid 𝑖 on A}} {{_ : Setoid 𝑗 on B}} (f : A -> B) : 𝒰 (𝑖 ､ 𝑗)where
   field preserves-∼ : ∀{a b} -> a ∼ b -> f a ∼ f b
 open isSetoidHom {{...}} public
 
@@ -94,12 +99,22 @@ instance
 --------------------------------------------------------------------------------
 -- Induced setoid
 
+module _ {A : 𝒰 𝑖} {{_ : isSetoid 𝑗 A}} {I : 𝒰 𝑘} where
+  _∼-Family_ : (f g : I -> A) -> 𝒰 _
+  _∼-Family_ f g = ∀{i} -> f i ∼' g i
 
-instance
-  isSetoid:Family : ∀{A : 𝒰 𝑖} -> {{_ : isSetoid 𝑗 A}} -> ∀{I : 𝒰 𝑘} -> isSetoid _ (I -> A)
-  isSetoid._∼'_ isSetoid:Family f g = ∀{a} -> f a ∼ g a
-  isEquivRel.refl (isSetoid.isEquivRel:∼ isSetoid:Family) = incl (refl)
-  isEquivRel.sym (isSetoid.isEquivRel:∼ isSetoid:Family) (incl p) = incl (p ⁻¹)
-  isEquivRel._∙_ (isSetoid.isEquivRel:∼ isSetoid:Family) (incl p) (incl q) = incl (p ∙ q)
+  instance
+    isEquivRel:∼-Family : isEquivRel (∼-Base _∼-Family_)
+    isEquivRel.refl isEquivRel:∼-Family {f} = incl (λ {a} -> ⟨ refl {x = f a} ⟩)
+    isEquivRel.sym isEquivRel:∼-Family (incl p) = incl (⟨ incl p ⁻¹ ⟩)
+    isEquivRel._∙_ isEquivRel:∼-Family (incl p) (incl q) = incl (⟨ incl p ∙ incl q ⟩)
+
+  instance
+    isSetoid:Family : isSetoid _ (I -> A)
+    isSetoid._∼'_ isSetoid:Family f g = f ∼-Family g
+
+    -- isEquivRel.refl (isSetoid.isEquivRel:∼ isSetoid:Family) = incl (⟨ refl ⟩)
+    -- isEquivRel.sym (isSetoid.isEquivRel:∼ isSetoid:Family) (incl p) = incl (⟨ incl p ⁻¹ ⟩)
+    -- isEquivRel._∙_ (isSetoid.isEquivRel:∼ isSetoid:Family) (incl p) (incl q) = incl (⟨ incl p ∙ incl q ⟩)
 
 

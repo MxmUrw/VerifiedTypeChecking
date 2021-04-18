@@ -7,7 +7,7 @@ open import Verification.Conventions
 open import Verification.Core.Category.Definition
 
 
-module _ {𝒞 : 𝒰 𝑖} {{_ : ICategory 𝒞 𝑗}} where
+module _ {𝒞 : 𝒰 𝑖} {{_ : isCategory 𝒞 𝑗}} where
   record IMono {X Y : 𝒞} (f : Hom X Y) : 𝒰 (𝑖 ､ 𝑗) where
     field isMono : ∀{W} -> (g h : Hom W X) -> (g ◆ f ≣ h ◆ f) -> g ≣ h
 

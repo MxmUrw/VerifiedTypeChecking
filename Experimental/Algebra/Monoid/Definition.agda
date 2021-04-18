@@ -3,7 +3,10 @@ module Verification.Experimental.Algebra.Monoid.Definition where
 
 open import Verification.Conventions
 open import Verification.Experimental.Meta.Structure
-open import Verification.Experimental.Algebra.Setoid.Definition
+open import Verification.Experimental.Set.Setoid.Definition
+
+
+
 
 record isMonoid {𝑗 : 𝔏 ^ 2} (A : Setoid 𝑗) : 𝒰 (𝑗) where
   field _⋆_ : ⟨ A ⟩ -> ⟨ A ⟩ -> ⟨ A ⟩
@@ -13,7 +16,17 @@ record isMonoid {𝑗 : 𝔏 ^ 2} (A : Setoid 𝑗) : 𝒰 (𝑗) where
         assoc-l-⋆ : ∀{a b c} -> (a ⋆ b) ⋆ c ∼ a ⋆ (b ⋆ c)
         assoc-r-⋆ : ∀{a b c} -> a ⋆ (b ⋆ c) ∼ (a ⋆ b) ⋆ c
         _`cong-⋆`_ : ∀{a₀ a₁ b₀ b₁} -> a₀ ∼ a₁ -> b₀ ∼ b₁ -> a₀ ⋆ b₀ ∼ a₁ ⋆ b₁
+
+
+
+
+
   _≀⋆≀_ = _`cong-⋆`_
+
+
+
+
+
   infixl 50 _⋆_ _`cong-⋆`_ _≀⋆≀_
 open isMonoid {{...}} public
 

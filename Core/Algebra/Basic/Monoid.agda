@@ -50,18 +50,18 @@ record IMonoidHom (M : Monoid 𝑖) (N : Monoid 𝑗) (f : ⟨ M ⟩ -> ⟨ N �
 unquoteDecl MonoidHom monoidHom = #struct "MonHom" (quote IMonoidHom) "f" MonoidHom monoidHom
 
 instance
-  ICategory:Monoid : ICategory (Monoid 𝑖) (𝑖 , 𝑖)
-  ICategory.Hom ICategory:Monoid = MonoidHom
-  ICategory._≣_ ICategory:Monoid = {!!}
-  ICategory.IEquiv:≣ ICategory:Monoid = {!!}
-  ICategory.id ICategory:Monoid = {!!}
-  ICategory._◆_ ICategory:Monoid = {!!}
-  ICategory._◈_ ICategory:Monoid = {!!}
-  ICategory.unit-l-◆ ICategory:Monoid = {!!}
-  ICategory.unit-r-◆ ICategory:Monoid = {!!}
-  ICategory.unit-2-◆ ICategory:Monoid = {!!}
-  ICategory.assoc-l-◆ ICategory:Monoid = {!!}
-  ICategory.assoc-r-◆ ICategory:Monoid = {!!}
+  isCategory:Monoid : isCategory (Monoid 𝑖) (𝑖 , 𝑖)
+  isCategory.Hom isCategory:Monoid = MonoidHom
+  isCategory._≣_ isCategory:Monoid = {!!}
+  isCategory.isEquivRel:≣ isCategory:Monoid = {!!}
+  isCategory.id isCategory:Monoid = {!!}
+  isCategory._◆_ isCategory:Monoid = {!!}
+  isCategory._◈_ isCategory:Monoid = {!!}
+  isCategory.unit-l-◆ isCategory:Monoid = {!!}
+  isCategory.unit-r-◆ isCategory:Monoid = {!!}
+  isCategory.unit-2-◆ isCategory:Monoid = {!!}
+  isCategory.assoc-l-◆ isCategory:Monoid = {!!}
+  isCategory.assoc-r-◆ isCategory:Monoid = {!!}
 
 
 instance

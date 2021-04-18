@@ -47,26 +47,26 @@ module _ (𝒞 : Category 𝑖) (𝒟 : Category 𝑗) where
   ⟨ Category:Functor ⟩ = Functor 𝒞 𝒟
 
   -- | - Natural transformations between them as morphisms.
-  ICategory.Hom (of Category:Functor) = Natural
+  isCategory.Hom (of Category:Functor) = Natural
 
   -- | - Identities and composition are given by the just defined |Natural:id| and |Natural:comp|.
-  ICategory.id (of Category:Functor) = Natural:id _
-  ICategory._◆_ (of Category:Functor) = Natural:comp
+  isCategory.id (of Category:Functor) = Natural:id _
+  isCategory._◆_ (of Category:Functor) = Natural:comp
 -- //
 -- [Hide]
-  ICategory._≣_ (of Category:Functor) = λ α β -> ∀ x -> ⟨ α ⟩ {x = x} ≣ ⟨ β ⟩
-  IEquiv.refl (ICategory.IEquiv:≣ (of Category:Functor)) x = refl
-  IEquiv.sym (ICategory.IEquiv:≣ (of Category:Functor)) p x = sym (p x)
-  IEquiv._∙_ (ICategory.IEquiv:≣ (of Category:Functor)) p q x = p x ∙ q x
-  ICategory.unit-l-◆ (of Category:Functor) x = unit-l-◆
-  ICategory.unit-r-◆ (of Category:Functor) x = unit-r-◆
-  ICategory.unit-2-◆ (of Category:Functor) x = unit-2-◆
-  ICategory.assoc-l-◆ (of Category:Functor) x = assoc-l-◆
-  ICategory.assoc-r-◆ (of Category:Functor) x = assoc-r-◆
-  ICategory._◈_ (of Category:Functor) p q x = p x ◈ q x
+  isCategory._≣_ (of Category:Functor) = λ α β -> ∀ x -> ⟨ α ⟩ {x = x} ≣ ⟨ β ⟩
+  isEquivRel.refl (isCategory.isEquivRel:≣ (of Category:Functor)) x = refl
+  isEquivRel.sym (isCategory.isEquivRel:≣ (of Category:Functor)) p x = sym (p x)
+  isEquivRel._∙_ (isCategory.isEquivRel:≣ (of Category:Functor)) p q x = p x ∙ q x
+  isCategory.unit-l-◆ (of Category:Functor) x = unit-l-◆
+  isCategory.unit-r-◆ (of Category:Functor) x = unit-r-◆
+  isCategory.unit-2-◆ (of Category:Functor) x = unit-2-◆
+  isCategory.assoc-l-◆ (of Category:Functor) x = assoc-l-◆
+  isCategory.assoc-r-◆ (of Category:Functor) x = assoc-r-◆
+  isCategory._◈_ (of Category:Functor) p q x = p x ◈ q x
 -- //
 
-instance ICategory:Functor = #openstruct Category:Functor
+instance isCategory:Functor = #openstruct Category:Functor
 
 -- [Hide]
 private
@@ -77,7 +77,7 @@ module _ {𝒞 : Category 𝑖} {𝒟 : Category 𝑗} {𝒢 : Category 𝑘} wh
     _◆-H_ : (α : Natural a b) -> (β : Natural c d) -> Natural (a ◇ c) (b ◇ d)
     ⟨ α ◆-H β ⟩ {x} = ⟨ β ⟩ {⟨ a ⟩ x} ◆ map ⟨ α ⟩
     INatural.naturality (of (α ◆-H β)) f =
-        let P : ⟨ β ⟩ ◆ map ⟨ α ⟩ ◆ map {{of b ◇ d}} f ≣ map {{of a ◇ c}} f ◆ (⟨ β ⟩ ◆ map ⟨ α ⟩)
+        let P : ⟨ β ⟩ ◆ map ⟨ α ⟩ ◆ map {{of (b ◇ d)}} f ≣ map {{of (a ◇ c)}} f ◆ (⟨ β ⟩ ◆ map ⟨ α ⟩)
             P = assoc-l-◆ ∙ (refl ◈ sym functoriality-◆)
                           ∙ (refl ◈ functoriality-≣ (naturality f))
                           ∙ (refl ◈ functoriality-◆)

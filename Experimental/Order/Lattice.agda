@@ -29,13 +29,13 @@ module _ {𝑖 : 𝔏 ^ 3} where
 
   record hasFiniteMeets (A : Preorder 𝑖) : 𝒰 𝑖 where
     field ⊤ : ⟨ A ⟩
-          initial-⊤ : ∀(a : ⟨ A ⟩) -> a ≤ ⊤
+          terminal-⊤ : ∀{a : ⟨ A ⟩} -> a ≤ ⊤
     field _∧_ : ⟨ A ⟩ -> ⟨ A ⟩ -> ⟨ A ⟩
           π₀-∧ : {a b : ⟨ A ⟩} -> a ∧ b ≤ a
           π₁-∧ : {a b : ⟨ A ⟩} -> a ∧ b ≤ b
           ⟨_,_⟩-∧ : {a b c : ⟨ A ⟩} -> c ≤ a -> c ≤ b -> c ≤ a ∧ b
 
-    infixl 60 _∧_
+    infixl 80 _∧_
   open hasFiniteMeets {{...}} public
 
   record hasAllJoins (A : Preorder 𝑖) : 𝒰 (𝑖 ⁺) where
@@ -50,7 +50,17 @@ CompleteJoinSemilattice 𝑖 = Preorder 𝑖 :& hasAllJoins
 MeetSemilattice : ∀ 𝑖 -> 𝒰 (𝑖 ⁺)
 MeetSemilattice 𝑖 = Preorder 𝑖 :& hasFiniteMeets
 
+record isLattice (A : Preorder 𝑖 :& (hasFiniteMeets :, hasFiniteJoins)) : 𝒰 𝑖 where
 
+instance
+  isLattice:Default : ∀{A : 𝒰 _} -> {{_ : Preorder 𝑖 on A}}
+                      {{_ : hasFiniteMeets ′ A ′}}
+                      {{_ : hasFiniteJoins ′ A ′}}
+                      -> isLattice ′ A ′
+  isLattice:Default = record {}
+
+Lattice : (𝑖 : 𝔏 ^ 3) -> 𝒰 _
+Lattice 𝑖 = Preorder 𝑖 :& (hasFiniteMeets :, hasFiniteJoins) :& isLattice
 ----------------------------------------------------------
 -- Derived instances
 
@@ -61,11 +71,28 @@ module _ {A : 𝒰 𝑖}
   instance
     hasFiniteJoins:Family : ∀{I : 𝒰 𝑗} -> hasFiniteJoins (′ (I -> A) ′)
     hasFiniteJoins.⊥         hasFiniteJoins:Family = λ _ -> ⊥
-    hasFiniteJoins.initial-⊥ hasFiniteJoins:Family = incl initial-⊥
+    hasFiniteJoins.initial-⊥ hasFiniteJoins:Family = incl ⟨ initial-⊥ ⟩
     hasFiniteJoins._∨_       hasFiniteJoins:Family = λ a b i -> a i ∨ b i
-    hasFiniteJoins.ι₀-∨      hasFiniteJoins:Family = incl ι₀-∨
-    hasFiniteJoins.ι₁-∨      hasFiniteJoins:Family = incl ι₁-∨
-    hasFiniteJoins.[_,_]-∨   hasFiniteJoins:Family = λ f g -> incl [ ⟨ f ⟩ , ⟨ g ⟩ ]-∨
+    hasFiniteJoins.ι₀-∨      hasFiniteJoins:Family = incl ⟨ ι₀-∨ ⟩
+    hasFiniteJoins.ι₁-∨      hasFiniteJoins:Family = incl ⟨ ι₁-∨ ⟩
+    hasFiniteJoins.[_,_]-∨   hasFiniteJoins:Family = λ f g -> incl ⟨ [ incl ⟨ f ⟩ , incl ⟨ g ⟩ ]-∨ ⟩
+
+
+module _ {A : 𝒰 𝑖}
+         {{_ : isSetoid 𝑗 A}}
+         {{_ : isPreorder 𝑘 ′ A ′}}
+         {{_ : hasFiniteMeets ′ A ′}} where
+  instance
+    hasFiniteMeets:Family : ∀{I : 𝒰 𝑗} -> hasFiniteMeets (′ (I -> A) ′)
+    hasFiniteMeets.⊤          hasFiniteMeets:Family = λ _ -> ⊤
+    hasFiniteMeets.terminal-⊤ hasFiniteMeets:Family = incl ⟨ terminal-⊤ ⟩
+    hasFiniteMeets._∧_        hasFiniteMeets:Family = λ a b i -> a i ∧ b i
+    hasFiniteMeets.π₀-∧       hasFiniteMeets:Family = incl ⟨ π₀-∧ ⟩
+    hasFiniteMeets.π₁-∧       hasFiniteMeets:Family = incl ⟨ π₁-∧ ⟩
+    hasFiniteMeets.⟨_,_⟩-∧    hasFiniteMeets:Family = λ f g -> incl ⟨ ⟨ incl ⟨ f ⟩ , incl ⟨ g ⟩ ⟩-∧ ⟩
+
+  map-∧ : ∀{a b c d : A} -> (a ≤ b) -> (c ≤ d) -> a ∧ c ≤ b ∧ d
+  map-∧ f g = ⟨ π₀-∧ ⟡ f , π₁-∧ ⟡ g ⟩-∧
 
 
 

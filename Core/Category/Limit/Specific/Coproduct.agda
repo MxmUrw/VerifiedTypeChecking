@@ -7,7 +7,7 @@ open import Verification.Core.Category.Instance.Cat.Products
 
 
 
-module _ {X : 𝒰 𝑖} {{_ : ICategory X 𝑗}} where
+module _ {X : 𝒰 𝑖} {{_ : isCategory X 𝑗}} where
   record isCoproduct (a b x : X) : 𝒰 (𝑖 ､ 𝑗) where
     field ι₀ : a ⟶ x
           ι₁ : b ⟶ x

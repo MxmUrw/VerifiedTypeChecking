@@ -26,20 +26,27 @@ record isPreorder 𝑘 (A : 𝒰 𝑖 :& isSetoid 𝑗) : 𝒰 (𝑘 ⁺ ､ �
         _⟡_ : {a b c : ⟨ A ⟩} -> a ≤ b -> b ≤ c -> a ≤ c
         transp-≤ : ∀{a₀ a₁ b₀ b₁ : ⟨ A ⟩} -> a₀ ∼ a₁ -> b₀ ∼ b₁ -> a₀ ≤ b₀ -> a₁ ≤ b₁
   infixl 40 _≤_
+  infixl 40 _⟡_
 
 open isPreorder {{...}} public
 
 Preorder : ∀ (𝑖 : 𝔏 ^ 3) -> 𝒰 (𝑖 ⁺)
 Preorder 𝑖 = 𝒰 (𝑖 ⌄ 0) :& isSetoid (𝑖 ⌄ 1) :& isPreorder (𝑖 ⌄ 2)
 
-
-
-
-
 module _ {𝑖 : 𝔏 ^ 3} {A : 𝒰 _} {{_ : Preorder 𝑖 on A}} where
-
   _≰_ : A -> A -> 𝒰 _
   a ≰ b = ¬ a ≤ b
+
+--------------------------------------------------------------------
+-- == Partial order
+
+module _ {𝑖 : 𝔏 ^ 3} where
+  record isPartialorder (A : Preorder 𝑖) : 𝒰 𝑖 where
+   field antisym : ∀{a b : ⟨ A ⟩} -> (a ≤ b) -> (b ≤ a) -> a ∼ b
+open isPartialorder {{...}} public
+
+Partialorder : (𝑖 : 𝔏 ^ 3) -> 𝒰 _
+Partialorder 𝑖 = Preorder 𝑖 :& isPartialorder
 
 ----------------------------------------------------------
 -- Derived instances
@@ -47,10 +54,51 @@ module _ {𝑖 : 𝔏 ^ 3} {A : 𝒰 _} {{_ : Preorder 𝑖 on A}} where
 module _ {A : 𝒰 𝑖} {{_ : isSetoid 𝑗 A}} {{_ : isPreorder 𝑘 ′ A ′}} where
   instance
     isPreorder:Family : ∀{I : 𝒰 𝑙} -> isPreorder _ (′ (I -> A) ′)
-    isPreorder._≤'_      isPreorder:Family f g = ∀{a} -> f a ≤ g a
-    isPreorder.reflexive isPreorder:Family = incl reflexive
-    isPreorder._⟡_       isPreorder:Family (incl f) (incl g) = incl (f ⟡ g)
-    isPreorder.transp-≤  isPreorder:Family (incl p) (incl q) f = incl (transp-≤ p q ⟨ f ⟩)
+    isPreorder._≤'_      isPreorder:Family f g = ∀{a} -> f a ≤' g a
+    isPreorder.reflexive isPreorder:Family = incl ⟨ reflexive ⟩
+    isPreorder._⟡_       isPreorder:Family (incl f) (incl g) = incl (⟨ incl f ⟡ incl g ⟩)
+    isPreorder.transp-≤  isPreorder:Family (incl p) (incl q) f = incl (⟨ transp-≤ (incl p) (incl q) (incl ⟨ f ⟩) ⟩)
+
+module _ {A : 𝒰 𝑖} {{_ : isSetoid 𝑗 A}} {{_ : isPreorder 𝑘 ′ A ′}} {{_ : isPartialorder ′ A ′}} where
+  instance
+    isPartialorder:Family : ∀{I : 𝒰 𝑙} -> isPartialorder (′ (I -> A) ′)
+    isPartialorder.antisym isPartialorder:Family (incl p) (incl q) = incl ⟨ antisym (incl p) (incl q) ⟩
+
+----------------------------------------------------------
+-- Category of preorders
+
+-- record isMonotone {A : Preorder 𝑖} {B : Preorder 𝑗} (f : El A -> El B) : 𝒰 (𝑖 ､ 𝑗) where
+--   field monotone : ∀{a b : El A} -> (a ≤ b) -> f a ≤ f b
+
+record isMonotone {A : 𝒰 _} {B : 𝒰 _} {{_ : Preorder 𝑖 on A}} {{_ : Preorder 𝑗 on B}} (f : (A -> B) :& isSetoidHom) : 𝒰 (𝑖 ､ 𝑗) where
+  field monotone : ∀{a b : A} -> (a ≤ b) -> ⟨ f ⟩ a ≤ ⟨ f ⟩ b
+open isMonotone {{...}} public
+
+-- record isMonotone {A : 𝒰 𝑖} {B : 𝒰 𝑗} {{_ : isPreorder A}} {{_ : isPreorder B}} (f : A -> B) : 𝒰 (𝑖 ､ 𝑗) where
+--   field monotone : ∀{a b : A} -> (a ≤ b) -> f a ≤ f b
+
+Monotone : (A : Preorder 𝑖) (B : Preorder 𝑗) -> 𝒰 (𝑖 ､ 𝑗)
+Monotone A B = (⟨ A ⟩ -> ⟨ B ⟩) :& isSetoidHom :& isMonotone
+
+
+
+-- unquoteDecl Monotone makeMonotone = #struct "Monotone" (quote isMonotone) "f" Monotone makeMonotone
+
+{-
+Category:Preorder : (𝑖 : 𝔏) -> Category _
+⟨ Category:Preorder 𝑖 ⟩ = Preorder 𝑖
+ICategory.Hom (of Category:Preorder 𝑖) = Monotone
+ICategory._≣_ (of Category:Preorder 𝑖) f g = El f ≡ El g
+ICategory.IEquiv:≣ (of Category:Preorder 𝑖) = {!!}
+ICategory.id (of Category:Preorder 𝑖) = {!!}
+ICategory._◆_ (of Category:Preorder 𝑖) = {!!}
+ICategory.unit-l-◆ (of Category:Preorder 𝑖) = {!!}
+ICategory.unit-r-◆ (of Category:Preorder 𝑖) = {!!}
+ICategory.unit-2-◆ (of Category:Preorder 𝑖) = {!!}
+ICategory.assoc-l-◆ (of Category:Preorder 𝑖) = {!!}
+ICategory.assoc-r-◆ (of Category:Preorder 𝑖) = {!!}
+ICategory._◈_ (of Category:Preorder 𝑖) = {!!}
+-}
 
 
 
@@ -69,7 +117,6 @@ module _ {A : 𝒰 𝑖} {{_ : isSetoid 𝑗 A}} {{_ : isPreorder 𝑘 ′ A ′
   -- a < b = a ≤ b ×-𝒰 (a ∼ b -> 𝟘-𝒰)
 
 
-{-
 
 module _ {𝑗 : 𝔏 ^ 3} {A : 𝒰 _} {{_ : Preorder 𝑗 on A}} where
   by-∼-≤_ : {a b : A} -> (a ∼ b) -> a ≤ b
@@ -105,6 +152,7 @@ module _ {𝑗 : 𝔏 ^ 3} {A : 𝒰 _} {{_ : Preorder 𝑗 on A}} where
   infixr 2 ⟨⟩-≤-∼-syntax
   infixr 2 _⟨_⟩-≤-∼_
 
+{-
 
 -}
 
@@ -166,37 +214,7 @@ unquoteDecl Preorder preorder = #struct "PreOrd" (quote isPreorder) "A" Preorder
 -}
 
 
--- record isMonotone {A : Preorder 𝑖} {B : Preorder 𝑗} (f : El A -> El B) : 𝒰 (𝑖 ､ 𝑗) where
---   field monotone : ∀{a b : El A} -> (a ≤ b) -> f a ≤ f b
-
-record isMonotone {A : 𝒰 𝑖} {B : 𝒰 𝑗} {{_ : Preorder 𝑖 on A}} {{_ : Preorder 𝑗 on B}} (f : A -> B) : 𝒰 (𝑖 ､ 𝑗) where
-  field monotone : ∀{a b : A} -> (a ≤ b) -> f a ≤ f b
-
 -}
-
-{-
-record isMonotone {A : 𝒰 𝑖} {B : 𝒰 𝑗} {{_ : isPreorder A}} {{_ : isPreorder B}} (f : A -> B) : 𝒰 (𝑖 ､ 𝑗) where
-  field monotone : ∀{a b : A} -> (a ≤ b) -> f a ≤ f b
-
-Monotone : (A : Preorder 𝑖) (B : Preorder 𝑗) -> 𝒰 (𝑖 ､ 𝑗)
-Monotone A B = (El A -> El B) :& isMonotone
--- unquoteDecl Monotone makeMonotone = #struct "Monotone" (quote isMonotone) "f" Monotone makeMonotone
-
-Category:Preorder : (𝑖 : 𝔏) -> Category _
-⟨ Category:Preorder 𝑖 ⟩ = Preorder 𝑖
-ICategory.Hom (of Category:Preorder 𝑖) = Monotone
-ICategory._≣_ (of Category:Preorder 𝑖) f g = El f ≡ El g
-ICategory.IEquiv:≣ (of Category:Preorder 𝑖) = {!!}
-ICategory.id (of Category:Preorder 𝑖) = {!!}
-ICategory._◆_ (of Category:Preorder 𝑖) = {!!}
-ICategory.unit-l-◆ (of Category:Preorder 𝑖) = {!!}
-ICategory.unit-r-◆ (of Category:Preorder 𝑖) = {!!}
-ICategory.unit-2-◆ (of Category:Preorder 𝑖) = {!!}
-ICategory.assoc-l-◆ (of Category:Preorder 𝑖) = {!!}
-ICategory.assoc-r-◆ (of Category:Preorder 𝑖) = {!!}
-ICategory._◈_ (of Category:Preorder 𝑖) = {!!}
--}
-
 {-
 module _ {A : 𝒰 𝑖} {{_ : isPreorder A}} where
   infix 30 _<_
