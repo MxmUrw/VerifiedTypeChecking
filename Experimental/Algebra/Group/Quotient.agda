@@ -3,7 +3,7 @@ module Verification.Experimental.Algebra.Group.Quotient where
 
 open import Verification.Conventions
 open import Verification.Experimental.Meta.Structure
-open import Verification.Experimental.Algebra.Setoid.Definition
+open import Verification.Experimental.Set.Setoid.Definition
 open import Verification.Experimental.Algebra.Monoid.Definition
 open import Verification.Experimental.Algebra.Group.Definition
 
@@ -45,7 +45,7 @@ module _ where
       isEquivRel._∙_ isEquivRel:RelSubgroup = lem-30
 
     instance
-      isSetoidHom:[] : isSetoidHom ′ ⟨ G ⟩ ′ ′ ⟨ G ⟩ /-𝒰 RelSubgroup H ′ [_]
+      isSetoidHom:[] : isSetoidHom {A = ⟨ G ⟩} {B = ⟨ G ⟩ /-𝒰 RelSubgroup H} [_]
       isSetoidHom.preserves-∼ isSetoidHom:[] {a} {b} (p) =
         let P = a ⋆ ◡ b ≣⟨ p `cong-⋆` refl ⟩
                 b ⋆ ◡ b ≣⟨ inv-r-⋆ ⟩

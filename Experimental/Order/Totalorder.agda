@@ -6,16 +6,16 @@ open import Verification.Core.Category.Definition
 open import Verification.Core.Category.Instance.Set.Definition
 -- open import Verification.Core.Type
 open import Verification.Experimental.Meta.Structure
-open import Verification.Experimental.Algebra.Setoid.Definition
+open import Verification.Experimental.Set.Setoid.Definition
 
 open import Verification.Experimental.Order.Preorder
 
-module _ {𝑖 : 𝔏 ^ 3} where
-  record isPartialorder (A : Preorder 𝑖) : 𝒰 𝑖 where
-   field antisym : ∀{a b : ⟨ A ⟩} -> (a ≤ b) -> (b ≤ a) -> a ∼ b
+-- module _ {𝑖 : 𝔏 ^ 3} where
+--   record isPartialorder (A : Preorder 𝑖) : 𝒰 𝑖 where
+--    field antisym : ∀{a b : ⟨ A ⟩} -> (a ≤ b) -> (b ≤ a) -> a ∼ b
 
-Partialorder : (𝑖 : 𝔏 ^ 3) -> 𝒰 _
-Partialorder 𝑖 = Preorder 𝑖 :& isPartialorder
+-- Partialorder : (𝑖 : 𝔏 ^ 3) -> 𝒰 _
+-- Partialorder 𝑖 = Preorder 𝑖 :& isPartialorder
 
 module _ {𝑖 : 𝔏 ^ 3} where
   record isTotalorder⁻ (A : Partialorder 𝑖) : 𝒰 𝑖 where

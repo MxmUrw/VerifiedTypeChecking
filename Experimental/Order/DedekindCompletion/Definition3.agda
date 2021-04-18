@@ -5,7 +5,7 @@ open import Verification.Conventions
 open import Verification.Experimental.Data.Int.Definition
 open import Verification.Experimental.Data.Rational.Definition
 open import Verification.Experimental.Meta.Structure
-open import Verification.Experimental.Algebra.Setoid
+open import Verification.Experimental.Set.Setoid
 open import Verification.Experimental.Order.Linearorder
 
 -- mostly from https://ncatlab.org/nlab/show/real+number
@@ -22,14 +22,14 @@ Subsetoid' : {𝑗 : 𝔏 ^ 2} (X : Setoid 𝑗) (𝑘 : 𝔏) -> 𝒰 _
 Subsetoid' X 𝑘 = (⟨ X ⟩ -> 𝒰 𝑘):& isSubsetoid'
 
 instance
-  isEquivRel:⫗' : ∀{𝑖 : 𝔏 ^ 2} {𝑘 : 𝔏} -> ∀{A : Setoid 𝑖} -> isEquivRel (RR (λ (P Q : Subsetoid' A 𝑘) -> ⟨ P ⟩ ⫗ ⟨ Q ⟩))
+  isEquivRel:⫗' : ∀{𝑖 : 𝔏 ^ 2} {𝑘 : 𝔏} -> ∀{A : Setoid 𝑖} -> isEquivRel (∼-Base (λ (P Q : Subsetoid' A 𝑘) -> ⟨ P ⟩ ⫗ ⟨ Q ⟩))
   isEquivRel.refl isEquivRel:⫗' = incl ((λ x -> x) , (λ x -> x))
   isEquivRel.sym isEquivRel:⫗' (incl (P , Q)) = incl (Q , P)
   isEquivRel._∙_ isEquivRel:⫗' (incl (P₀ , Q₀)) (incl (P₁ , Q₁)) = incl ((λ x -> P₁ (P₀ x)) , (λ x -> Q₀ (Q₁ x)))
 
 instance
   isSetoid:Subsetoid' : ∀{𝑗 : 𝔏 ^ 2} {𝑘 : 𝔏} -> {X : Setoid 𝑗} -> isSetoid _ (Subsetoid' X 𝑘)
-  isSetoid.myRel isSetoid:Subsetoid' A B = ⟨ A ⟩ ⫗ ⟨ B ⟩
+  isSetoid._∼'_ isSetoid:Subsetoid' A B = ⟨ A ⟩ ⫗ ⟨ B ⟩
   -- isSetoid.isEquivRel:∼ isSetoid:Subsetoid' = {!!}
   -- isSetoid.myRel isSetoid:Subsetoid A B = ⟨ A ⟩ ⫗ ⟨ B ⟩
 
@@ -71,7 +71,7 @@ module _ {𝑖 : 𝔏 ^ 3} {X : Linearorder 𝑖} {𝑘 : 𝔏} where
 
   instance
     isSetoid:Cut : isSetoid _ (Cut X 𝑘)
-    isSetoid.myRel isSetoid:Cut (L₀ , U₀) (L₁ , U₁) = (L₀ ∼ L₁) ×-𝒰 (U₀ ∼ U₁)
+    isSetoid._∼'_ isSetoid:Cut (L₀ , U₀) (L₁ , U₁) = (L₀ ∼ L₁) ×-𝒰 (U₀ ∼ U₁)
     isEquivRel.refl (isSetoid.isEquivRel:∼ isSetoid:Cut) = incl (refl , refl)
     isEquivRel.sym (isSetoid.isEquivRel:∼ isSetoid:Cut) (incl (p , q)) = incl (sym p , sym q)
     isEquivRel._∙_ (isSetoid.isEquivRel:∼ isSetoid:Cut) (incl (p0 , q0)) (incl (p1 , q1)) = incl (p0 ∙ p1 , q0 ∙ q1)

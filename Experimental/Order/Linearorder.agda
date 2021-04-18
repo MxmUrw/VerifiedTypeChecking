@@ -6,7 +6,7 @@ open import Verification.Core.Category.Definition
 open import Verification.Core.Category.Instance.Set.Definition
 -- open import Verification.Core.Type
 open import Verification.Experimental.Meta.Structure
-open import Verification.Experimental.Algebra.Setoid.Definition
+open import Verification.Experimental.Set.Setoid.Definition
 
 open import Verification.Experimental.Order.Preorder
 open import Verification.Experimental.Order.Totalorder
@@ -58,9 +58,9 @@ open isDense {{...}} public
 module LinearAsTotal {𝑖 : 𝔏 ^ 2} {𝑗 : 𝔏} {A : Setoid 𝑖} {{_ : isLinearorder 𝑗 A}} where
   instance
     isTotal:Linear : isPreorder 𝑗 A
-    isPreorder.myLE isTotal:Linear a b = b ≮ a
-    isPreorder.refl-≤ isTotal:Linear = incl irrefl-<
-    isPreorder._∙-≤_ isTotal:Linear {a} {b} {c} (incl p) (incl q) = incl P
+    isPreorder._≤'_ isTotal:Linear a b = b ≮ a
+    isPreorder.reflexive isTotal:Linear = incl irrefl-<
+    isPreorder._⟡_ isTotal:Linear {a} {b} {c} (incl p) (incl q) = incl P
       where
           P : c < a -> ⊥
           P r with compare-< r b

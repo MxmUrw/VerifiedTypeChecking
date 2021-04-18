@@ -3,7 +3,7 @@ module Verification.Experimental.Algebra.Ring.Localization.Instance.Setoid where
 
 open import Verification.Conventions
 open import Verification.Experimental.Meta.Structure
-open import Verification.Experimental.Algebra.Setoid.Definition
+open import Verification.Experimental.Set.Setoid.Definition
 open import Verification.Experimental.Algebra.Monoid.Definition
 open import Verification.Experimental.Algebra.Group.Definition
 -- open import Verification.Experimental.Algebra.Group.Quotient
@@ -18,7 +18,7 @@ module _ {𝑖 : 𝔏 ^ 2} {R : CRing 𝑖} {M : MCS R} where
   LocRel (a / da) (b / db) = ∑ λ (t : ⦋ ⟨ M ⟩ ⦌) -> (a ⋅ ⟨ db ⟩ ⋅ ⟨ t ⟩) ∼ (b ⋅ ⟨ da ⟩ ⋅ ⟨ t ⟩)
 
   instance
-    isEquivRel:LocRel : isEquivRel (RR LocRel)
+    isEquivRel:LocRel : isEquivRel (∼-Base LocRel)
     isEquivRel.refl isEquivRel:LocRel {x = a / da} = incl ((⨡ ∈ closed-⨡) , refl)
     isEquivRel.sym isEquivRel:LocRel {x = a / da} {y = b / db} (incl (t , p)) = incl (t , sym p)
     isEquivRel._∙_ isEquivRel:LocRel {x = a / (da ∈ _)} {y = b / (db ∈ dbP)} {z = c / (dc ∈ _)} (incl ((s ∈ sP) , p)) (incl ((t ∈ tP) , q)) =
@@ -48,7 +48,7 @@ module _ {𝑖 : 𝔏 ^ 2} {R : CRing 𝑖} {M : MCS R} where
 
   instance
     isSetoid:Localize : isSetoid _ (Localize R M)
-    isSetoid.myRel isSetoid:Localize = LocRel
+    isSetoid._∼'_ isSetoid:Localize = LocRel
     -- isSetoid.isEquivRel:∼ isSetoid:Localize = {!!}
 
 

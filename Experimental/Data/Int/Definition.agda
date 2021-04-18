@@ -3,7 +3,7 @@ module Verification.Experimental.Data.Int.Definition where
 
 open import Verification.Conventions
 open import Verification.Experimental.Meta.Structure
-open import Verification.Experimental.Algebra.Setoid
+open import Verification.Experimental.Set.Setoid
 open import Verification.Experimental.Algebra.Monoid
 open import Verification.Experimental.Algebra.Group
 open import Verification.Experimental.Algebra.Ring
@@ -13,7 +13,7 @@ open import Verification.Experimental.Algebra.Ring.Ordered
 
 instance
   isSetoid:ℤ : isSetoid _ ℤ
-  isSetoid.myRel isSetoid:ℤ = _≡_
+  isSetoid._∼'_ isSetoid:ℤ = _≡_
   isSetoid.isEquivRel:∼ isSetoid:ℤ = it
 
 instance

@@ -1,11 +1,11 @@
 
-{-# OPTIONS --overlapping-instances #-}
+-- {-# OPTIONS --overlapping-instances #-}
 
 module Verification.Experimental.Algebra.Abelian.Definition where
 
 open import Verification.Conventions
 open import Verification.Experimental.Meta.Structure
-open import Verification.Experimental.Algebra.Setoid.Definition
+open import Verification.Experimental.Set.Setoid.Definition
 open import Verification.Experimental.Algebra.Monoid.Definition
 open import Verification.Experimental.Algebra.Group.Definition
 open import Verification.Experimental.Algebra.Group.Quotient
