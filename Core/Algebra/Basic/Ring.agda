@@ -25,25 +25,25 @@ record IRingHom (R : Ring 𝑖) (S : Ring 𝑗) (f : ⟨ R ⟩ -> ⟨ S ⟩) : �
 unquoteDecl RingHom ringhom = #struct "RingHom" (quote IRingHom) "f" RingHom ringhom
 
 instance
-  ICategory:Ring : ICategory (Ring 𝑖) (𝑖 , 𝑖)
-  ICategory.Hom ICategory:Ring = RingHom
-  ICategory._≣_ ICategory:Ring = {!!}
-  ICategory.IEquiv:≣ ICategory:Ring = {!!}
-  ICategory.id ICategory:Ring = {!!}
-  ICategory._◆_ ICategory:Ring = {!!}
-  ICategory._◈_ ICategory:Ring = {!!}
-  ICategory.unit-l-◆ ICategory:Ring = {!!}
-  ICategory.unit-r-◆ ICategory:Ring = {!!}
-  ICategory.unit-2-◆ ICategory:Ring = {!!}
-  ICategory.assoc-l-◆ ICategory:Ring = {!!}
-  ICategory.assoc-r-◆ ICategory:Ring = {!!}
+  isCategory:Ring : isCategory (Ring 𝑖) (𝑖 , 𝑖)
+  isCategory.Hom isCategory:Ring = RingHom
+  isCategory._≣_ isCategory:Ring = {!!}
+  isCategory.isEquivRel:≣ isCategory:Ring = {!!}
+  isCategory.id isCategory:Ring = {!!}
+  isCategory._◆_ isCategory:Ring = {!!}
+  isCategory._◈_ isCategory:Ring = {!!}
+  isCategory.unit-l-◆ isCategory:Ring = {!!}
+  isCategory.unit-r-◆ isCategory:Ring = {!!}
+  isCategory.unit-2-◆ isCategory:Ring = {!!}
+  isCategory.assoc-l-◆ isCategory:Ring = {!!}
+  isCategory.assoc-r-◆ isCategory:Ring = {!!}
 
 
 instance
-  IAbelianHom:scale : {R : 𝒰 𝑖} {{_ : IRing R}} -> ∀{r : R} -> IAbelianHom (⌘ R) (⌘ R) (r ⋅_)
+  IAbelianHom:scale : {R : 𝒰 𝑖} {{_ : IRing R}} -> ∀{r : R} -> IAbelianHom (′ R ′) (′ R ′) (r ⋅_)
   unwrap IAbelianHom:scale = record {}
 
-AbelianHom:scale : {R : Ring 𝑖} -> ∀(r : ⟨ R ⟩) -> AbelianHom (⌘ ⟨ R ⟩) (⌘ ⟨ R ⟩)
+AbelianHom:scale : {R : Ring 𝑖} -> ∀(r : ⟨ R ⟩) -> AbelianHom (′ ⟨ R ⟩ ′) (′ ⟨ R ⟩ ′)
 ⟨ AbelianHom:scale r ⟩ = r ⋅_
 (of (AbelianHom:scale r)) = IAbelianHom:scale
 

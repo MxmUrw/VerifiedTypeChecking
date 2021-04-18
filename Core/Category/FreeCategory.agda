@@ -155,10 +155,10 @@ module _ {Q : 𝒰 𝑖} {{IQuiver:Q : IQuiver Q 𝑗}} where
   --   assoc-l-◆-QPathStr e f g = {!!} , {!!}
 
   instance
-    IEquiv:∼ : ∀{a b : Q} -> IEquiv (λ (p q : QPathStr a b) -> p ∼ q)
-    IEquiv.refl IEquiv:∼ = refl-∼
-    IEquiv.sym IEquiv:∼ = sym-∼
-    IEquiv._∙_ IEquiv:∼ = trans-∼
+    isEquivRel:∼ : ∀{a b : Q} -> isEquivRel (λ (p q : QPathStr a b) -> p ∼ q)
+    isEquivRel.refl isEquivRel:∼ = refl-∼
+    isEquivRel.sym isEquivRel:∼ = sym-∼
+    isEquivRel._∙_ isEquivRel:∼ = trans-∼
 
   data QPath₊ : (a b : Q) -> 𝒰 (𝑖 ､ 𝑗) where
     id-Q : ∀{a : Q} -> QPath₊ a a
@@ -181,10 +181,10 @@ module _ {Q : 𝒰 𝑖} {{IQuiver:Q : IQuiver Q 𝑗}} where
   trans-∼₂ (some p) (some q) = some (p ∙ q)
 
   instance
-    IEquiv:∼₂ : ∀{a b : Q} -> IEquiv (λ (p q : QPath₊ a b) -> p ∼₂ q)
-    IEquiv.refl IEquiv:∼₂ = refl-∼₂ _
-    IEquiv.sym IEquiv:∼₂ = sym-∼₂
-    IEquiv._∙_ IEquiv:∼₂ = trans-∼₂
+    isEquivRel:∼₂ : ∀{a b : Q} -> isEquivRel (λ (p q : QPath₊ a b) -> p ∼₂ q)
+    isEquivRel.refl isEquivRel:∼₂ = refl-∼₂ _
+    isEquivRel.sym isEquivRel:∼₂ = sym-∼₂
+    isEquivRel._∙_ isEquivRel:∼₂ = trans-∼₂
 
   module _ where
     private
@@ -227,23 +227,23 @@ module _ {Q : 𝒰 𝑖} {{IQuiver:Q : IQuiver Q 𝑗}} where
 
 Category:Free : Quiver 𝑖 -> Category (𝑖 ⌄ 0 , ⩚ 𝑖 , ⩚ 𝑖)
 ⟨ Category:Free Q ⟩ = ⟨ Q ⟩
-ICategory.Hom (of Category:Free Q) = QPath₊
-ICategory._≣_ (of Category:Free Q) = _∼₂_
-ICategory.IEquiv:≣ (of Category:Free Q) = IEquiv:∼₂
-ICategory.id (of Category:Free Q) = id-Q
-ICategory._◆_ (of Category:Free Q) = comp-QPath₊
-ICategory.unit-l-◆ (of Category:Free Q) = refl
-ICategory.unit-r-◆ (of Category:Free Q) = unit-r-◆-QPath₊ _
-ICategory.unit-2-◆ (of Category:Free Q) = refl
-ICategory.assoc-l-◆ (of Category:Free Q) {f = f} {g} {h} = assoc-l-◆-QPath₊ f g h
-ICategory.assoc-r-◆ (of Category:Free Q) {f = f} {g} {h} = sym (assoc-l-◆-QPath₊ f g h)
-ICategory._◈_ (of Category:Free Q) = compat-QPath₊
+isCategory.Hom (of Category:Free Q) = QPath₊
+isCategory._≣_ (of Category:Free Q) = _∼₂_
+isCategory.isEquivRel:≣ (of Category:Free Q) = isEquivRel:∼₂
+isCategory.id (of Category:Free Q) = id-Q
+isCategory._◆_ (of Category:Free Q) = comp-QPath₊
+isCategory.unit-l-◆ (of Category:Free Q) = refl
+isCategory.unit-r-◆ (of Category:Free Q) = unit-r-◆-QPath₊ _
+isCategory.unit-2-◆ (of Category:Free Q) = refl
+isCategory.assoc-l-◆ (of Category:Free Q) {f = f} {g} {h} = assoc-l-◆-QPath₊ f g h
+isCategory.assoc-r-◆ (of Category:Free Q) {f = f} {g} {h} = sym (assoc-l-◆-QPath₊ f g h)
+isCategory._◈_ (of Category:Free Q) = compat-QPath₊
 -- //
 
 -- Here we begin to build the adjunction.
 -- [Hide]
 private
-  module _ {C : 𝒰 𝑖} {{_ : ICategory C 𝑗}} where
+  module _ {C : 𝒰 𝑖} {{_ : isCategory C 𝑗}} where
     Qvr = (Category:Forget (category C))
     instance _ = of Qvr
 
@@ -325,7 +325,7 @@ Quiver:Discrete : (X : 𝒰 𝑖) -> Quiver (𝑖 , 𝑖 , 𝑖)
 ⟨ Quiver:Discrete X ⟩ = X
 IQuiver.Edge (of (Quiver:Discrete X)) _ _ = `𝟘`
 IQuiver._≈_ (of (Quiver:Discrete X)) a b = a ≡ b
-IQuiver.IEquivInst (of (Quiver:Discrete X)) = IEquiv:Path
+IQuiver.isEquivRelInst (of (Quiver:Discrete X)) = isEquivRel:Path
 
 instance IQuiver:Discrete = #openstruct Quiver:Discrete
 
@@ -419,19 +419,19 @@ instance
   -- (_,_ {b = b} ps p) ∼-On (_,_ {b = b2} qs q) = Lift {j = 𝑖 ⊔ ¡ 𝑗} $ ∑ λ (s : b ≡ b2) -> withSameVertex s refl (λ p1 p2 -> p1 ≈ p2) p q -- (p ≈ q) -- ×-𝒰 (ps ∼-On qs)
 
 -- instance
--- ICategory:Category:Free : {Q : Quiver 𝑖} -> ICategory ⟨ Q ⟩ (⨆ 𝑖 , ⨆ 𝑖)
--- ICategory.Hom (ICategory:Category:Free {Q = Q} ) = QPathStr Q
--- ICategory._≣_ (ICategory:Category:Free) = {!!}
--- ICategory.IEquiv:≣ (ICategory:Category:Free) = {!!}
--- ICategory.id (ICategory:Category:Free) = end
--- ICategory._◆_ (ICategory:Category:Free) = comp-QPath
--- ICategory._◈_ (ICategory:Category:Free) = {!!}
--- ICategory.unit-l-◆ ICategory:Category:Free = {!!}
--- ICategory.unit-r-◆ ICategory:Category:Free = {!!}
--- ICategory.unit-2-◆ ICategory:Category:Free = {!!}
--- ICategory.assoc-l-◆ ICategory:Category:Free = {!!}
--- ICategory.assoc-r-◆ ICategory:Category:Free = {!!}
--- category ⟨ Q ⟩ {{ICategory:Category:Free {Q = Q}}}
+-- isCategory:Category:Free : {Q : Quiver 𝑖} -> isCategory ⟨ Q ⟩ (⨆ 𝑖 , ⨆ 𝑖)
+-- isCategory.Hom (isCategory:Category:Free {Q = Q} ) = QPathStr Q
+-- isCategory._≣_ (isCategory:Category:Free) = {!!}
+-- isCategory.isEquivRel:≣ (isCategory:Category:Free) = {!!}
+-- isCategory.id (isCategory:Category:Free) = end
+-- isCategory._◆_ (isCategory:Category:Free) = comp-QPath
+-- isCategory._◈_ (isCategory:Category:Free) = {!!}
+-- isCategory.unit-l-◆ isCategory:Category:Free = {!!}
+-- isCategory.unit-r-◆ isCategory:Category:Free = {!!}
+-- isCategory.unit-2-◆ isCategory:Category:Free = {!!}
+-- isCategory.assoc-l-◆ isCategory:Category:Free = {!!}
+-- isCategory.assoc-r-◆ isCategory:Category:Free = {!!}
+-- category ⟨ Q ⟩ {{isCategory:Category:Free {Q = Q}}}
 
 -- [Definition]
 -- | Given any quiver |Q|, the free category on this quiver is constructed
@@ -439,18 +439,18 @@ instance
 --   and the morphisms are paths in |Q|.
 Category:Free : Quiver 𝑖 -> Category (𝑖 ⌄ 0 , ¡ 𝑖 , ¡ 𝑖)
 ⟨ Category:Free Q ⟩                 = ⟨ Q ⟩
-ICategory.Hom (of Category:Free Q)  = QPath
+isCategory.Hom (of Category:Free Q)  = QPath
 -- | The rest is as follows:
-ICategory._≣_ (of Category:Free Q) = _∼-On_
-ICategory.IEquiv:≣ (of Category:Free Q) = {!!}
-ICategory.id (of Category:Free Q) = end
-ICategory._◆_ (of Category:Free Q) = comp-QPath
-ICategory.unit-l-◆ (of Category:Free Q) {f = f} = {!!} -- ∼-On-refl {p = f}
-ICategory.unit-r-◆ (of Category:Free Q) = ∼-On-refl
-ICategory.unit-2-◆ (of Category:Free Q) = {!!}
-ICategory.assoc-l-◆ (of Category:Free Q) = {!!}
-ICategory.assoc-r-◆ (of Category:Free Q) = {!!}
-ICategory._◈_ (of Category:Free Q) = {!!}
+isCategory._≣_ (of Category:Free Q) = _∼-On_
+isCategory.isEquivRel:≣ (of Category:Free Q) = {!!}
+isCategory.id (of Category:Free Q) = end
+isCategory._◆_ (of Category:Free Q) = comp-QPath
+isCategory.unit-l-◆ (of Category:Free Q) {f = f} = {!!} -- ∼-On-refl {p = f}
+isCategory.unit-r-◆ (of Category:Free Q) = ∼-On-refl
+isCategory.unit-2-◆ (of Category:Free Q) = {!!}
+isCategory.assoc-l-◆ (of Category:Free Q) = {!!}
+isCategory.assoc-r-◆ (of Category:Free Q) = {!!}
+isCategory._◈_ (of Category:Free Q) = {!!}
 -- //
 
 -}
@@ -493,7 +493,7 @@ lrepeat l = l , l , l
 ⟨_⟩-Hom : (Q : Category 𝑖) -> (a b : ⟨ Q ⟩) -> 𝒰 (𝑖 ⌄ 1)
 ⟨_⟩-Hom Q a b = Hom a b
 
-module _ {Q : 𝒰 𝑖} {{QC : ICategory Q 𝑗}} where
+module _ {Q : 𝒰 𝑖} {{QC : isCategory Q 𝑗}} where
   Q2 = Category:Free (ForgetCategory (⌘ Q))
 
   map-eval : {a b : Q} (f : ⟨ Q2 ⟩-Hom a b) -> ⟨ ⌘ Q ⟩-Hom a b

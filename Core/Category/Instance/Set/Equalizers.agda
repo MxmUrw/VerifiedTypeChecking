@@ -69,13 +69,13 @@ module _ where
 
       where f : QuiverHom (` 𝟙-𝒰 `) (ForgetCategory ` Set _ `)
             ⟨ f ⟩ _ = ((map {{of F}} ` arr₀ `) Set:=?=-Set (map {{of F}} ` arr₁ `))
-            IQuiverHom.qmap (of f) e = ⌘ λ x -> x
+            IQuiverHom.qmap (of f) e = ′ (λ x -> x) ′
 
     IFunctor.map (of E) α = free-Diagram-Nat f (λ {()})
-      where f = λ {_ -> ⌘ λ {(x , xp) -> ⟨ ⟨ α ⟩ ⟩ x ,
+      where f = λ {_ -> ′( λ {(x , xp) -> ⟨ ⟨ α ⟩ ⟩ x ,
                     let P : ⟨ (⟨ α ⟩ ◆ map _) ⟩ x ≡ ⟨ (⟨ α ⟩ ◆ map _) ⟩ x
                         P = ((naturality _ x)) ∙ cong ⟨ ⟨ α ⟩ ⟩ xp ∙ ( (naturality _ x ⁻¹))
-                    in P}}
+                    in P})′}
 
     IFunctor.functoriality-id (of E) {a = a} α _ = byFirst1 refl
     IFunctor.functoriality-◆ (of E) {a = a} {b} {c} x _ = byFirst1 refl
@@ -88,8 +88,8 @@ module _ where
   ----------------------------
   -- The counit
     ε : ∀(x : 𝔼 ⟶ ` Set 𝑖 `) -> ∀(a : Pair) -> (⟨ ⟨ ! 𝔼 * ⟩ (⟨ E ⟩ x) ⟩ (↥ a)) ⟶ ⟨ x ⟩ (↥ a)
-    ε x ₀ = ⌘ λ (a , p) -> a
-    ε x ₁ = ⌘ λ (a , p) -> ⟨ map {{of x}} ` arr₀ ` ⟩ a
+    ε x ₀ = ′ (λ (a , p) -> a) ′
+    ε x ₁ = ′ (λ (a , p) -> ⟨ map {{of x}} ` arr₀ ` ⟩ a) ′
 
     εp : ∀{𝑖} -> ∀(x : 𝔼 ⟶ (⩚ Set 𝑖)) -> ∀{a b : Pair} -> (e : Edge {{of Quiver:Pair}} a b)
         -> ε x a ◆ map ` e ` ≣ map {{of (⟨ ! 𝔼 * ⟩ (⟨ E ⟩ x))}} ` e ` ◆ ε x b
@@ -106,7 +106,7 @@ module _ where
     ----------------------------
     -- The unit
     η : ∀(x : 𝟙 ⟶ ` Set 𝑖 `) -> ∀(a : 𝟙-𝒰) -> ⟨ x ⟩ (↥ a) ⟶ (⟨ ⟨ E ⟩ (⟨ ! 𝔼 * ⟩ x) ⟩ (↥ a))
-    η _ = λ _ -> ⌘ λ {a -> (a , refl)}
+    η _ = λ _ -> ′ (λ {a -> (a , refl)}) ′
 
     η' : ∀(x : 𝟙 ⟶ ` Set 𝑖 `) -> Natural x (⟨ ! 𝔼 * ◆ E ⟩ x)
     η' x = free-Diagram-Nat (η x) (λ {()})

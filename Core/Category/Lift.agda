@@ -69,24 +69,24 @@ module _ where
 
 Category:Lift : Category 𝑖 -> Category (𝑖 ∨ 𝑗)
 ⟨ Category:Lift {𝑖 = 𝑖} {𝑗 = 𝑗} 𝒞 ⟩ = Lift {j = 𝑗 ⌄ 0} ⟨ 𝒞 ⟩
-ICategory.Hom (of Category:Lift {𝑗 = 𝑗} 𝒞) (↥ a) (↥ b) = Lift {j = 𝑗 ⌄ 1} (Hom a b)
-ICategory._≣_ (of Category:Lift {𝑗 = 𝑗} 𝒞) (↥ f) (↥ g) = Lift {j = 𝑗 ⌄ 2} (f ≣ g)
-IEquiv.refl (ICategory.IEquiv:≣ (of Category:Lift 𝒞)) = ↥ refl
-IEquiv.sym (ICategory.IEquiv:≣ (of Category:Lift 𝒞)) (↥ p) = ↥ (sym p)
-IEquiv._∙_ (ICategory.IEquiv:≣ (of Category:Lift 𝒞)) (↥ p) (↥ q) = ↥ (p ∙ q)
-ICategory.id (of Category:Lift 𝒞) = ↥ id
-ICategory._◆_ (of Category:Lift 𝒞) (↥ f) (↥ g) = ↥ (f ◆ g)
-ICategory.unit-l-◆ (of Category:Lift 𝒞) = {!!}
-ICategory.unit-r-◆ (of Category:Lift 𝒞) = {!!}
-ICategory.unit-2-◆ (of Category:Lift 𝒞) = {!!}
-ICategory.assoc-l-◆ (of Category:Lift 𝒞) = {!!}
-ICategory.assoc-r-◆ (of Category:Lift 𝒞) = {!!}
-ICategory._◈_ (of Category:Lift 𝒞) = {!!}
+isCategory.Hom (of Category:Lift {𝑗 = 𝑗} 𝒞) (↥ a) (↥ b) = Lift {j = 𝑗 ⌄ 1} (Hom a b)
+isCategory._≣_ (of Category:Lift {𝑗 = 𝑗} 𝒞) (↥ f) (↥ g) = Lift {j = 𝑗 ⌄ 2} (f ≣ g)
+isEquivRel.refl (isCategory.isEquivRel:≣ (of Category:Lift 𝒞)) = ↥ refl
+isEquivRel.sym (isCategory.isEquivRel:≣ (of Category:Lift 𝒞)) (↥ p) = ↥ (sym p)
+isEquivRel._∙_ (isCategory.isEquivRel:≣ (of Category:Lift 𝒞)) (↥ p) (↥ q) = ↥ (p ∙ q)
+isCategory.id (of Category:Lift 𝒞) = ↥ id
+isCategory._◆_ (of Category:Lift 𝒞) (↥ f) (↥ g) = ↥ (f ◆ g)
+isCategory.unit-l-◆ (of Category:Lift 𝒞) = {!!}
+isCategory.unit-r-◆ (of Category:Lift 𝒞) = {!!}
+isCategory.unit-2-◆ (of Category:Lift 𝒞) = {!!}
+isCategory.assoc-l-◆ (of Category:Lift 𝒞) = {!!}
+isCategory.assoc-r-◆ (of Category:Lift 𝒞) = {!!}
+isCategory._◈_ (of Category:Lift 𝒞) = {!!}
 
 
 -- instance
---   ICategory:Lift : ∀{X : 𝒰 𝑖} {{_ : ICategory X 𝑗}} -> ICategory (Lift {j = 𝑘} X) (𝑗 ⋅ 𝑙)
---   ICategory:Lift = {!!}
+--   isCategory:Lift : ∀{X : 𝒰 𝑖} {{_ : isCategory X 𝑗}} -> isCategory (Lift {j = 𝑘} X) (𝑗 ⋅ 𝑙)
+--   isCategory:Lift = {!!}
 
 
 record Notation-Lift (P : (𝑖 : 𝔏 ^ n) -> 𝒰 (𝑖 ⁺)) : 𝒰ω where

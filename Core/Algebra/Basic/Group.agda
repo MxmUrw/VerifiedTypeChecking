@@ -34,7 +34,7 @@ instance
   INotation:Inverse:Group Notation-Inverse.⁻¹ = _⁻¹-Monoid
 
 instance
-  IMonoidHom:⁻¹ : ∀{A : 𝒰 𝑖} {{_ : IGroup A}} -> IMonoidHom (⌘ A) (⌘ A) _⁻¹-Monoid
+  IMonoidHom:⁻¹ : ∀{A : 𝒰 𝑖} {{_ : IGroup A}} -> IMonoidHom (′ A ′) (′ A ′) _⁻¹-Monoid
   IMonoidHom:⁻¹ = record {}
 
 -- //

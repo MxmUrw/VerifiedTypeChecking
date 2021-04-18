@@ -133,7 +133,7 @@ _ᵒᵖ-Q : Quiver 𝑖 -> Quiver 𝑖
 ⟨ Q ᵒᵖ-Q ⟩ = ⟨ Q ⟩
 IQuiver.Edge (of (Q ᵒᵖ-Q)) a b = Edge b a
 IQuiver._≈_ (of (Q ᵒᵖ-Q)) = _≈_
-IQuiver.IEquivInst (of (Q ᵒᵖ-Q)) = IEquivInst
+IQuiver.isEquivRelInst (of (Q ᵒᵖ-Q)) = isEquivRelInst
 
 -- free-Diagramᵒᵖ : ∀{X : Category 𝑖} {Q : Quiver 𝑗} -> (f : QuiverHom (Q ᵒᵖ-Q) (ForgetCategory X)) -> Functor ((Category:Free Q) ᵒᵖ) X
 -- ⟨ free-Diagramᵒᵖ f ⟩ x = ⟨ f ⟩ x

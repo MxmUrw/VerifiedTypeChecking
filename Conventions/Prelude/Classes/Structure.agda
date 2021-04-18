@@ -13,7 +13,7 @@ record Structure {A : 𝒰 𝑖} (P : A -> 𝒰 𝑗) : 𝒰 (𝑖 ⊔ 𝑗) whe
         {{of_}} : P ⟨_⟩
         -- of_ : P ⟨_⟩
 
-  -- infixr 2 of_
+  infixr 2 of_
 
 open Structure public
 

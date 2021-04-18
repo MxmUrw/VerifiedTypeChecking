@@ -75,7 +75,7 @@ module _ where
             ⟨ d ⟩ _ = ⟨ z ⟩ (↥ ₀) ×-Set ⟨ z ⟩ (↥ ₁)
             -- QuiverHom.qmap d ()
     IFunctor.map (of L) α = free-Diagram-Nat f fp
-      where f = λ {_ -> ⌘ λ {(x , y) -> ⟨ ⟨ α ⟩ ⟩ x , ⟨ ⟨ α ⟩ ⟩ y}}
+      where f = λ {_ -> ′ (λ {(x , y) -> ⟨ ⟨ α ⟩ ⟩ x , ⟨ ⟨ α ⟩ ⟩ y}) ′ }
             fp = λ {()}
     IFunctor.functoriality-id (of L) x _ = refl
     IFunctor.functoriality-◆ (of L) x _ = refl
@@ -84,12 +84,12 @@ module _ where
 
     lem::1 : (! `𝟚` *) ⊣ L {𝑖 = 𝑖}
     ⟨ IAdjoint.embed lem::1 ⟩ = free-Diagram-Nat f fp
-      where f = λ _ -> ⌘ λ {a -> (a , a)}
+      where f = λ _ -> ′ (λ {a -> (a , a)}) ′
             fp = λ {()}
     INatural.naturality (of IAdjoint.embed lem::1) α x _ = refl
     ⟨ IAdjoint.eval lem::1 ⟩ = free-Diagram-Nat f (λ {()})
-      where f = λ { ₀ -> ⌘ λ {(v , w) -> v}
-                  ; ₁ -> ⌘ λ {(v , w) -> w}}
+      where f = λ { ₀ -> ′ (λ {(v , w) -> v}) ′
+                  ; ₁ -> ′ (λ {(v , w) -> w})′ }
     INatural.naturality (of IAdjoint.eval lem::1) f (↥ ₀) _ = refl
     INatural.naturality (of IAdjoint.eval lem::1) f (↥ ₁) _ = refl
     IAdjoint.reduce-Adj-β lem::1 (↥ ₀) _ = refl

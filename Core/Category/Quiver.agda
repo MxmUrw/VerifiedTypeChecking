@@ -23,7 +23,7 @@ record IQuiver (X : 𝒰 𝑖) (𝑗 : 𝔏 ^ 2) : 𝒰 (𝑖 ､ 𝑗 ⁺) wher
   -- |> if the following data is given:
   field Edge : X -> X -> 𝒰 (𝑗 ⌄ 0)
         _≈_ : ∀{a b : X} -> (f g : Edge a b) -> 𝒰 (𝑗 ⌄ 1)
-        {{IEquivInst}} : ∀{a b : X} -> IEquiv (_≈_ {a = a} {b = b})
+        {{isEquivRelInst}} : ∀{a b : X} -> isEquivRel (_≈_ {a = a} {b = b})
 -- //
 
 open IQuiver {{...}} public
@@ -49,21 +49,21 @@ module _ {X : Quiver 𝑖} {Y : Quiver 𝑗} {Z : Quiver 𝑘} where
 
 Category:Quiver : (𝑖 : 𝔏 ^ 3) -> Category (⨆ 𝑖 ⁺ , ⨆ 𝑖 , ⨆ 𝑖)
 ⟨ Category:Quiver 𝑖 ⟩ = Quiver 𝑖
-ICategory.Hom (of Category:Quiver 𝑖) = QuiverHom
-ICategory._≣_ (of Category:Quiver 𝑖) f g = {!!}
-ICategory.IEquiv:≣ (of Category:Quiver 𝑖) = {!!}
-⟨ ICategory.id (of Category:Quiver 𝑖) ⟩ = id
-IQuiverHom.qmap (of (ICategory.id (of Category:Quiver 𝑖))) = id
-ICategory._◆_ (of Category:Quiver 𝑖) = comp-Quiver
-ICategory._◈_ (of Category:Quiver 𝑖) = {!!}
-ICategory.unit-l-◆ (of Category:Quiver 𝑖) = {!!}
-ICategory.unit-r-◆ (of Category:Quiver 𝑖) = {!!}
-ICategory.unit-2-◆ (of Category:Quiver 𝑖) = {!!}
-ICategory.assoc-l-◆ (of Category:Quiver 𝑖) = {!!}
-ICategory.assoc-r-◆ (of Category:Quiver 𝑖) = {!!}
+isCategory.Hom (of Category:Quiver 𝑖) = QuiverHom
+isCategory._≣_ (of Category:Quiver 𝑖) f g = {!!}
+isCategory.isEquivRel:≣ (of Category:Quiver 𝑖) = {!!}
+⟨ isCategory.id (of Category:Quiver 𝑖) ⟩ = id
+IQuiverHom.qmap (of (isCategory.id (of Category:Quiver 𝑖))) = id
+isCategory._◆_ (of Category:Quiver 𝑖) = comp-Quiver
+isCategory._◈_ (of Category:Quiver 𝑖) = {!!}
+isCategory.unit-l-◆ (of Category:Quiver 𝑖) = {!!}
+isCategory.unit-r-◆ (of Category:Quiver 𝑖) = {!!}
+isCategory.unit-2-◆ (of Category:Quiver 𝑖) = {!!}
+isCategory.assoc-l-◆ (of Category:Quiver 𝑖) = {!!}
+isCategory.assoc-r-◆ (of Category:Quiver 𝑖) = {!!}
 -- //
 
-instance ICategory:Quiver = #openstruct Category:Quiver
+instance isCategory:Quiver = #openstruct Category:Quiver
 
 
 
@@ -73,7 +73,7 @@ ForgetCategory : Category 𝑖 -> Quiver 𝑖
 ⟨ ForgetCategory X ⟩ = ⟨ X ⟩
 IQuiver.Edge (of (ForgetCategory X)) = Hom
 IQuiver._≈_ (of (ForgetCategory X)) = _≣_
-IQuiver.IEquivInst (of (ForgetCategory X)) = IEquiv:≣
+IQuiver.isEquivRelInst (of (ForgetCategory X)) = isEquivRel:≣
 
 Category:Forget = ForgetCategory
 
@@ -83,13 +83,13 @@ map-ForgetCategory : ∀{X Y : Category 𝑖} -> (f : X ⟶ Y) -> (ForgetCategor
 IQuiverHom.qmap (of (map-ForgetCategory f)) = map
 
 instance
-  IFunctor:ForgetCategory : IFunctor (⌘ Category 𝑖) (⌘ Quiver 𝑖) ForgetCategory
+  IFunctor:ForgetCategory : IFunctor (′ Category 𝑖 ′) (′ Quiver 𝑖 ′) ForgetCategory
   IFunctor.map IFunctor:ForgetCategory = map-ForgetCategory
   IFunctor.functoriality-id IFunctor:ForgetCategory = {!!}
   IFunctor.functoriality-◆ IFunctor:ForgetCategory = {!!}
   IFunctor.functoriality-≣ IFunctor:ForgetCategory = {!!}
 
-Functor:ForgetCategory : Functor (⌘ (Category 𝑖)) (⌘ Quiver 𝑖)
+Functor:ForgetCategory : Functor (′ (Category 𝑖) ′) (′ Quiver 𝑖 ′)
 Functor:ForgetCategory = functor ForgetCategory
 -- //
 
@@ -100,7 +100,7 @@ Quiver:LiftQuiver : (Q : Quiver 𝑖) -> ∀{𝑗} -> Quiver (zipL 𝑖 𝑗)
 ⟨ Quiver:LiftQuiver Q {𝑗 = J} ⟩ = Lift {j = J ⌄ 0} ⟨ Q ⟩
 IQuiver.Edge (of (Quiver:LiftQuiver Q {𝑗 = J})) (lift a) (lift b) = Lift {j = J ⌄ ₁} (Edge a b)
 IQuiver._≈_ (of (Quiver:LiftQuiver Q {𝑗 = J})) = {!!}
-IQuiver.IEquivInst (of (Quiver:LiftQuiver Q {𝑗 = J})) = {!!}
+IQuiver.isEquivRelInst (of (Quiver:LiftQuiver Q {𝑗 = J})) = {!!}
 
 
 instance

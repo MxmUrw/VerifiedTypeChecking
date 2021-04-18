@@ -23,7 +23,7 @@ unquoteDecl Terminal terminal = #struct "Term" (quote ITerminal) "x" Terminal te
 
 -- [Notation]
 -- | We write |𝟙| for the terminal object of a category, if it exists.
-𝟙 : {X : 𝒰 𝑖} {{_ : ICategory X 𝑗}} {{_ : Terminal (⩚ X)}} -> X
+𝟙 : {X : 𝒰 𝑖} {{_ : isCategory X 𝑗}} {{_ : Terminal (⩚ X)}} -> X
 𝟙 {{_}} {{t}} = ⟨ t ⟩
 -- //
 
@@ -38,7 +38,7 @@ unquoteDecl Terminal terminal = #struct "Term" (quote ITerminal) "x" Terminal te
 Category:𝟙 : Category _
 Category:𝟙 = Category:Discrete 𝟙-𝒰
 
-instance ICategory:𝟙 = #openstruct Category:𝟙
+instance isCategory:𝟙 = #openstruct Category:𝟙
 
 -- | And now we show that it is indeed terminal.
 private

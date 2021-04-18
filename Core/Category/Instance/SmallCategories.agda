@@ -39,7 +39,7 @@ Quiver:Pair : Quiver (many ℓ₀)
 ⟨ Quiver:Pair ⟩ = Pair
 IQuiver.Edge (of Quiver:Pair) = PairHom
 IQuiver._≈_ (of Quiver:Pair) = _≡_
-IQuiver.IEquivInst (of Quiver:Pair) = IEquiv:Path
+IQuiver.isEquivRelInst (of Quiver:Pair) = isEquivRel:Path
 
 Category:Pair = Category:Free (Quiver:Pair)
 

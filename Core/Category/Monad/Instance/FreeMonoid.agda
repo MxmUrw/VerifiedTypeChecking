@@ -27,7 +27,7 @@ instance
   IFunctor.functoriality-≣ IFunctor:List = {!!}
 
 instance
-  IMonad:List : IMonad {𝒞 = (Category:𝒰 𝑖)} (⌘ List)
+  IMonad:List : IMonad {𝒞 = (Category:𝒰 𝑖)} (′ List ′)
   -- IMonad.FunctorInstance IMonad:List = IFunctor:List
   IMonad.return IMonad:List a = a ∷ []
   IMonad.INatural:return IMonad:List = {!!}

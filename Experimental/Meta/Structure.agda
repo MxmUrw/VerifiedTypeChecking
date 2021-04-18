@@ -28,7 +28,7 @@ record _:&_ (UU : 𝒰 𝑖) {{U : hasU UU 𝑘 𝑙}} (P : UU -> 𝒰 𝑗) : �
   field ⟨_⟩ : getU U
   -- field overlap {{oldProof}} : getP U ⟨_⟩
   field {oldProof} : getP U ⟨_⟩
-  field overlap {{Proof}} : P (reconstruct U (⟨_⟩ , oldProof))
+  field overlap {{of_}} : P (reconstruct U (⟨_⟩ , oldProof))
 open _:&_ {{...}} public hiding (⟨_⟩)
 open _:&_ public using (⟨_⟩)
 
@@ -110,6 +110,21 @@ instance
   reconstruct (hasU:Exp {A = A} {B}) (x , _) = x
   destructEl (hasU:Exp {A = A} {B}) f = f
   destructP (hasU:Exp {A = A} {B}) _ = record {}
+
+hasU:Base : ∀(X : 𝒰 𝑖) -> hasU X _ _
+getU (hasU:Base X) = X
+getP (hasU:Base X) u = isAnything u ℓ₀
+reconstruct (hasU:Base X) (x , _) = x
+destructEl (hasU:Base X) a = a
+destructP (hasU:Base X) a = record {}
+
+-- instance
+--   hasU:ExpFam : ∀{K : 𝒰 𝑘} {A : K -> 𝒰 𝑖} {B : K -> 𝒰 𝑗} -> hasU (∀{k : K} -> A k -> B k) _ _
+--   getU (hasU:ExpFam {K = K}{A = A} {B}) = ∀{k : K} -> A k -> B k
+--   getP (hasU:ExpFam {𝑖} {𝑗} {A = A} {B}) u = isAnything {A = ∀{k} -> A k -> B k} u (ℓ₀)
+--   reconstruct (hasU:ExpFam {A = A} {B}) (x , _) = x
+--   destructEl (hasU:ExpFam {A = A} {B}) f = f
+--   destructP (hasU:ExpFam {A = A} {B}) _ = record {}
 
 instance
   hasU:& : {UU : 𝒰 𝑖} {{U : hasU UU 𝑘 𝑙}} {P : UU -> 𝒰 𝑗} -> hasU (UU :& P) _ _

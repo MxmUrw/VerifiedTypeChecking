@@ -114,7 +114,7 @@ module _ {K : 𝒰 𝑖} (T' : Monad `(IdxSet K 𝑖)`) {{_ : IRecAccessible T'}
     IQuiver.Edge (of Q) = Edge {{Dir}}
     --Maybe (Edge {{Dir}} a b)
     IQuiver._≈_ (of Q) = _≡_
-    IQuiver.IEquivInst (of Q) = IEquiv:Path
+    IQuiver.isEquivRelInst (of Q) = isEquivRel:Path
 
   𝔇 = (Category:Free Q)
 
@@ -804,7 +804,7 @@ module _ {K : 𝒰 𝑖} (T' : Monad `(IdxSet K 𝑖)`) {{_ : IRecAccessible T'}
                         f (some x) = x
 
               q3 : ψ (e1 ∷ p1) ∼ ψ (e2 ∷ p2)
-              q3 = fromPath {{IEquiv:∼}} (cong ψ q2)
+              q3 = fromPath {{isEquivRel:∼}} (cong ψ q2)
 
               P : ψ  ∼ ψ p2
               P with q3

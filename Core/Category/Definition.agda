@@ -1,6 +1,4 @@
 
-{-# OPTIONS --cubical --allow-unsolved-metas #-}
-
 module Verification.Core.Category.Definition where
 
 open import Verification.Conventions

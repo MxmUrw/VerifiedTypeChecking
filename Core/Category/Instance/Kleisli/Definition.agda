@@ -29,19 +29,19 @@ module _ {𝒞 : Category 𝑖} where
   -- | The Kleisli category of a monad \AD{T} is given by:
   Category:Kleisli : ∀(T : Monad 𝒞) -> Category 𝑖
   ⟨ Category:Kleisli T ⟩ = Kleisli T
-  ICategory.Hom (of Category:Kleisli T) A B = KleisliHom A B
-  ICategory._≣_ (of Category:Kleisli T) f g = ⟨ f ⟩ ≣ ⟨ g ⟩
-  IEquiv.refl (ICategory.IEquiv:≣ (of Category:Kleisli T)) = refl
-  IEquiv.sym (ICategory.IEquiv:≣ (of Category:Kleisli T)) = sym
-  IEquiv._∙_ (ICategory.IEquiv:≣ (of Category:Kleisli T)) = _∙_
-  ICategory.id (of Category:Kleisli T) = ` return `
-  ICategory._◆_ (of Category:Kleisli T) f g = ` ⟨ f ⟩ >=> ⟨ g ⟩ `
-  ICategory.unit-l-◆ (of Category:Kleisli T) = {!!}
-  ICategory.unit-r-◆ (of Category:Kleisli T) = {!!}
-  ICategory.unit-2-◆ (of Category:Kleisli T) = {!!}
-  ICategory.assoc-l-◆ (of Category:Kleisli T) = {!!}
-  ICategory.assoc-r-◆ (of Category:Kleisli T) = {!!}
-  ICategory._◈_ (of Category:Kleisli T) = {!!}
+  isCategory.Hom (of Category:Kleisli T) A B = KleisliHom A B
+  isCategory._≣_ (of Category:Kleisli T) f g = ⟨ f ⟩ ≣ ⟨ g ⟩
+  isEquivRel.refl (isCategory.isEquivRel:≣ (of Category:Kleisli T)) = refl
+  isEquivRel.sym (isCategory.isEquivRel:≣ (of Category:Kleisli T)) = sym
+  isEquivRel._∙_ (isCategory.isEquivRel:≣ (of Category:Kleisli T)) = _∙_
+  isCategory.id (of Category:Kleisli T) = ` return `
+  isCategory._◆_ (of Category:Kleisli T) f g = ` ⟨ f ⟩ >=> ⟨ g ⟩ `
+  isCategory.unit-l-◆ (of Category:Kleisli T) = {!!}
+  isCategory.unit-r-◆ (of Category:Kleisli T) = {!!}
+  isCategory.unit-2-◆ (of Category:Kleisli T) = {!!}
+  isCategory.assoc-l-◆ (of Category:Kleisli T) = {!!}
+  isCategory.assoc-r-◆ (of Category:Kleisli T) = {!!}
+  isCategory._◈_ (of Category:Kleisli T) = {!!}
   -- //
 
 instance

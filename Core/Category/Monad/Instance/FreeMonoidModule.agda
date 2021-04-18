@@ -26,7 +26,7 @@ instance
 
 
 instance
-  IMonad:× : ∀{M : 𝒰 𝑖} -> {{_ : IMonoid M}} -> IMonad (⌘ (M ×-𝒰_))
+  IMonad:× : ∀{M : 𝒰 𝑖} -> {{_ : IMonoid M}} -> IMonad (′ (M ×-𝒰_) ′)
   -- IMonad.FunctorInstance IMonad:× = IFunctor:×-𝒰
   IMonad.return IMonad:× a = 𝟷 , a
   IMonad.INatural:return IMonad:× = {!!}

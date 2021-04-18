@@ -12,17 +12,17 @@ open import Verification.Core.Category.Definition
 -- | There is a function [..], mapping a category to its opposite. It is defined as:
 _ᵒᵖ : Category 𝑖 -> Category 𝑖
 ⟨ 𝒞 ᵒᵖ ⟩                         = ⟨ 𝒞 ⟩
-ICategory.Hom (of 𝒞 ᵒᵖ) a b  = Hom {{of 𝒞}} b a
+isCategory.Hom (of 𝒞 ᵒᵖ) a b  = Hom {{of 𝒞}} b a
 
 -- |> All equations for |𝒞 ᵒᵖ| can be proven by simply using their symmetric counterpart in $𝒞$.
-ICategory._≣_        (of 𝒞 ᵒᵖ)  = _≣_
-ICategory.IEquiv:≣   (of 𝒞 ᵒᵖ)  = IEquiv:≣
-ICategory.id         (of 𝒞 ᵒᵖ)  = id
-ICategory._◆_        (of 𝒞 ᵒᵖ)  = λ f g -> g ◆ f
-ICategory._◈_        (of 𝒞 ᵒᵖ)  = λ p q -> q ◈ p
-ICategory.unit-l-◆   (of 𝒞 ᵒᵖ)  = unit-r-◆
-ICategory.unit-r-◆   (of 𝒞 ᵒᵖ)  = unit-l-◆
-ICategory.unit-2-◆   (of 𝒞 ᵒᵖ)  = unit-2-◆
-ICategory.assoc-l-◆  (of 𝒞 ᵒᵖ)  = assoc-r-◆
-ICategory.assoc-r-◆  (of 𝒞 ᵒᵖ)  = assoc-l-◆
+isCategory._≣_        (of 𝒞 ᵒᵖ)  = _≣_
+isCategory.isEquivRel:≣   (of 𝒞 ᵒᵖ)  = isEquivRel:≣
+isCategory.id         (of 𝒞 ᵒᵖ)  = id
+isCategory._◆_        (of 𝒞 ᵒᵖ)  = λ f g -> g ◆ f
+isCategory._◈_        (of 𝒞 ᵒᵖ)  = λ p q -> q ◈ p
+isCategory.unit-l-◆   (of 𝒞 ᵒᵖ)  = unit-r-◆
+isCategory.unit-r-◆   (of 𝒞 ᵒᵖ)  = unit-l-◆
+isCategory.unit-2-◆   (of 𝒞 ᵒᵖ)  = unit-2-◆
+isCategory.assoc-l-◆  (of 𝒞 ᵒᵖ)  = assoc-r-◆
+isCategory.assoc-r-◆  (of 𝒞 ᵒᵖ)  = assoc-l-◆
 -- //

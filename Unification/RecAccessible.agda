@@ -39,7 +39,7 @@ module _ {𝒞 : Category 𝑖} {𝒟 : Category 𝑗} where
 
 module _ {𝒞 : Category 𝑖} where
   μ : (T : Monad 𝒞) -> (⟨ T ⟩ ◆ ⟨ T ⟩ ⟶ ⟨ T ⟩)
-  μ T = ⌘ join {{of T}}
+  μ T = ′ join {{of T}} ′
 
 module _ {K : 𝒰 𝑖} (D : IQuiver K (𝑖 , 𝑖)) where
   Decomp : Functor ` IdxSet K 𝑖 ` ` IdxSet K 𝑖 `

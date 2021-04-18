@@ -46,6 +46,23 @@ record isSetoidHom {𝑖 𝑗 : 𝔏 ^ 2} {A : 𝒰 _} {B : 𝒰 _} {{_ : Setoid
   field preserves-∼ : ∀{a b} -> a ∼ b -> f a ∼ f b
 open isSetoidHom {{...}} public
 
+SetoidHom : (A : Setoid 𝑖) (B : Setoid 𝑗) -> 𝒰 _
+SetoidHom A B = (⟨ A ⟩ -> ⟨ B ⟩) :& isSetoidHom
+
+module _ {A : Setoid 𝑖} {B : Setoid 𝑗} where
+  _∼-SetoidHom_ : (f g : SetoidHom A B) -> 𝒰 _
+  _∼-SetoidHom_ f g = ∀{a} -> ⟨ f ⟩ a ∼ ⟨ g ⟩ a
+
+  instance
+    isEquivRel:∼-SetoidHom : isEquivRel (∼-Base _∼-SetoidHom_)
+    isEquivRel.refl isEquivRel:∼-SetoidHom = incl (λ {a} → refl)
+    isEquivRel.sym isEquivRel:∼-SetoidHom (incl p) = incl (p ⁻¹)
+    isEquivRel._∙_ isEquivRel:∼-SetoidHom (incl p) (incl q) = incl (p ∙ q)
+
+  instance
+    isSetoid:SetoidHom : isSetoid _ (SetoidHom A B)
+    isSetoid._∼'_ isSetoid:SetoidHom = _∼-SetoidHom_
+
 
 instance
   isSetoid:⦋𝒫⦌ : ∀{𝑖 𝑗 : 𝔏} {A : 𝒰 𝑖} -> {{_ : isSetoid 𝑗 A}} -> {P : 𝒫 A} -> isSetoid _ ⦋ P ⦌

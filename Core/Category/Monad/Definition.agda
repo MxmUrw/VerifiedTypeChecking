@@ -39,7 +39,7 @@ unquoteDecl Monad monad = #struct "Mnd" (quote IMonad) "F" Monad monad
 
 -- [Hide]
 -- | We define a shorthand for monads on \AD{𝒰 𝑖}
-ISetMonad : (F : Functor (⌘ 𝒰 𝑖) (⌘ 𝒰 𝑖)) -> 𝒰 (𝑖 ⁺)
+ISetMonad : (F : Functor (′ 𝒰 𝑖 ′) (′ 𝒰 𝑖 ′)) -> 𝒰 (𝑖 ⁺)
 ISetMonad F = IMonad F
 
 module _ {𝒞 : Category 𝑖} {F : Functor 𝒞 𝒞} {{_ : IMonad F}} where
@@ -61,7 +61,7 @@ module _ {𝒞 : Category 𝑖} {F : Functor 𝒞 𝒞} {{_ : IMonad F}} where
   f =<< = map f ◆ join
 
 
-module _ {F : Functor (⌘ 𝒰 𝑖) (⌘ 𝒰 𝑖)} {{_ : IMonad F}} where
+module _ {F : Functor (′ 𝒰 𝑖 ′) (′ 𝒰 𝑖 ′)} {{_ : IMonad F}} where
   _>>=_ : ∀{A B} -> ⟨ F ⟩ A -> (A -> ⟨ F ⟩ B) -> ⟨ F ⟩ B
   a >>= f = join (map f a)
 

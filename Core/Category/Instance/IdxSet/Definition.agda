@@ -35,36 +35,36 @@ unquoteDecl _≣-IdxSet_ mk-≣-IdxSet = #struct "_≣_" (quote is-≣-IdxSet) "
 
 module _ {K : 𝒰 𝑘} where
   instance
-    IEquiv:≣-IdxSet : {A : IdxSet K 𝑖} {B : IdxSet K 𝑗} -> IEquiv (_≣-IdxSet_ {A = A} {B = B})
-    ⟨ IEquiv.refl IEquiv:≣-IdxSet ⟩ _ = refl
-    ⟨ IEquiv.sym IEquiv:≣-IdxSet p ⟩ x = ⟨ p ⟩ x ⁻¹
-    ⟨ IEquiv._∙_ IEquiv:≣-IdxSet p q ⟩ x = ⟨ p ⟩ x ∙ ⟨ q ⟩ x
+    isEquivRel:≣-IdxSet : {A : IdxSet K 𝑖} {B : IdxSet K 𝑗} -> isEquivRel (_≣-IdxSet_ {A = A} {B = B})
+    ⟨ isEquivRel.refl isEquivRel:≣-IdxSet ⟩ _ = refl
+    ⟨ isEquivRel.sym isEquivRel:≣-IdxSet p ⟩ x = ⟨ p ⟩ x ⁻¹
+    ⟨ isEquivRel._∙_ isEquivRel:≣-IdxSet p q ⟩ x = ⟨ p ⟩ x ∙ ⟨ q ⟩ x
 
 instance
-  IEquiv:≣-on-IdxSet : {K : 𝒰 𝑘} {A : IdxSet K 𝑖} {B : IdxSet K 𝑗} -> IEquiv (λ (f g : IdxSetHom A B) -> ∀{k} -> ∀ x -> ⟨ f ⟩ {k} x ≡ ⟨ g ⟩ {k} x)
-  IEquiv.refl IEquiv:≣-on-IdxSet x = refl
-  IEquiv.sym IEquiv:≣-on-IdxSet p x₁ = p _ ⁻¹
-  IEquiv._∙_ IEquiv:≣-on-IdxSet p q _ = p _ ∙ q _
+  isEquivRel:≣-on-IdxSet : {K : 𝒰 𝑘} {A : IdxSet K 𝑖} {B : IdxSet K 𝑗} -> isEquivRel (λ (f g : IdxSetHom A B) -> ∀{k} -> ∀ x -> ⟨ f ⟩ {k} x ≡ ⟨ g ⟩ {k} x)
+  isEquivRel.refl isEquivRel:≣-on-IdxSet x = refl
+  isEquivRel.sym isEquivRel:≣-on-IdxSet p x₁ = p _ ⁻¹
+  isEquivRel._∙_ isEquivRel:≣-on-IdxSet p q _ = p _ ∙ q _
 
 
 
 Category:IdxSet : ∀(K : 𝒰 𝑘) -> ∀ 𝑖 -> Category (𝑖 ⁺ ⊔ 𝑘 , (𝑘 ⊔ 𝑖) , (𝑘 ⊔ 𝑖))
 ⟨ Category:IdxSet K 𝑖 ⟩ = IdxSet K 𝑖
-ICategory.Hom (of Category:IdxSet K 𝑖) = IdxSetHom
-ICategory._≣_ (of Category:IdxSet K 𝑖) f g = ∀{k} -> ∀ x -> ⟨ f ⟩ {k} x ≡ ⟨ g ⟩ {k} x
+isCategory.Hom (of Category:IdxSet K 𝑖) = IdxSetHom
+isCategory._≣_ (of Category:IdxSet K 𝑖) f g = ∀{k} -> ∀ x -> ⟨ f ⟩ {k} x ≡ ⟨ g ⟩ {k} x
 -- f ≣-IdxSet g -- 
 -- ∀ {k} x -> ⟨ f ⟩ {k} x ≡ ⟨ g ⟩ {k} x
-ICategory.IEquiv:≣ (of Category:IdxSet K 𝑖) = IEquiv:≣-on-IdxSet
-ICategory.id (of Category:IdxSet K 𝑖) = idxSetHom (id)
-ICategory._◆_ (of Category:IdxSet K 𝑖) f g = ` (λ {k} -> ⟨ f ⟩ {k} ◆ ⟨ g ⟩ {k}) `
-ICategory.unit-l-◆ (of Category:IdxSet K 𝑖) = {!!}
-ICategory.unit-r-◆ (of Category:IdxSet K 𝑖) = {!!}
-ICategory.unit-2-◆ (of Category:IdxSet K 𝑖) = {!!}
-ICategory.assoc-l-◆ (of Category:IdxSet K 𝑖) = {!!}
-ICategory.assoc-r-◆ (of Category:IdxSet K 𝑖) = {!!}
-ICategory._◈_ (of Category:IdxSet K 𝑖) = {!!}
+isCategory.isEquivRel:≣ (of Category:IdxSet K 𝑖) = isEquivRel:≣-on-IdxSet
+isCategory.id (of Category:IdxSet K 𝑖) = idxSetHom (id)
+isCategory._◆_ (of Category:IdxSet K 𝑖) f g = ` (λ {k} -> ⟨ f ⟩ {k} ◆ ⟨ g ⟩ {k}) `
+isCategory.unit-l-◆ (of Category:IdxSet K 𝑖) = {!!}
+isCategory.unit-r-◆ (of Category:IdxSet K 𝑖) = {!!}
+isCategory.unit-2-◆ (of Category:IdxSet K 𝑖) = {!!}
+isCategory.assoc-l-◆ (of Category:IdxSet K 𝑖) = {!!}
+isCategory.assoc-r-◆ (of Category:IdxSet K 𝑖) = {!!}
+isCategory._◈_ (of Category:IdxSet K 𝑖) = {!!}
 
-instance ICategory:IdxSet = #openstruct Category:IdxSet
+instance isCategory:IdxSet = #openstruct Category:IdxSet
 
 module _ {K : 𝒰 𝑘} where
   instance
