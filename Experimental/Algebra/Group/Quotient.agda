@@ -45,7 +45,7 @@ module _ where
       isEquivRel._∙_ isEquivRel:RelSubgroup = lem-30
 
     instance
-      isSetoidHom:[] : isSetoidHom {A = ⟨ G ⟩} {B = ⟨ G ⟩ /-𝒰 RelSubgroup H} [_]
+      isSetoidHom:[] : isSetoidHom ′(⟨ G ⟩)′ ′(⟨ G ⟩ /-𝒰 RelSubgroup H)′ [_]
       isSetoidHom.preserves-∼ isSetoidHom:[] {a} {b} (p) =
         let P = a ⋆ ◡ b ≣⟨ p `cong-⋆` refl ⟩
                 b ⋆ ◡ b ≣⟨ inv-r-⋆ ⟩

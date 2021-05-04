@@ -20,10 +20,19 @@ open import Verification.Experimental.Order.Preorder
 module _ {𝑖 : 𝔏 ^ 3} where
   record isTotalorder⁻ (A : Partialorder 𝑖) : 𝒰 𝑖 where
     field total⁻ : ∀{a b : ⟨ A ⟩} -> (a ≰ b) -> b ≤ a
-    -- (b ≤ a -> 𝟘-𝒰) -> 𝟘-𝒰
 
-Totalorder : (𝑖 : 𝔏 ^ 3) -> 𝒰 _
-Totalorder 𝑖 = Preorder 𝑖 :& isPartialorder :& isTotalorder⁻
+  record isTotalorder⁺ (A : Partialorder 𝑖) : 𝒰 𝑖 where
+    field total⁺ : ∀{a b : ⟨ A ⟩} -> (a ≤ b) +-𝒰 b ≤ a
+
+Totalorder⁻ : (𝑖 : 𝔏 ^ 3) -> 𝒰 _
+Totalorder⁻ 𝑖 = Preorder 𝑖 :& isPartialorder :& isTotalorder⁻
+
+Totalorder⁺ : (𝑖 : 𝔏 ^ 3) -> 𝒰 _
+Totalorder⁺ 𝑖 = Preorder 𝑖 :& isPartialorder :& isTotalorder⁺
+
+
+
+
 
 {-
 module _ {𝑗 : 𝔏 ^ 3} where

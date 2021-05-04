@@ -13,3 +13,16 @@ instance
   Notation-Absolute.∣_∣ Notation-Absolute:Prop = ∣_∣-Prop
 
 
+𝒫 : 𝒰 𝑖 -> 𝒰 (𝑖 ⁺)
+𝒫 {𝑖} A = A -> Prop 𝑖
+
+record ⦋_⦌ {U : 𝒰 𝑖} (P : U -> Prop 𝑗) : 𝒰 (𝑖 ⊔ 𝑗) where
+  constructor _∈_
+  field ⟨_⟩ : U
+  field Proof : Prop.⟨_⟩ (P ⟨_⟩)
+open ⦋_⦌ public
+
+infix 60 _∈_
+
+
+

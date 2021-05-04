@@ -11,10 +11,6 @@ open import Verification.Experimental.Data.Universe.Definition
 open import Verification.Experimental.Data.Universe.Instance.Setoid
 open import Verification.Experimental.Data.Universe.Instance.Preorder
 
-data ⊥-𝒰 {𝑖} : 𝒰 𝑖 where
-data ⊤-𝒰 {𝑖} : 𝒰 𝑖 where
-  tt : ⊤-𝒰
-
 instance
   hasFiniteJoins:𝒰 : hasFiniteJoins ′ 𝒰 𝑖 ′
   hasFiniteJoins.⊥         hasFiniteJoins:𝒰 = ⊥-𝒰

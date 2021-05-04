@@ -67,20 +67,24 @@ module _ {A : 𝒰 𝑖} {{_ : isSetoid 𝑗 A}} {{_ : isPreorder 𝑘 ′ A ′
 ----------------------------------------------------------
 -- Category of preorders
 
--- record isMonotone {A : Preorder 𝑖} {B : Preorder 𝑗} (f : El A -> El B) : 𝒰 (𝑖 ､ 𝑗) where
---   field monotone : ∀{a b : El A} -> (a ≤ b) -> f a ≤ f b
+record isMonotone (A : Preorder 𝑖) (B : Preorder 𝑗) (f : SetoidHom ′ ⟨ A ⟩ ′ ′ ⟨ B ⟩ ′) : 𝒰 (𝑖 ､ 𝑗) where
+  field monotone : ∀{a b : ⟨ A ⟩} -> (a ≤ b) -> ⟨ f ⟩ a ≤ ⟨ f ⟩ b
 
-record isMonotone {A : 𝒰 _} {B : 𝒰 _} {{_ : Preorder 𝑖 on A}} {{_ : Preorder 𝑗 on B}} (f : (A -> B) :& isSetoidHom) : 𝒰 (𝑖 ､ 𝑗) where
-  field monotone : ∀{a b : A} -> (a ≤ b) -> ⟨ f ⟩ a ≤ ⟨ f ⟩ b
+-- record isMonotone {A : 𝒰 _} {B : 𝒰 _} {{_ : Preorder 𝑖 on A}} {{_ : Preorder 𝑗 on B}} (f : (A -> B) :& isSetoidHom) : 𝒰 (𝑖 ､ 𝑗) where
+--   field monotone : ∀{a b : A} -> (a ≤ b) -> ⟨ f ⟩ a ≤ ⟨ f ⟩ b
 open isMonotone {{...}} public
 
 -- record isMonotone {A : 𝒰 𝑖} {B : 𝒰 𝑗} {{_ : isPreorder A}} {{_ : isPreorder B}} (f : A -> B) : 𝒰 (𝑖 ､ 𝑗) where
 --   field monotone : ∀{a b : A} -> (a ≤ b) -> f a ≤ f b
 
 Monotone : (A : Preorder 𝑖) (B : Preorder 𝑗) -> 𝒰 (𝑖 ､ 𝑗)
-Monotone A B = (⟨ A ⟩ -> ⟨ B ⟩) :& isSetoidHom :& isMonotone
+Monotone A B = _ :& isMonotone A B
 
-
+module _ {A : Preorder 𝑖} {B : Preorder 𝑗} where
+  instance
+    isSetoid:Monotone : isSetoid _ (Monotone A B)
+    isSetoid._∼'_ isSetoid:Monotone f g = ⟨ f ⟩ ∼' ⟨ g ⟩
+    isSetoid.isEquivRel:∼ isSetoid:Monotone = {!!}
 
 -- unquoteDecl Monotone makeMonotone = #struct "Monotone" (quote isMonotone) "f" Monotone makeMonotone
 

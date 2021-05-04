@@ -145,18 +145,22 @@ module TypeNotation where
   _×_ = _×-𝒰_
 
 
-𝒫 : (A : 𝒰 𝑖) -> 𝒰 (𝑖 ⁺)
-𝒫 {𝑖} A = A -> 𝒰 𝑖
+-- 𝒫 : (A : 𝒰 𝑖) -> 𝒰 (𝑖 ⁺)
+-- 𝒫 {𝑖} A = A -> 𝒰 𝑖
 
-record ⦋_⦌ {U : 𝒰 𝑖} (P : U -> 𝒰 𝑗) : 𝒰 (𝑖 ⊔ 𝑗) where
-  constructor _∈_
-  field ⟨_⟩ : U
-  field Proof : P ⟨_⟩
-open ⦋_⦌ public
+-- record ⦋_⦌ {U : 𝒰 𝑖} (P : U -> 𝒰 𝑗) : 𝒰 (𝑖 ⊔ 𝑗) where
+--   constructor _∈_
+--   field ⟨_⟩ : U
+--   field Proof : P ⟨_⟩
+-- open ⦋_⦌ public
 
   -- _∈_ : (a : U) -> P a -> ⦋ P ⦌
 
-infix 60 _∈_
+data ⊥-𝒰 {𝑖} : 𝒰 𝑖 where
+data ⊤-𝒰 {𝑖} : 𝒰 𝑖 where
+  tt : ⊤-𝒰
+
+
 
 case_of : ∀{A : 𝒰 𝑖} {B : 𝒰 𝑗} {C : 𝒰 𝑘} (a : A +-𝒰 B) -> (A -> C) -> (B -> C) -> C
 case left x of f g = f x

@@ -4,6 +4,7 @@ module Verification.Experimental.Algebra.Monoid.Definition where
 open import Verification.Conventions
 open import Verification.Experimental.Meta.Structure
 open import Verification.Experimental.Set.Setoid.Definition
+open import Verification.Experimental.Data.Prop.Definition
 
 
 
@@ -40,8 +41,8 @@ open isCommutative {{...}} public
 
 
 record isSubmonoid {𝑗 : 𝔏 ^ 2} {A} {{_ : Monoid 𝑗 on A}} (P : 𝒫 A :& isSubsetoid) : 𝒰 𝑗 where
-  field closed-◌ : ⟨ P ⟩ ◌
-        closed-⋆ : ∀{a b} -> ⟨ P ⟩ a -> ⟨ P ⟩ b -> ⟨ P ⟩ (a ⋆ b)
+  field closed-◌ : ⟨ ⟨ P ⟩ ◌ ⟩
+        closed-⋆ : ∀{a b} -> ⟨ ⟨ P ⟩ a ⟩ -> ⟨ ⟨ P ⟩ b ⟩ -> ⟨ ⟨ P ⟩ (a ⋆ b) ⟩
 open isSubmonoid {{...}} public
 
 

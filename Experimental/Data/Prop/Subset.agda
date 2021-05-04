@@ -24,11 +24,11 @@ module _ {A B : 𝒰 𝑖} where
   pb-𝒫 f P a = P (f a)
 
   instance
-    isSetoidHom:pb-𝒫 : ∀{f : A -> B} -> isSetoidHom (pb-𝒫 f)
+    isSetoidHom:pb-𝒫 : ∀{f : A -> B} -> isSetoidHom ′(B -> Prop 𝑖)′ ′(A -> Prop 𝑖)′ (pb-𝒫 f)
     isSetoidHom.preserves-∼ isSetoidHom:pb-𝒫 {a = P} {b = Q} (incl x) = incl x
 
   instance
-    isMonotone:pb-𝒫 : ∀{f : A -> B} -> isMonotone ′ (pb-𝒫 f) ′
+    isMonotone:pb-𝒫 : ∀{f : A -> B} -> isMonotone ′(B -> Prop 𝑖)′ ′(A -> Prop 𝑖)′ (′(pb-𝒫 f)′)
     isMonotone.monotone isMonotone:pb-𝒫 {a = P} {b = Q} (incl x) = incl x
 
   instance
@@ -85,7 +85,7 @@ module _ {A B : 𝒰 𝑖} where
   pb-𝒫-Dec : ∀(f : A -> B) -> (𝒫-Dec B) -> (𝒫-Dec A)
   ⟨ pb-𝒫-Dec f P ⟩ a = pb-𝒫 f ⟨ P ⟩ a
   _:&_.oldProof (pb-𝒫-Dec f P) = record {}
-  _:&_.Proof (pb-𝒫-Dec f P) = is𝒫-Dec:pb-𝒫
+  _:&_.of (pb-𝒫-Dec f P) = is𝒫-Dec:pb-𝒫
 
   instance
     Notation-Restriction:pb-𝒫-Dec : Notation-Restriction (𝒫-Dec B) (A -> B) (𝒫-Dec A)
