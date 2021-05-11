@@ -4,6 +4,7 @@ module Verification.Experimental.Algebra.Group.Definition where
 open import Verification.Conventions
 open import Verification.Experimental.Meta.Structure
 open import Verification.Experimental.Set.Setoid
+open import Verification.Experimental.Data.Prop.Everything
 open import Verification.Experimental.Algebra.Monoid.Definition
 
 
@@ -21,7 +22,7 @@ Group 𝑗 = Monoid 𝑗 :& isGroup
 
 
 record isSubgroup {𝑗 : 𝔏 ^ 2} {A} {{_ : Group 𝑗 on A}} (P : 𝒫 A :& isSubsetoid :& isSubmonoid) : 𝒰 𝑗 where
-  field closed-◡ : ∀{a} -> ⟨ P ⟩ a -> ⟨ P ⟩ (◡ a)
+  field closed-◡ : ∀{a} -> ⟨ ⟨ P ⟩ a ⟩ -> ⟨ ⟨ P ⟩ (◡ a) ⟩
 open isSubgroup {{...}} public
 
 
@@ -30,7 +31,7 @@ Subgroup G = 𝒫 ⟨ G ⟩ :& isSubsetoid :& isSubmonoid :& isSubgroup
 
 
 data RelSubgroup {𝑗 : 𝔏 ^ 2} {G : Group 𝑗} (H : Subgroup G) (a : ⟨ G ⟩) (b : ⟨ G ⟩) : 𝒰 (𝑗 ⌄ 0) where
-  incl : ⟨ H ⟩ (a ⋆ ◡ b) -> RelSubgroup H a b
+  incl : ⟨ ⟨ H ⟩ (a ⋆ ◡ b) ⟩ -> RelSubgroup H a b
 
 
 module _ {𝑖 𝑗 : 𝔏} {A : 𝒰 𝑖} {{_ : Group (𝑖 , 𝑗) on A}} where

@@ -41,12 +41,14 @@ open isCommutative {{...}} public
 
 
 record isSubmonoid {𝑗 : 𝔏 ^ 2} {A} {{_ : Monoid 𝑗 on A}} (P : 𝒫 A :& isSubsetoid) : 𝒰 𝑗 where
-  field closed-◌ : ⟨ ⟨ P ⟩ ◌ ⟩
-        closed-⋆ : ∀{a b} -> ⟨ ⟨ P ⟩ a ⟩ -> ⟨ ⟨ P ⟩ b ⟩ -> ⟨ ⟨ P ⟩ (a ⋆ b) ⟩
+  field closed-◌ : ◌ ∈ P
+        closed-⋆ : ∀{a b : A} -> a ∈ P -> b ∈ P -> (a ⋆ b) ∈ P
+        --⟨ ⟨ P ⟩ a ⟩ -> ⟨ ⟨ P ⟩ b ⟩ -> ⟨ ⟨ P ⟩ (a ⋆ b) ⟩
 open isSubmonoid {{...}} public
 
 
-
+Submonoid : (M : Monoid 𝑖) -> 𝒰 _
+Submonoid M = _ :& isSubmonoid {A = ⟨ M ⟩}
 
 
 

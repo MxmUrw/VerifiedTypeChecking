@@ -31,9 +31,15 @@ module _ {A B : 𝒰 𝑖} where
     isMonotone:pb-𝒫 : ∀{f : A -> B} -> isMonotone ′(B -> Prop 𝑖)′ ′(A -> Prop 𝑖)′ (′(pb-𝒫 f)′)
     isMonotone.monotone isMonotone:pb-𝒫 {a = P} {b = Q} (incl x) = incl x
 
+-- module _ {A : 𝒰 𝑖} {B : 𝒰 𝑗} {C : 𝒰 𝑘} where
+--   instance
+--     Notation-Restriction:pb-𝒫 : Notation-Restriction (B -> C) (A -> B) (λ _ _ -> A -> C)
+--     Notation-Restriction._∣_ Notation-Restriction:pb-𝒫 P f = λ a -> P (f a)
+
+module _ {A : 𝒰 𝑖} {B : 𝒰 𝑗} {C : B -> 𝒰 𝑘} where
   instance
-    Notation-Restriction:pb-𝒫 : Notation-Restriction (B -> Prop 𝑖) (A -> B) (A -> Prop 𝑖)
-    Notation-Restriction._∣_ Notation-Restriction:pb-𝒫 P f = pb-𝒫 f P
+    Notation-Restriction:pb-𝒫-dep2 : Notation-Restriction (∀(b : B) -> C b) (A -> B) (λ X Y -> ∀(a : A) -> C (Y a))
+    Notation-Restriction._∣_ Notation-Restriction:pb-𝒫-dep2 P f = λ a -> P (f a)
 
   -- instance
   --   Notation-Restriction:pb-𝒫-Monotone : {p q : A -> Prop 𝑖} -> Notation-Restriction (p ≤ q) (A -> B) (A -> Prop 𝑖)
@@ -88,7 +94,7 @@ module _ {A B : 𝒰 𝑖} where
   _:&_.of (pb-𝒫-Dec f P) = is𝒫-Dec:pb-𝒫
 
   instance
-    Notation-Restriction:pb-𝒫-Dec : Notation-Restriction (𝒫-Dec B) (A -> B) (𝒫-Dec A)
+    Notation-Restriction:pb-𝒫-Dec : Notation-Restriction (𝒫-Dec B) (A -> B) (λ _ _ -> 𝒫-Dec A)
     Notation-Restriction._∣_ Notation-Restriction:pb-𝒫-Dec P f = pb-𝒫-Dec f P
 
 

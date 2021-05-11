@@ -41,6 +41,16 @@ instance
   (IBootEq:Relevance IBootEq.≟ irrelevant) relevant = false
   (IBootEq:Relevance IBootEq.≟ irrelevant) irrelevant = true
 
+  IBootEq:Quantity : IBootEq Quantity
+  IBootEq._≟_ IBootEq:Quantity quantity-0 quantity-0 = true
+  IBootEq._≟_ IBootEq:Quantity quantity-0 quantity-ω = false
+  IBootEq._≟_ IBootEq:Quantity quantity-ω quantity-0 = false
+  IBootEq._≟_ IBootEq:Quantity quantity-ω quantity-ω = true
+
+
+  IBootEq:Modality : IBootEq Modality
+  IBootEq._≟_ IBootEq:Modality (modality r1 q1) (modality r2 q2) = (r1 ≟ r2) and (q1 ≟ q2)
+
 
 instance
   IBootEq:ArgInfo : IBootEq ArgInfo
@@ -117,8 +127,13 @@ wrapRel : Relevance -> String -> String
 wrapRel relevant s = s
 wrapRel irrelevant s = "." <> s
 
+wrapMod : Modality -> String -> String
+wrapMod m s = s
+-- wrapMod relevant s = s
+-- wrapMod irrelevant s = "." <> s
+
 wrapInfo : ArgInfo -> String -> String
-wrapInfo (arg-info v r) s = wrapVis v (wrapRel r s)
+wrapInfo (arg-info v r) s = wrapVis v (wrapMod r s)
 
 
 instance
@@ -188,9 +203,13 @@ return = returnTC
 _>>_ : ∀{A B : 𝒰 𝑖} -> (TC A) -> TC B -> TC B
 _>>_ a b = a >>= \_ -> b
 
-pattern varg x = arg (arg-info visible relevant) x
-pattern harg x = arg (arg-info hidden  relevant) x
-pattern iarg x = arg (arg-info instance′    relevant) x
+-- pattern varg x = arg (arg-info visible relevant) x
+-- pattern harg x = arg (arg-info hidden  relevant) x
+-- pattern iarg x = arg (arg-info instance′    relevant) x
+
+pattern varg x = arg (arg-info visible (modality relevant quantity-ω)) x
+pattern harg x = arg (arg-info hidden  (modality relevant quantity-ω)) x
+pattern iarg x = arg (arg-info instance′    (modality relevant quantity-ω)) x
 
 printErr : ∀{A : 𝒰 𝑖} -> String -> TC A
 printErr s = typeError (strErr s ∷ [])

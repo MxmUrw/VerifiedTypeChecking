@@ -5,6 +5,7 @@ module Verification.Experimental.Algebra.Ring.Quotient where
 
 open import Verification.Conventions
 open import Verification.Experimental.Meta.Structure
+open import Verification.Experimental.Data.Prop.Everything
 open import Verification.Experimental.Set.Setoid.Definition
 open import Verification.Experimental.Algebra.Monoid.Definition
 open import Verification.Experimental.Algebra.Group.Definition
@@ -31,7 +32,7 @@ module _ {𝑗 : 𝔏 ^ 2} {R : Ring 𝑗} {I : Ideal R} where
     isSemiring.distr-l-⋅ isSemiring:Quot {a = [ a ]} {b = [ b ]} {c = [ c ]} = preserves-∼ distr-l-⋅
     isSemiring.distr-r-⋅ isSemiring:Quot {a = [ a ]} {b = [ b ]} {c = [ c ]} = preserves-∼ distr-r-⋅
     isSemiring._`cong-⋅`_ isSemiring:Quot {a₀ = [ a₀ ]} {a₁ = [ a₁ ]} {b₀ = [ b₀ ]} {b₁ = [ b₁ ]} (incl (incl p)) (incl (incl q)) =
-      let P₀ : ⟨ I ⟩ ((a₀ ⋆ ◡ a₁) ⋅ b₀)
+      let P₀ : ⟨ ⟨ I ⟩ ((a₀ ⋆ ◡ a₁) ⋅ b₀) ⟩
           P₀ = ideal-r-⋅ p
 
           P₁ : ∀{x y z} -> ((x ⋆ ◡ y) ⋅ z) ∼ x ⋅ z ⋆ ◡ (y ⋅ z)
@@ -40,7 +41,7 @@ module _ {𝑗 : 𝔏 ^ 2} {R : Ring 𝑗} {I : Ideal R} where
                (x ⋅ z ⋆ ◡ y ⋅ z) ≣⟨ refl `cong-⋆` switch-◡-⋅-l ⁻¹ ⟩
                x ⋅ z ⋆ ◡ (y ⋅ z) ∎
 
-          P₂ : ⟨ I ⟩ (a₀ ⋅ b₀ ⋆ ◡ (a₁ ⋅ b₀))
+          P₂ : ⟨ ⟨ I ⟩ (a₀ ⋅ b₀ ⋆ ◡ (a₁ ⋅ b₀)) ⟩
           P₂ = transp-Subsetoid P₁ P₀
 
           P₃ : ∀{x y z} -> (z ⋅ (x ⋆ ◡ y)) ∼ z ⋅ x ⋆ ◡ (z ⋅ y)
@@ -49,10 +50,10 @@ module _ {𝑗 : 𝔏 ^ 2} {R : Ring 𝑗} {I : Ideal R} where
                (z ⋅ x ⋆ z ⋅ ◡ y) ≣⟨ refl `cong-⋆` switch-◡-⋅-r ⁻¹ ⟩
                z ⋅ x ⋆ ◡ (z ⋅ y) ∎
 
-          P₄ : ⟨ I ⟩ (a₁ ⋅ b₀ ⋆ ◡ (a₁ ⋅ b₁))
+          P₄ : ⟨ ⟨ I ⟩ (a₁ ⋅ b₀ ⋆ ◡ (a₁ ⋅ b₁)) ⟩
           P₄ = transp-Subsetoid P₃ (ideal-l-⋅ q)
 
-          P₅ : ⟨ I ⟩ ((a₀ ⋅ b₀ ⋆ ◡ (a₁ ⋅ b₀)) ⋆ (a₁ ⋅ b₀ ⋆ ◡ (a₁ ⋅ b₁)))
+          P₅ : ⟨ ⟨ I ⟩ ((a₀ ⋅ b₀ ⋆ ◡ (a₁ ⋅ b₀)) ⋆ (a₁ ⋅ b₀ ⋆ ◡ (a₁ ⋅ b₁))) ⟩
           P₅ = closed-⋆ P₂ P₄
 
           P₆ : ∀ {x y z} -> (x ⋆ ◡ y) ⋆ (y ⋆ z) ∼ x ⋆ z
@@ -62,7 +63,7 @@ module _ {𝑗 : 𝔏 ^ 2} {R : Ring 𝑗} {I : Ideal R} where
             x ⋆ (◡ y ⋆ y ⋆ z)     ≣⟨ refl `cong-⋆` ((inv-l-⋆ `cong-⋆` refl) ∙ unit-l-⋆) ⟩
             x ⋆ z                 ∎
 
-          P₇ : ⟨ I ⟩ (a₀ ⋅ b₀ ⋆ ◡ (a₁ ⋅ b₁))
+          P₇ : ⟨ ⟨ I ⟩ (a₀ ⋅ b₀ ⋆ ◡ (a₁ ⋅ b₁)) ⟩
           P₇ = transp-Subsetoid P₆ P₅
       in incl (incl P₇)
 

@@ -5,6 +5,7 @@ module Verification.Experimental.Algebra.Abelian.Definition where
 
 open import Verification.Conventions
 open import Verification.Experimental.Meta.Structure
+open import Verification.Experimental.Data.Prop.Everything
 open import Verification.Experimental.Set.Setoid.Definition
 open import Verification.Experimental.Algebra.Monoid.Definition
 open import Verification.Experimental.Algebra.Group.Definition
@@ -58,7 +59,7 @@ module _ {𝑗 : 𝔏 ^ 2} {A : Group 𝑗} {B : Subgroup A} {{_ : isCommutative
                 b ⋆ a ⋆ ◡ a   ≣⟨ comm-⋆ `cong-⋆` refl ⟩
                 a ⋆ b ⋆ ◡ a   ∎
 
-          P₁ : ⟨ B ⟩ (a ⋆ b ⋆ ◡ a)
+          P₁ : ⟨ ⟨ B ⟩ (a ⋆ b ⋆ ◡ a) ⟩
           P₁ = transp-Subsetoid P₀ b∈B
       in P₁
 

@@ -14,36 +14,12 @@ open import Verification.Experimental.Data.Sum.Definition
 open import Verification.Experimental.Order.Preorder
 open import Verification.Experimental.Order.Lattice
 open import Verification.Experimental.Theory.Computation.Unification.Definition
+open import Verification.Experimental.Theory.Computation.Unification.Monoidic.PrincipalFamilyCat
 open import Verification.Experimental.Algebra.Monoid.Definition
 open import Verification.Experimental.Algebra.MonoidWithZero.Definition
 open import Verification.Experimental.Algebra.MonoidWithZero.Ideal
 open import Verification.Experimental.Algebra.MonoidAction.Definition
 
-module _ {M : 𝒰 𝑖} {{_ : Monoid₀ (𝑖 , 𝑖) on M}} where
-
-  record CoeqSolutions' (f g h : M) : 𝒰 𝑖 where
-    constructor incl
-    field ⟨_⟩ : f ⋆ h ∼ g ⋆ h
-  open CoeqSolutions' public
-
-  CoeqSolutions : (f g : M) -> 𝒫 M
-  CoeqSolutions f g = λ h -> ∣ CoeqSolutions' f g h ∣
-
-module _ {M : Monoid₀ (𝑖 , 𝑖)} {f g : ⟨ M ⟩} where
-  instance
-    isSubsetoid:CoeqSolutions : isSubsetoid (CoeqSolutions f g)
-    isSubsetoid.transp-Subsetoid isSubsetoid:CoeqSolutions (p) (incl P) = incl ((refl ≀⋆≀ p ⁻¹) ∙ P ∙ (refl ≀⋆≀ p))
-
-  instance
-    isIdeal-r:CoeqSolutions : isIdeal-r M ′(CoeqSolutions f g)′
-    isIdeal-r.ideal-r-⋆ isIdeal-r:CoeqSolutions {h} (incl P) i =
-      let P₀ : f ⋆ (h ⋆ i) ∼ g ⋆ (h ⋆ i)
-          P₀ = f ⋆ (h ⋆ i)   ⟨ assoc-r-⋆ ⟩-∼
-                (f ⋆ h) ⋆ i   ⟨ P ≀⋆≀ refl ⟩-∼
-                (g ⋆ h) ⋆ i   ⟨ assoc-l-⋆ ⟩-∼
-                g ⋆ (h ⋆ i)   ∎
-      in incl P₀
-    isIdeal-r.ideal-◍ isIdeal-r:CoeqSolutions = incl (absorb-⋆-r ∙ absorb-⋆-r ⁻¹)
 
 module _ {𝒞 : Category 𝑖} {{_ : isDiscrete ⟨ 𝒞 ⟩}} {{_ : isSet-Str ⟨ 𝒞 ⟩}} where
   private
@@ -56,10 +32,13 @@ module _ {𝒞 : Category 𝑖} {{_ : isDiscrete ⟨ 𝒞 ⟩}} {{_ : isSet-Str 
         -- J = ′(CoeqSolutions f' g')′
         All : Ideal-r ′ PathMon 𝒞 ′
         All = ′ ⊤ ′
-      lem-10 : (isPrincipal/⁺-r ′(CoeqSolutions f' g')′) -> isDecidable (hasCoequalizer f g)
-      lem-10 P with split-+-Str (zeroOrCancel-r {{_:>_.Proof2 P}})
+        II : Ideal-r ′ PathMon 𝒞 ′
+        II = ′(CoeqSolutions f' g')′
+
+      lem-10 : ∀{G : Submonoid ′ PathMon 𝒞 ′} -> (isPrincipal/⁺-r G ′(CoeqSolutions f' g')′) -> isDecidable (hasCoequalizer f g)
+      lem-10 P with split-+-Str (zeroOrCancel-r {{_:>_.Proof2> P}})
       ... | left (rep=[] , snd₁) = left (λ X ->
-              let rr = rep {{_:>_.Proof1 P}}
+              let rr = rep {{_:>_.Proof1> P}}
                   h : b ⟶ ⟨ X ⟩
                   h = π-Coeq
                   h' : PathMon 𝒞
@@ -69,8 +48,8 @@ module _ {𝒞 : Category 𝑖} {{_ : isDiscrete ⟨ 𝒞 ⟩}} {{_ : isSet-Str 
                   P₁ : ⟨ CoeqSolutions f' g' h' ⟩
                   P₁ = incl P₀
                   P₂ : ⟨ ⟨ rr ↷-Ide All ⟩ h' ⟩
-                  P₂ = ⟨ ⟨ ⟨ principal-r ⟩ ⟩ ⟩ P₁
-                  x , xP , xQ = P₂
+                  P₂ = ⟨ ⟨ principal-r ⟩ ⟩ P₁
+                  incl (x , xP , xQ) = P₂
 
                   P₃ : h' ∼ rr ⋆ x
                   P₃ = xQ
@@ -83,10 +62,10 @@ module _ {𝒞 : Category 𝑖} {{_ : isDiscrete ⟨ 𝒞 ⟩}} {{_ : isSet-Str 
 
               in P₅ P₄
             )
-      ... | just ((rep≁◍ , cancelRep) , Q₀) = case-PathMon rep of
-        (λ (p : rep ∼ [])  -> 𝟘-rec (rep≁◍ p))
-        (λ (p : rep ∼ idp) ->
-          let P₀ : ⟨ CoeqSolutions f' g' rep ⟩
+      ... | just ((rep≁◍ , cancelRep) , Q₀) = case-PathMon (rep' ′(CoeqSolutions f' g')′) of
+        (λ (p : rep' II ∼ [])  -> 𝟘-rec (rep≁◍ p))
+        (λ (p : rep' II ∼ idp) ->
+          let P₀ : ⟨ CoeqSolutions f' g' (rep' II) ⟩
               P₀ = Principal-r::rep-in-ideal
 
               P₁ : ⟨ CoeqSolutions f' g' idp ⟩
@@ -120,7 +99,7 @@ module _ {𝒞 : Category 𝑖} {{_ : isDiscrete ⟨ 𝒞 ⟩}} {{_ : isSet-Str 
 
             -- We assume that we have a coeq
             left (λ X ->
-              let rr = rep {{_:>_.Proof1 P}}
+              let rr = rep {{_:>_.Proof1> P}}
                   h : b ⟶ ⟨ X ⟩
                   h = π-Coeq
                   h' : PathMon 𝒞
@@ -130,8 +109,8 @@ module _ {𝒞 : Category 𝑖} {{_ : isDiscrete ⟨ 𝒞 ⟩}} {{_ : isSet-Str 
                   P₁ : ⟨ CoeqSolutions f' g' h' ⟩
                   P₁ = incl P₀
                   P₂ : ⟨ ⟨ rr ↷-Ide All ⟩ h' ⟩
-                  P₂ = ⟨ ⟨ ⟨ principal-r {{_:>_.Proof1 P}} ⟩ ⟩ ⟩ P₁
-                  x , xP , xQ = P₂
+                  P₂ = ⟨ ⟨ principal-r {{_:>_.Proof1> P}} ⟩ ⟩ P₁
+                  incl (x , xP , xQ) = P₂
 
                   -- We derive that then an x must exist such that our coeq h' factors through rr (since rr is the representing element)
                   P₃ : h' ∼ rr ⋆ x
@@ -188,7 +167,7 @@ module _ {𝒞 : Category 𝑖} {{_ : isDiscrete ⟨ 𝒞 ⟩}} {{_ : isSet-Str 
                 π = i
 
                 -- we know that rep is in the CoeqSolutions ideal
-                P₀ : ⟨ (CoeqSolutions f' g') rep ⟩
+                P₀ : ⟨ (CoeqSolutions f' g') (rep' II) ⟩
                 P₀ = Principal-r::rep-in-ideal
 
                 -- thus, since rep is actually the arrow i, it is also in this ideal
@@ -216,15 +195,15 @@ module _ {𝒞 : Category 𝑖} {{_ : isDiscrete ⟨ 𝒞 ⟩}} {{_ : isSet-Str 
                 P₄ : ∀{d : ⟨ 𝒞 ⟩} -> (h : b ⟶ d) -> (f ◆ h ∼ g ◆ h) -> (∑ λ (j : c ⟶ d) -> (i ◆ j ∼ h))
                 P₄ {d} h hP =
                   let h' = arrow h
-                      rr = rep
+                      rr = rep' II
                       -- we show that h is in the ideal
                       Q₀ : ⟨ CoeqSolutions f' g' h' ⟩
                       Q₀ = incl (functoriality-arrow f h ⁻¹ ∙ incl (arrow hP) ∙ functoriality-arrow g h)
 
                       -- this means that it is also element of the "factoring ideal"/principal ideal
                       Q₂ : ⟨ ⟨ rr ↷-Ide All ⟩ h' ⟩
-                      Q₂ = ⟨ ⟨ ⟨ principal-r {{_:>_.Proof1 P}} ⟩ ⟩ ⟩ Q₀
-                      x , xP , xQ = Q₂
+                      Q₂ = ⟨ ⟨ principal-r {{_:>_.Proof1> P}} ⟩ ⟩ Q₀
+                      incl (x , xP , xQ) = Q₂
 
                       -- i.e., we get
                       Q₃ : h' ∼ rr ⋆ x
@@ -306,7 +285,7 @@ module _ {𝒞 : Category 𝑖} {{_ : isDiscrete ⟨ 𝒞 ⟩}} {{_ : isSet-Str 
                 -- the η rule, i.e., uniqueness of the coeq
                 P₅ : ∀{d : ⟨ 𝒞 ⟩} -> (v w : c ⟶ d) -> (i ◆ v ∼ i ◆ w) -> v ∼ w
                 P₅ v w P =
-                  let rr = rep
+                  let rr = rep' II
                       Q₀ : rr ⋆ arrow v ∼ rr ⋆ arrow w
                       Q₀ = (rep=i ≀⋆≀ refl) ∙ functoriality-arrow i v ⁻¹ ∙ (incl (arrow P)) ∙ functoriality-arrow i w ∙ (rep=i ⁻¹ ≀⋆≀ refl)
                       Q₁ : arrow v ∼ arrow w

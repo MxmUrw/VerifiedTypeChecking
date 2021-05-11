@@ -67,10 +67,10 @@ module _ {A : Setoid 𝑖} {B : Setoid 𝑗} where
 
 instance
   isSetoid:⦋𝒫⦌ : ∀{𝑖 𝑗 : 𝔏} {A : 𝒰 𝑖} -> {{_ : isSetoid 𝑗 A}} -> {P : 𝒫 A} -> isSetoid _ ⦋ P ⦌
-  isSetoid._∼'_ isSetoid:⦋𝒫⦌ (a ∈ _) (b ∈ _) = a ∼ b
-  isEquivRel.refl (isSetoid.isEquivRel:∼ isSetoid:⦋𝒫⦌) {x = a ∈ x} = incl refl
-  isEquivRel.sym (isSetoid.isEquivRel:∼ isSetoid:⦋𝒫⦌) {a ∈ x} {a₁ ∈ x₁} (incl p) = incl (sym p)
-  isEquivRel._∙_ (isSetoid.isEquivRel:∼ isSetoid:⦋𝒫⦌) {a ∈ x} {a₁ ∈ x₁} {a₂ ∈ x₂} (incl p) (incl q) = incl (p ∙ q)
+  isSetoid._∼'_ isSetoid:⦋𝒫⦌ (a ∢ _) (b ∢ _) = a ∼ b
+  isEquivRel.refl (isSetoid.isEquivRel:∼ isSetoid:⦋𝒫⦌) {x = a ∢ x} = incl refl
+  isEquivRel.sym (isSetoid.isEquivRel:∼ isSetoid:⦋𝒫⦌) {a ∢ x} {a₁ ∢ x₁} (incl p) = incl (sym p)
+  isEquivRel._∙_ (isSetoid.isEquivRel:∼ isSetoid:⦋𝒫⦌) {a ∢ x} {a₁ ∢ x₁} {a₂ ∢ x₂} (incl p) (incl q) = incl (p ∙ q)
 
 
 -------------------------------------------------------------------------------
@@ -78,12 +78,12 @@ instance
 
 module _ {UU : 𝒰 𝑖} {{U : hasU UU 𝑗 𝑘}} {{_ : isSetoid 𝑙 (getU U)}} where
   _∼-hasU_ : UU -> UU -> 𝒰 _
-  _∼-hasU_ a b = destructEl U a ∼ destructEl U b
+  _∼-hasU_ a b = destructEl U a ∼' destructEl U b
 
   isEquivRel:hasU : isEquivRel (∼-Base _∼-hasU_)
-  isEquivRel.refl isEquivRel:hasU = incl refl
-  isEquivRel.sym isEquivRel:hasU (incl p) = incl (sym p)
-  isEquivRel._∙_ isEquivRel:hasU (incl p) (incl q) = incl (p ∙ q)
+  isEquivRel.refl isEquivRel:hasU = incl ⟨ refl ⟩
+  isEquivRel.sym isEquivRel:hasU (incl p) = incl (⟨ sym (incl p) ⟩)
+  isEquivRel._∙_ isEquivRel:hasU (incl p) (incl q) = incl ⟨ ((incl p) ∙ (incl q)) ⟩
 
   isSetoid:hasU : isSetoid _ UU
   isSetoid._∼'_ isSetoid:hasU = _∼-hasU_
@@ -95,8 +95,10 @@ module _ {UU : 𝒰 𝑖} {{U : hasU UU 𝑗 𝑘}} {{_ : isSetoid 𝑙 (getU U)
 -- Subsetoids
 
 
-record isSubsetoid {𝑗 : 𝔏 ^ 2} {A} {{_ : Setoid 𝑗 on A}} (P : 𝒫 A) : 𝒰 𝑗 where
-  field transp-Subsetoid : ∀{a b} -> a ∼ b -> ⟨ P a ⟩ -> ⟨ P b ⟩
+-- record isSubsetoid {𝑗 : 𝔏 ^ 2} (X : Setoid 𝑗) (P : 𝒫 ⟨ X ⟩) : 𝒰 𝑗 where
+
+record isSubsetoid {𝑗 : 𝔏 ^ 2} {X : 𝒰 _} {{_ : Setoid 𝑗 on X}} (P : 𝒫 X) : 𝒰 𝑗 where
+  field transp-Subsetoid : ∀{a b : X} -> a ∼ b -> a ∈ P -> b ∈ P
 
 open isSubsetoid {{...}} public
 

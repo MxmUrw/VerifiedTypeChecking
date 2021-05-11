@@ -3,6 +3,7 @@ module Verification.Experimental.Algebra.Ring.Definition where
 
 open import Verification.Conventions
 open import Verification.Experimental.Meta.Structure
+open import Verification.Experimental.Data.Prop.Everything
 open import Verification.Experimental.Set.Setoid.Definition
 open import Verification.Experimental.Algebra.Monoid.Definition
 open import Verification.Experimental.Algebra.Group.Definition
@@ -92,8 +93,8 @@ module _ {𝑗 : 𝔏 ^ 2} {R : 𝒰 _} {{_ : Ring 𝑗 on R}} where
 
 -- record isIdeal {A} {{_ : Ring 𝑗 on A}} (P : 𝒫 A :& isSubsetoid :& isSubmonoid :& isSubgroup :& isSubabelian {A = ′ A ′}) : 𝒰 𝑗 where
 record isIdeal {𝑗 : 𝔏 ^ 2} {A : Ring 𝑗} (P : 𝒫 ⟨ A ⟩ :& isSubsetoid :& isSubmonoid :& isSubgroup :& isSubabelian {A = ′ ⟨ A ⟩ ′}) : 𝒰 𝑗 where
-  field ideal-l-⋅ : ∀{a b} -> ⟨ P ⟩ b -> ⟨ P ⟩ (a ⋅ b)
-        ideal-r-⋅ : ∀{a b} -> ⟨ P ⟩ a -> ⟨ P ⟩ (a ⋅ b)
+  field ideal-l-⋅ : ∀{a b} -> ⟨ ⟨ P ⟩ b ⟩ -> ⟨ ⟨ P ⟩ (a ⋅ b) ⟩
+        ideal-r-⋅ : ∀{a b} -> ⟨ ⟨ P ⟩ a ⟩ -> ⟨ ⟨ P ⟩ (a ⋅ b) ⟩
 open isIdeal {{...}} public
 
 Ideal : (R : Ring 𝑗) -> 𝒰 _
@@ -106,7 +107,7 @@ module _ {𝑗 : 𝔏 ^ 2} {R : Ring 𝑗} where
 
 
 record isPrime {𝑗 : 𝔏 ^ 2} {R : Ring 𝑗} (I : Ideal R) : 𝒰 𝑗 where
-  field prime : ∀{a b} -> ⟨ I ⟩ (a ⋅ b) -> ⟨ I ⟩ a +-𝒰 ⟨ I ⟩ b
+  field prime : ∀{a b} -> ⟨ ⟨ I ⟩ (a ⋅ b) ⟩ -> ⟨ ⟨ I ⟩ a ⟩ +-𝒰 ⟨ ⟨ I ⟩ b ⟩
 
 
 {-

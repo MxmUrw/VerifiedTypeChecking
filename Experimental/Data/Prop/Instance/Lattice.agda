@@ -34,3 +34,16 @@ instance
   hasFiniteMeets.π₀-∧       hasFiniteMeets:Prop = incl fst
   hasFiniteMeets.π₁-∧       hasFiniteMeets:Prop = incl snd
   hasFiniteMeets.⟨_,_⟩-∧    hasFiniteMeets:Prop f g = incl (λ a -> ⟨ f ⟩ a , ⟨ g ⟩ a)
+
+
+instance
+  hasAllJoins:Prop : hasAllJoins 𝑖 ′ Prop 𝑖 ′
+  hasAllJoins.⋁ hasAllJoins:Prop F = ∣ ∑ (λ a -> ⟨ F a ⟩) ∣
+  hasAllJoins.ι-⋁ hasAllJoins:Prop = λ x → incl (λ Fx → x , Fx)
+  hasAllJoins.[ hasAllJoins:Prop ]-⋁ = λ P → incl (λ (x , Px) → ⟨ P x ⟩ Px)
+
+instance
+  hasAllMeets:Prop : hasAllMeets 𝑖 ′ Prop 𝑖 ′
+  hasAllMeets.⋀ hasAllMeets:Prop F = ∣ ∏ (λ a -> ⟨ F a ⟩) ∣
+  hasAllMeets.π-⋀ hasAllMeets:Prop = λ x → incl (λ Fx → Fx x)
+  hasAllMeets.⟨ hasAllMeets:Prop ⟩-⋀ = λ P → incl (λ F → λ x -> ⟨ P x ⟩ F)

@@ -154,10 +154,10 @@ module _ {𝒞 : Category 𝑖} {{_ : isDiscrete ⟨ 𝒞 ⟩}} {{_ : isSet-Str 
   instance
     hasZero:PathMon : hasZero ′(PathMon 𝒞)′
     hasZero.◍ hasZero:PathMon = []
-    hasZero.absorb-⋆-r hasZero:PathMon {[]} = refl
-    hasZero.absorb-⋆-r hasZero:PathMon {idp} = refl
-    hasZero.absorb-⋆-r hasZero:PathMon {arrow f} = refl
-    hasZero.absorb-⋆-l hasZero:PathMon = refl
+    hasZero.absorb-r-⋆ hasZero:PathMon {[]} = refl
+    hasZero.absorb-r-⋆ hasZero:PathMon {idp} = refl
+    hasZero.absorb-r-⋆ hasZero:PathMon {arrow f} = refl
+    hasZero.absorb-l-⋆ hasZero:PathMon = refl
 
 
 

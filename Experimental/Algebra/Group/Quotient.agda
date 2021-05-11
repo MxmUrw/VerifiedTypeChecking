@@ -3,13 +3,14 @@ module Verification.Experimental.Algebra.Group.Quotient where
 
 open import Verification.Conventions
 open import Verification.Experimental.Meta.Structure
+open import Verification.Experimental.Data.Prop.Everything
 open import Verification.Experimental.Set.Setoid.Definition
 open import Verification.Experimental.Algebra.Monoid.Definition
 open import Verification.Experimental.Algebra.Group.Definition
 
 module _ {𝑗 : 𝔏 ^ 2} {G : Group 𝑗} where
   record isNormal (H : Subgroup G) : 𝒰 𝑗 where
-    field normal : ∀ a -> ∀{b : ⟨ G ⟩} -> ⟨ H ⟩ b -> ⟨ H ⟩ (a ⋆ b ⋆ ◡ a)
+    field normal : ∀ a -> ∀{b : ⟨ G ⟩} -> ⟨ ⟨ H ⟩ b ⟩ -> ⟨ ⟨ H ⟩ (a ⋆ b ⋆ ◡ a) ⟩
 
   open isNormal {{...}} public
 
@@ -61,10 +62,10 @@ module _ where
       isMonoid.assoc-l-⋆ isMonoid:GroupQuot {a = [ a ]} {b = [ b ]} {c = [ c ]} = preserves-∼ assoc-l-⋆
       isMonoid.assoc-r-⋆ isMonoid:GroupQuot {a = [ a ]} {b = [ b ]} {c = [ c ]} = preserves-∼ assoc-r-⋆
       isMonoid._`cong-⋆`_ isMonoid:GroupQuot {a₀ = [ a₀ ]} {a₁ = [ a₁ ]} {b₀ = [ b₀ ]} {b₁ = [ b₁ ]} (incl (incl p)) (incl (incl q)) =
-        let P₀ : ⟨ H ⟩ (a₁ ⋆ (b₀ ⋆ ◡ b₁) ⋆ ◡ a₁)
+        let P₀ : ⟨ ⟨ H ⟩ (a₁ ⋆ (b₀ ⋆ ◡ b₁) ⋆ ◡ a₁) ⟩
             P₀ = normal a₁ q
 
-            P₁ : ⟨ H ⟩ ((a₀ ⋆ ◡ a₁) ⋆ (a₁ ⋆ (b₀ ⋆ ◡ b₁) ⋆ ◡ a₁))
+            P₁ : ⟨ ⟨ H ⟩ ((a₀ ⋆ ◡ a₁) ⋆ (a₁ ⋆ (b₀ ⋆ ◡ b₁) ⋆ ◡ a₁)) ⟩
             P₁ = closed-⋆ p P₀
 
             P₂ = ((a₀ ⋆ ◡ a₁) ⋆ (a₁ ⋆ (b₀ ⋆ ◡ b₁) ⋆ ◡ a₁))  ≣⟨ assoc-l-⋆ ⟩
@@ -77,7 +78,7 @@ module _ where
                 ((a₀ ⋆ b₀) ⋆ (◡ b₁ ⋆ ◡ a₁))                ≣⟨ refl `cong-⋆` distr-⋆-◡ ⁻¹ ⟩
                 (a₀ ⋆ b₀) ⋆ ◡ (a₁ ⋆ b₁)                    ∎
 
-            P₃ : ⟨ H ⟩ ((a₀ ⋆ b₀) ⋆ ◡ (a₁ ⋆ b₁))
+            P₃ : ⟨ ⟨ H ⟩ ((a₀ ⋆ b₀) ⋆ ◡ (a₁ ⋆ b₁)) ⟩
             P₃ = transp-Subsetoid P₂ P₁
 
         in incl (incl P₃)
@@ -92,10 +93,10 @@ module _ where
                   ◡ ◡ a₁ ⋆ ◡ a₀               ≣⟨ double-◡ `cong-⋆` refl ⟩
                   a₁ ⋆ ◡ a₀                   ∎
 
-            P₁ : ⟨ H ⟩ (a₁ ⋆ ◡ a₀)
+            P₁ : ⟨ ⟨ H ⟩ (a₁ ⋆ ◡ a₀) ⟩
             P₁ = transp-Subsetoid P₀ (closed-◡ p)
 
-            P₂ : ⟨ H ⟩ (◡ a₁ ⋆ (a₁ ⋆ ◡ a₀) ⋆ ◡ ◡ a₁)
+            P₂ : ⟨ ⟨ H ⟩ (◡ a₁ ⋆ (a₁ ⋆ ◡ a₀) ⋆ ◡ ◡ a₁) ⟩
             P₂ = normal (◡ a₁) P₁
 
             P₃ = ◡ a₁ ⋆ (a₁ ⋆ ◡ a₀) ⋆ ◡ ◡ a₁ ≣⟨ assoc-r-⋆ `cong-⋆` refl ⟩
@@ -103,7 +104,7 @@ module _ where
                   ◌ ⋆ ◡ a₀ ⋆ ◡ ◡ a₁           ≣⟨ unit-l-⋆ `cong-⋆` refl ⟩
                   ◡ a₀ ⋆ ◡ ◡ a₁               ∎
 
-            P₄ : ⟨ H ⟩ (◡ a₀ ⋆ ◡ ◡ a₁)
+            P₄ : ⟨ ⟨ H ⟩ (◡ a₀ ⋆ ◡ ◡ a₁) ⟩
             P₄ = transp-Subsetoid P₃ P₂
         in incl (incl P₄)
 

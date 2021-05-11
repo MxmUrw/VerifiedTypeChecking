@@ -38,14 +38,20 @@ module _ {𝑖 : 𝔏 ^ 3} where
     infixl 80 _∧_
   open hasFiniteMeets {{...}} public
 
-  record hasAllJoins (A : Preorder 𝑖) : 𝒰 (𝑖 ⁺) where
-    field ⋁ : ∀{X : 𝒰 𝑖} -> (X -> ⟨ A ⟩) -> ⟨ A ⟩
+  record hasAllJoins (𝑗 : 𝔏) (A : Preorder 𝑖) : 𝒰 (𝑖 ､ (𝑗 ⁺)) where
+    field ⋁ : ∀{X : 𝒰 𝑗} -> (X -> ⟨ A ⟩) -> ⟨ A ⟩
           ι-⋁ : ∀{X F} -> ∀ (x : X) -> F x ≤ ⋁ F
           [_]-⋁ : ∀{X F b} -> (∀(x : X) -> F x ≤ b) -> ⋁ F ≤ b
   open hasAllJoins {{...}} public
 
-CompleteJoinSemilattice : ∀ 𝑖 -> 𝒰 (𝑖 ⁺)
-CompleteJoinSemilattice 𝑖 = Preorder 𝑖 :& hasAllJoins
+  record hasAllMeets (𝑗 : 𝔏) (A : Preorder 𝑖) : 𝒰 (𝑖 ､ (𝑗 ⁺)) where
+    field ⋀ : ∀{X : 𝒰 𝑗} -> (X -> ⟨ A ⟩) -> ⟨ A ⟩
+          π-⋀ : ∀{X F} -> ∀ (x : X) -> ⋀ F ≤ F x
+          ⟨_⟩-⋀ : ∀{X F b} -> (∀(x : X) -> b ≤ F x) -> b ≤ ⋀ F
+  open hasAllMeets {{...}} public
+
+CompleteJoinSemilattice : ∀ (𝑖 : 𝔏 ^ 4) -> 𝒰 (𝑖 ⁺)
+CompleteJoinSemilattice 𝑖 = Preorder (𝑖 ⌄ 0 , 𝑖 ⌄ 1 , 𝑖 ⌄ 2) :& hasAllJoins (𝑖 ⌄ 3)
 
 MeetSemilattice : ∀ 𝑖 -> 𝒰 (𝑖 ⁺)
 MeetSemilattice 𝑖 = Preorder 𝑖 :& hasFiniteMeets
@@ -61,6 +67,7 @@ instance
 
 Lattice : (𝑖 : 𝔏 ^ 3) -> 𝒰 _
 Lattice 𝑖 = Preorder 𝑖 :& (hasFiniteMeets :, hasFiniteJoins) :& isLattice
+
 ----------------------------------------------------------
 -- Derived instances
 
@@ -93,6 +100,49 @@ module _ {A : 𝒰 𝑖}
 
   map-∧ : ∀{a b c d : A} -> (a ≤ b) -> (c ≤ d) -> a ∧ c ≤ b ∧ d
   map-∧ f g = ⟨ π₀-∧ ⟡ f , π₁-∧ ⟡ g ⟩-∧
+
+  module _ {{_ : isPartialorder ′ A ′}} where
+    _≀∧≀_ : {a b c d : A} -> (a ∼ b) -> (c ∼ d) -> a ∧ c ∼ b ∧ d
+    _≀∧≀_ p q = antisym (map-∧ (by-∼-≤ p) (by-∼-≤ q)) (map-∧ (by-∼-≤ (p ⁻¹)) (by-∼-≤ (q ⁻¹)))
+
+    unit-r-∧ : ∀{a : A} -> a ∧ ⊤ ∼ a
+    unit-r-∧ = antisym π₀-∧ ⟨ reflexive , terminal-⊤ ⟩-∧
+
+    assoc-l-∧ : ∀{a b c : A} -> (a ∧ b) ∧ c ∼ a ∧ (b ∧ c)
+    assoc-l-∧ = antisym
+      ⟨ π₀-∧ ⟡ π₀-∧ , ⟨ π₀-∧ ⟡ π₁-∧ , π₁-∧ ⟩-∧ ⟩-∧
+      ⟨ ⟨ π₀-∧ , π₁-∧ ⟡ π₀-∧ ⟩-∧ , π₁-∧ ⟡ π₁-∧ ⟩-∧
+
+    assoc-r-∧ : ∀{a b c : A} -> a ∧ (b ∧ c) ∼ (a ∧ b) ∧ c
+    assoc-r-∧ = assoc-l-∧ ⁻¹
+
+    idem-∧ : ∀{a : A} -> a ∧ a ∼ a
+    idem-∧ = antisym π₀-∧ ⟨ reflexive , reflexive ⟩-∧
+
+  ⋀-fin : ∀{n} -> (F : Fin-R n -> A) -> A
+  ⋀-fin {zero} F = ⊤
+  ⋀-fin {suc n} F = F zero ∧ (⋀-fin (λ i -> F (suc i)))
+
+
+module _ {A : 𝒰 𝑖}
+         {{_ : isSetoid 𝑗 A}}
+         {{_ : isPreorder 𝑘 ′ A ′}}
+         {{_ : hasAllJoins 𝑙 ′ A ′}} where
+  instance
+    hasAllJoins:Family : ∀{I : 𝒰 𝑗} -> hasAllJoins 𝑙 (′ (I -> A) ′)
+    hasAllJoins.⋁ hasAllJoins:Family F = λ i -> ⋁ (λ x -> F x i)
+    hasAllJoins.ι-⋁ hasAllJoins:Family = λ x → {!!}
+    hasAllJoins.[ hasAllJoins:Family ]-⋁ = {!!}
+
+module _ {A : 𝒰 𝑖}
+         {{_ : isSetoid 𝑗 A}}
+         {{_ : isPreorder 𝑘 ′ A ′}}
+         {{_ : hasAllMeets 𝑙 ′ A ′}} where
+  instance
+    hasAllMeets:Family : ∀{I : 𝒰 𝑗} -> hasAllMeets 𝑙 (′ (I -> A) ′)
+    hasAllMeets.⋀ hasAllMeets:Family F = λ i -> ⋀ (λ x -> F x i)
+    hasAllMeets.π-⋀ hasAllMeets:Family = λ x → {!!}
+    hasAllMeets.⟨ hasAllMeets:Family ⟩-⋀ = {!!}
 
 
 

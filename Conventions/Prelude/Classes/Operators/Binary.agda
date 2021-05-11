@@ -21,8 +21,8 @@ open INotation:Union {{...}} public
 --------------------------------------------------------------------
 -- Restriction
 
-record Notation-Restriction (A : 𝒰 𝑖) (B : 𝒰 𝑗) (C : 𝒰 𝑘) : (𝒰 (𝑖 ⊔ 𝑗 ⊔ 𝑘)) where
-  field _∣_ : A -> B -> C
+record Notation-Restriction (A : 𝒰 𝑖) (B : 𝒰 𝑗) (C : A -> B -> 𝒰 𝑘) : (𝒰 (𝑖 ⊔ 𝑗 ⊔ 𝑘)) where
+  field _∣_ : (a : A) -> (b : B) -> C a b
   infix 90 _∣_
 
 open Notation-Restriction {{...}} public
