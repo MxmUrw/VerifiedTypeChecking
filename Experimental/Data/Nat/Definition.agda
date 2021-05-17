@@ -4,6 +4,7 @@ module Verification.Experimental.Data.Nat.Definition where
 open import Verification.Conventions
 open import Verification.Experimental.Meta.Structure
 open import Verification.Experimental.Set.Setoid
+open import Verification.Experimental.Set.Discrete
 open import Verification.Experimental.Algebra.Monoid
 open import Verification.Experimental.Algebra.Group
 open import Verification.Experimental.Algebra.Ring
@@ -25,5 +26,14 @@ instance
 
 Preorder:ℕ : Preorder _
 Preorder:ℕ = ′ ℕ ′
+
+
+instance
+  isDiscrete:ℕ : isDiscrete ℕ
+  isDiscrete:ℕ = {!!}
+
+instance
+  isSet-Str:ℕ : isSet-Str ℕ
+  isSet-Str:ℕ = {!!}
 
 

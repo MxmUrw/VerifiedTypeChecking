@@ -1,7 +1,7 @@
 
-module Verification.Experimental.Set.Finite.Reach where
+module Verification.Experimental.Set.Finite.Old.Reach where
 
-open import Verification.Conventions hiding (𝒫 ; ⦋_⦌ ; _∈_)
+open import Verification.Conventions
 open import Verification.Experimental.Meta.Structure
 open import Verification.Experimental.Set.Setoid.Definition
 open import Verification.Experimental.Set.Discrete
@@ -12,8 +12,8 @@ open import Verification.Experimental.Order.Lattice
 open import Verification.Experimental.Order.HeytingAlgebra
 
 
-𝒫 : (A : 𝒰 𝑖) -> 𝒰 (𝑖 ⁺)
-𝒫 {𝑖} A = A -> Prop 𝑖
+-- 𝒫 : (A : 𝒰 𝑖) -> 𝒰 (𝑖 ⁺)
+-- 𝒫 {𝑖} A = A -> Prop 𝑖
 
 module _ {A : 𝒰 𝑖} where
   ⦅_⦆ : A -> A -> Prop 𝑖

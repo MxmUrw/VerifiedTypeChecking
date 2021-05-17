@@ -40,4 +40,16 @@ module _ {𝒞 : Category 𝑖} where
   open isMonad {{...}} public
 -- //
 
+
+Monad : (𝒞 : Category 𝑖) -> 𝒰 _
+Monad 𝒞 = Functor 𝒞 𝒞 :& isMonad
+
 -- unquoteDecl Monad monad = #struct "Mnd" (quote IMonad) "F" Monad monad
+
+
+
+
+
+
+
+

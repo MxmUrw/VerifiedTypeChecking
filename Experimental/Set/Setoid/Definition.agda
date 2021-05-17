@@ -6,7 +6,7 @@ open import Verification.Experimental.Meta.Structure
 open import Verification.Experimental.Data.Prop.Definition
 
 
-record ∼-Base {A : 𝒰 𝑖} (R : A -> A -> 𝒰 𝑗) (a : A) (b : A) : 𝒰 (𝑖 ､ 𝑗) where
+record ∼-Base {A : 𝒰 𝑖} (R : A -> A -> 𝒰 𝑗) (a : A) (b : A) : 𝒰 (𝑗) where
   constructor incl
   field ⟨_⟩ : R a b
   -- incl : R a b -> ∼-Base R a b -- a ∼[ R ] b
@@ -26,12 +26,12 @@ record isSetoid (𝑗 : 𝔏) (A : 𝒰 𝑖) : 𝒰 (𝑖 ､ 𝑗 ⁺) where
   -- field _∼_ : A -> A -> 𝒰 𝑗
   --       {{isEquivRel:∼}} : isEquivRel _∼_
   field _∼'_ : A -> A -> 𝒰 𝑗
-  _∼_ : A -> A -> 𝒰 (𝑖 ､ 𝑗)
+  _∼_ : A -> A -> 𝒰 (𝑗)
   _∼_ = ∼-Base _∼'_ -- _∼[ _∼'_ ]_
 
   field {{isEquivRel:∼}} : isEquivRel _∼_
 
-  _≁_ : A -> A -> 𝒰 (𝑖 ､ 𝑗)
+  _≁_ : A -> A -> 𝒰 (𝑗)
   _≁_ a b = ¬ a ∼ b
 open isSetoid {{...}} public
 

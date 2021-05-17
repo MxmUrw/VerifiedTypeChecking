@@ -2,6 +2,7 @@
 module Verification.Experimental.Data.Sum.Definition where
 
 open import Verification.Conventions
+open import Verification.Experimental.Set.Function.Injective
 -- open import Verification.Core.Category.Definition
 -- open import Verification.Core.Category.EpiMono
 -- open import Verification.Core.Category.Instance.Type
@@ -27,6 +28,8 @@ module _ {A : 𝒰 ℓ} {B : 𝒰 ℓ'} where
   either f g (left x) = f x
   either f g (just x) = g x
 
+  rec-+-𝒰 = either
+
 _≢_ : ∀{A : 𝒰 ℓ} (a b : A) -> 𝒰 ℓ
 a ≢ b = (a ≡ b) -> 𝟘-𝒰
 
@@ -39,6 +42,27 @@ module _ {A : 𝒰 ℓ} {B : 𝒰 ℓ'} where
 
   right≢left : ∀{a : A}{b : B} -> right b ≢ left a
   right≢left = λ p -> left≢right (sym p)
+
+
+module _ {A : 𝒰 𝑖} {B : 𝒰 𝑗} {C : 𝒰 𝑘} {D : 𝒰 𝑙} where
+  map-+-𝒰 : ∀(f : A -> B) (g : C -> D) -> (A +-𝒰 C) -> (B +-𝒰 D)
+  map-+-𝒰 f g = either (λ x -> left (f x)) (λ y -> right (g y))
+
+module _ {A : 𝒰 𝑖} {B : 𝒰 𝑗} where
+  instance
+    isInjective:left : isInjective (left {A = A} {B = B})
+    isInjective.injective isInjective:left {a} {.a} refl-StrId = refl
+
+  instance
+    isInjective:right : isInjective (right {A = A} {B = B})
+    isInjective.injective isInjective:right {a} {.a} refl-StrId = refl
+
+
+module _ {A : 𝒰 𝑖} {B : 𝒰 𝑗} {C : 𝒰 𝑘} {D : 𝒰 𝑙} where
+  instance
+    isInjective:either : {f : A -> C} {g : B -> C} -> {{_ : isInjective f}} {{_ : isInjective g}} -> isInjective (map-+-𝒰 f g)
+    isInjective.injective (isInjective:either {f} {g}) {left x} {left x₁} p = cong-Str left (injective (injective {{isInjective:left}} p))
+    isInjective.injective (isInjective:either {f} {g}) {just x} {just x₁} p = cong-Str right (injective (injective {{isInjective:right}} p))
 
 {-
   isInjective:left : ∀{a b : A} -> left {B = B} a ≡ left b -> a ≡ b

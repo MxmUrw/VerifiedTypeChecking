@@ -22,7 +22,7 @@ open import Verification.Experimental.Set.Setoid
 --
 -- We also copy other 'tricks' of_ them, as, e.g. requiring left and right associativity proof_s, and an id ◆ id ∼ id proof_.
 
-record Hom-Base {A : 𝒰 𝑖} (Hom : A -> A -> 𝒰 𝑗) (a : A) (b : A) : 𝒰 (𝑖 ､ 𝑗) where
+record Hom-Base {𝑖 𝑗 : 𝔏} {A : 𝒰 𝑖} (Hom : A -> A -> 𝒰 𝑗) (a : A) (b : A) : 𝒰 (𝑗) where
   constructor incl
   field ⟨_⟩ : Hom a b
   -- incl : R a b -> Hom-Base R a b -- a ∼[ R ] b
@@ -38,7 +38,7 @@ record isCategory {𝑖 : 𝔏} (𝑗 : 𝔏 ^ 2) (𝒞 : 𝒰 𝑖) : 𝒰 (�
 --      a type of /homomorphisms/ |Hom a b| between them.
 --      We call elements of this type also simply /morphisms/ or /arrows/.
   field Hom' : 𝒞 -> 𝒞 -> 𝒰 (𝑗 ⌄ 0)
-  Hom : 𝒞 -> 𝒞 -> 𝒰 (𝑖 ⊔ 𝑗 ⌄ 0)
+  Hom : 𝒞 -> 𝒞 -> 𝒰 (𝑗 ⌄ 0)
   Hom a b = Hom-Base Hom' a b
   field {{isSetoid:Hom}} : ∀{a b : 𝒞} -> isSetoid (𝑗 ⌄ 1) (Hom a b)
 
@@ -57,13 +57,15 @@ record isCategory {𝑖 : 𝔏} (𝑗 : 𝔏 ^ 2) (𝒞 : 𝒰 𝑖) : 𝒰 (�
         assoc-r-◆         : ∀{a b c d : 𝒞} -> ∀{f : Hom a b} -> ∀{g : Hom b c} -> ∀{h : Hom c d} -> f ◆ (g ◆ h) ∼ (f ◆ g) ◆ h
 -- | 7. A proof that composition is compatible with the equivalence relation.
         _◈_               : ∀{a b c : 𝒞} -> ∀{f g : Hom a b} -> ∀{h i : Hom b c} -> f ∼ g -> h ∼ i -> f ◆ h ∼ g ◆ i
+-- //
+
+open isCategory ⦃...⦄ public
+
+module _ {𝑖 : 𝔏} {𝑗 : 𝔏 ^ 2} {𝒞 : 𝒰 𝑖} {{_ : isCategory 𝑗 𝒞}} where
   instance
     isEquivRel:∼-Cat : ∀{a b : 𝒞} -> isEquivRel (λ (f g : Hom a b) -> f ∼ g)
     isEquivRel:∼-Cat = isEquivRel:∼
 
--- //
-
-open isCategory ⦃...⦄ public
 Category : (𝑗 : 𝔏 ^ 3) -> 𝒰 _
 Category (𝑗₀ , 𝑗₁ , 𝑗₂) = 𝒰 𝑗₀ :& isCategory (𝑗₁ , 𝑗₂)
 
@@ -91,7 +93,6 @@ isSetoid.isEquivRel:∼ isSetoid:Hom-Base = {!!}
 -- ISmallCategory : (𝒞 : 𝒰₀) -> 𝒰₁
 -- ISmallCategory 𝒞 = isCategory (ℓ₀ , ℓ₀) 𝒞
 -- //
-
 
 
 

@@ -1,5 +1,5 @@
 
-module Verification.Experimental.Theory.Computation.Unification.Monoidic.PrincipalFamilyCat where
+module Verification.Experimental.Theory.Computation.Unification.Monoidic.PrincipalFamilyCat2 where
 
 open import Verification.Conventions
 open import Verification.Experimental.Meta.Structure
@@ -54,13 +54,14 @@ private
     Pair : (a b : 𝒞) -> 𝒰 _
     Pair a x = Hom a x ∧ Hom a x
 
-record PrincipalFamilyCat (𝒞 : Category 𝑖) (a : ⟨ 𝒞 ⟩) : 𝒰 (𝑖 ⁺) where
+record PrincipalFamilyCat (𝒞 : Category 𝑖) : 𝒰 (𝑖 ⁺) where
   field SizeC : WFT (ℓ₀ , ℓ₀)
-  field SizeCF : WFT (ℓ₀ , ℓ₀)
-  field isBase : ∀(x) -> (h : a ⟶ x) -> 𝒰 (𝑖 ⌄ 1)
-  field sizeC : (x : ⟨ 𝒞 ⟩) -> ⟨ SizeC ⟩
-  field sizeCF : {x : ⟨ 𝒞 ⟩} -> (Pair a x) -> ⟨ SizeCF ⟩
+  field isBase : ∀(a x : ⟨ 𝒞 ⟩) -> (h : a ⟶ x) -> 𝒰 (𝑖 ⌄ 1)
+  field sizeC : {a x : ⟨ 𝒞 ⟩} -> (Pair a x) -> ⟨ SizeC ⟩
 
+  -- field SizeCF : WFT (ℓ₀ , ℓ₀)
+  -- field sizeC : (x : ⟨ 𝒞 ⟩) -> ⟨ SizeC ⟩
+  -- field sizeCF : {x : ⟨ 𝒞 ⟩} -> (Pair a x) -> ⟨ SizeCF ⟩
   -- field _≪_ : SizeC -> SizeC -> 𝒰₀
   -- field trans-SizeC : ∀{a b c} -> a ≪ b -> b ≪ c -> a ≪ c
   -- field isWellFounded:SizeC : WellFounded _≪_
@@ -74,11 +75,11 @@ open PrincipalFamilyCat {{...}} public
 data Side : 𝒰₀ where
   isLeft isRight : Side
 
-module _ (𝒞 : Category 𝑖) {{_ : isDiscrete ⟨ 𝒞 ⟩}} {{_ : isSet-Str ⟨ 𝒞 ⟩}} (a : ⟨ 𝒞 ⟩) {{F : PrincipalFamilyCat 𝒞 a}} where
+module _ (𝒞 : Category (𝑖 , 𝑖 , 𝑖)) {{_ : isDiscrete ⟨ 𝒞 ⟩}} {{_ : isSet-Str ⟨ 𝒞 ⟩}} {{F : PrincipalFamilyCat 𝒞}} where
   private
 
-    Ix = Maybe (∑ λ (x : ⟨ 𝒞 ⟩) -> Pair a x)
-    Bx = Maybe (∑ λ (x : ⟨ 𝒞 ⟩) -> Side ×-𝒰 ((∑ isBase x) ∧ Hom a x))
+    Ix = Maybe (∑ λ (a : ⟨ 𝒞 ⟩) -> ∑ λ (x : ⟨ 𝒞 ⟩) -> Pair a x)
+    Bx = Maybe (∑ λ (a : ⟨ 𝒞 ⟩) -> ∑ λ (x : ⟨ 𝒞 ⟩) -> Side ×-𝒰 ((∑ isBase a x) ∧ Hom a x))
 
     -- record isSplittableCat (n : ℕ) (i : Ix) (P : I -> 𝒰₀) : 𝒰 (𝑗 ､ 𝑖 ⁺) where
     --   field fam : Fin-R n -> I
@@ -88,12 +89,12 @@ module _ (𝒞 : Category 𝑖) {{_ : isDiscrete ⟨ 𝒞 ⟩}} {{_ : isSet-Str 
 
     size' : Ix -> ⟨ SizeC ⟩
     size' nothing = size0
-    size' (just (x , _)) = sizeC x
+    size' (just (a , x , f)) = sizeC f
 
     bb : Bx -> Ix
     bb nothing = nothing
-    bb (just (x , isLeft , ((h , _) , f)))  = just (x , h , f)
-    bb (just (x , isRight , ((h , _) , f))) = just (x , f , h)
+    bb (just (x , a , isLeft , ((h , _) , f)))  = just (x , a , h , f)
+    bb (just (x , a , isRight , ((h , _) , f))) = just (x , a , f , h)
 
 
     M : Monoid₀ _
@@ -101,13 +102,14 @@ module _ (𝒞 : Category 𝑖) {{_ : isDiscrete ⟨ 𝒞 ⟩}} {{_ : isSet-Str 
 
     𝓘 : Ix -> Ideal-r M
     𝓘 nothing = ⊤
-    𝓘 (just (_ , f , g)) = ′(CoeqSolutions (arrow f) (arrow g))′
+    𝓘 (just (_ , _ , f , g)) = ′(CoeqSolutions (arrow f) (arrow g))′
 
     Good : 𝒫 (PathMon 𝒞)
     Good [] = ⊤
     Good idp = ⊤
-    Good (arrow {x} {y} f) = ∣ Lift (sizeC y ≪ sizeC x) ∣
+    Good (arrow {x} {y} h) = ∣ (∀(a : ⟨ 𝒞 ⟩) -> (f g : a ⟶ x) -> sizeC (f ◆ h , g ◆ h) ≪ sizeC (f , g)) ∣
 
+{-
     _⁻¹'_ : ⦋ Good ⦌ -> Ix -> Ix
     _⁻¹'_ (a) nothing = nothing
     _⁻¹'_ ([] ∢ _) (just _) = nothing
@@ -159,29 +161,32 @@ module _ (𝒞 : Category 𝑖) {{_ : isDiscrete ⟨ 𝒞 ⟩}} {{_ : isSet-Str 
                     (arrow (g ◆ h)) ⋆ a        ∎
                ))
       in antisym P₀ P₁
+      -}
 
     instance
       isSubsetoid:Good : isSubsetoid Good
-      isSubsetoid.transp-Subsetoid isSubsetoid:Good (incl idp) P = tt
-      isSubsetoid.transp-Subsetoid isSubsetoid:Good (incl []) P = P
-      isSubsetoid.transp-Subsetoid isSubsetoid:Good (incl (arrow f∼g)) (↥ p) = ↥ p
+      isSubsetoid:Good = {!!}
+      -- isSubsetoid.transp-Subsetoid isSubsetoid:Good (incl idp) P = tt
+      -- isSubsetoid.transp-Subsetoid isSubsetoid:Good (incl []) P = P
+      -- isSubsetoid.transp-Subsetoid isSubsetoid:Good (incl (arrow f∼g)) (↥ p) = ↥ p
 
       isSubmonoid:Good : isSubmonoid ′ Good ′
-      isSubmonoid.closed-◌ isSubmonoid:Good = tt
-      isSubmonoid.closed-⋆ isSubmonoid:Good {idp} {b} p1 p2 = p2
-      isSubmonoid.closed-⋆ isSubmonoid:Good {[]} {b} p1 p2 = p1
-      isSubmonoid.closed-⋆ isSubmonoid:Good {arrow f} {[]} p1 p2 = p2
-      isSubmonoid.closed-⋆ isSubmonoid:Good {arrow f} {idp} p1 p2 = p1
-      isSubmonoid.closed-⋆ isSubmonoid:Good {arrow {a} {b} f} {arrow {c} {d} g} (↥ p1) (↥ p2) with (b ≟-Str c)
-      ... | yes refl-StrId = ↥ (p2 ⟡-≪ p1)
-      ... | no ¬p = tt
+      isSubmonoid:Good = {!!}
+      -- isSubmonoid.closed-◌ isSubmonoid:Good = tt
+      -- isSubmonoid.closed-⋆ isSubmonoid:Good {idp} {b} p1 p2 = p2
+      -- isSubmonoid.closed-⋆ isSubmonoid:Good {[]} {b} p1 p2 = p1
+      -- isSubmonoid.closed-⋆ isSubmonoid:Good {arrow f} {[]} p1 p2 = p2
+      -- isSubmonoid.closed-⋆ isSubmonoid:Good {arrow f} {idp} p1 p2 = p1
+      -- isSubmonoid.closed-⋆ isSubmonoid:Good {arrow {a} {b} f} {arrow {c} {d} g} (↥ p1) (↥ p2) with (b ≟-Str c)
+      -- ... | yes refl-StrId = ↥ (p2 ⟡-≪ p1)
+      -- ... | no ¬p = tt
       -- record
       --   { closed-◌ = tt
       --   ; closed-⋆ = λ p1 p2 -> ?
       --   }
 
-    lem-50 : isPrincipalFamily M ′ Good ′ bb 𝓘
-    lem-50 = {!!} -- record
+  by-PrincipalCat-Principal : isPrincipalFamily M ′ Good ′ bb 𝓘
+  by-PrincipalCat-Principal = {!!} -- record
                -- { Size = SizeC
                -- ; size = size'
                -- ; _<<_ = _≪_

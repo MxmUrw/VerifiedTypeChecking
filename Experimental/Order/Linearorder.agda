@@ -7,6 +7,7 @@ open import Verification.Core.Category.Instance.Set.Definition
 -- open import Verification.Core.Type
 open import Verification.Experimental.Meta.Structure
 open import Verification.Experimental.Set.Setoid.Definition
+open import Verification.Experimental.Data.Prop.Everything
 
 open import Verification.Experimental.Order.Preorder
 open import Verification.Experimental.Order.Totalorder
@@ -43,6 +44,7 @@ open isLinearorder {{...}} public
 Linearorder : ∀ (𝑖 : 𝔏 ^ 3) -> 𝒰 (𝑖 ⁺)
 Linearorder 𝑖 = 𝒰 (𝑖 ⌄ 0) :& isSetoid (𝑖 ⌄ 1) :& isLinearorder (𝑖 ⌄ 2)
 
+{-
 record isUnbound {𝑖 : 𝔏 ^ 3} (L : Linearorder 𝑖) : 𝒰 𝑖 where
   field getLess     : (a : ⟨ L ⟩) -> ⦋ _< a ⦌
   field getGreater  : (a : ⟨ L ⟩) -> ⦋ a <_ ⦌
@@ -51,6 +53,7 @@ open isUnbound {{...}} public
 record isDense {𝑖 : 𝔏 ^ 3} (L : Linearorder 𝑖) : 𝒰 𝑖 where
   field between : {a b : ⟨ L ⟩} -> a < b -> ⦋ (λ x -> a < x ×-𝒰 x < b) ⦌
 open isDense {{...}} public
+-}
 
 --------------------------------------------------------------------
 -- as Totalorder⁻

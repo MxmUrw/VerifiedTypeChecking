@@ -1,8 +1,8 @@
 
 
-module Verification.Experimental.Set.Finite.Definition where
+module Verification.Experimental.Set.Finite.Old.Definition where
 
-open import Verification.Conventions hiding (𝒫 ; ⦋_⦌ ; _∈_)
+open import Verification.Conventions
 open import Verification.Experimental.Meta.Structure
 open import Verification.Experimental.Set.Setoid.Definition
 open import Verification.Experimental.Set.Discrete
@@ -11,7 +11,7 @@ open import Verification.Experimental.Data.Universe.Everything
 open import Verification.Experimental.Order.Preorder
 open import Verification.Experimental.Order.Lattice
 open import Verification.Experimental.Order.HeytingAlgebra
-open import Verification.Experimental.Set.Finite.Reach
+open import Verification.Experimental.Set.Finite.Old.Reach
 
 
 record isFinite (A : 𝒰 𝑖 :& isDiscrete') : 𝒰 (𝑖 ⁺) where

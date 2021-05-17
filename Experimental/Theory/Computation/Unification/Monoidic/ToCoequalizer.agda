@@ -14,7 +14,7 @@ open import Verification.Experimental.Data.Sum.Definition
 open import Verification.Experimental.Order.Preorder
 open import Verification.Experimental.Order.Lattice
 open import Verification.Experimental.Theory.Computation.Unification.Definition
-open import Verification.Experimental.Theory.Computation.Unification.Monoidic.PrincipalFamilyCat
+open import Verification.Experimental.Theory.Computation.Unification.Monoidic.PrincipalFamilyCat2
 open import Verification.Experimental.Algebra.Monoid.Definition
 open import Verification.Experimental.Algebra.MonoidWithZero.Definition
 open import Verification.Experimental.Algebra.MonoidWithZero.Ideal
@@ -22,21 +22,23 @@ open import Verification.Experimental.Algebra.MonoidAction.Definition
 
 
 module _ {𝒞 : Category 𝑖} {{_ : isDiscrete ⟨ 𝒞 ⟩}} {{_ : isSet-Str ⟨ 𝒞 ⟩}} where
-  private
-    module _ {a b : ⟨ 𝒞 ⟩} (f g : a ⟶ b) where
-      private
-        f' g' : PathMon 𝒞
-        f' = arrow f
-        g' = arrow g
-        -- J : Ideal-r ′ PathMon 𝒞 ′
-        -- J = ′(CoeqSolutions f' g')′
-        All : Ideal-r ′ PathMon 𝒞 ′
-        All = ′ ⊤ ′
-        II : Ideal-r ′ PathMon 𝒞 ′
-        II = ′(CoeqSolutions f' g')′
+  module _ {a b : ⟨ 𝒞 ⟩} (f g : a ⟶ b) where
+    private
+      f' g' : PathMon 𝒞
+      f' = arrow f
+      g' = arrow g
+      -- J : Ideal-r ′ PathMon 𝒞 ′
+      -- J = ′(CoeqSolutions f' g')′
+      All : Ideal-r ′ PathMon 𝒞 ′
+      All = ′ ⊤ ′
+      II : Ideal-r ′ PathMon 𝒞 ′
+      II = ′(CoeqSolutions f' g')′
 
-      lem-10 : ∀{G : Submonoid ′ PathMon 𝒞 ′} -> (isPrincipal/⁺-r G ′(CoeqSolutions f' g')′) -> isDecidable (hasCoequalizer f g)
-      lem-10 P with split-+-Str (zeroOrCancel-r {{_:>_.Proof2> P}})
+    module by-Principal-Unification {G : Submonoid ′ PathMon 𝒞 ′} (P : isPrincipal/⁺-r G ′(CoeqSolutions f' g')′) where
+      proof : isDecidable (hasCoequalizer f g)
+      proof = {!!}
+      {-
+      proof with split-+-Str (zeroOrCancel-r {{_:>_.Proof2> P}})
       ... | left (rep=[] , snd₁) = left (λ X ->
               let rr = rep {{_:>_.Proof1> P}}
                   h : b ⟶ ⟨ X ⟩
@@ -122,42 +124,42 @@ module _ {𝒞 : Category 𝑖} {{_ : isDiscrete ⟨ 𝒞 ⟩}} {{_ : isSet-Str 
                   -- We now look at the different cases for what x might be
                   P₅ = case-PathMon x of
 
-                       (λ (q : x ∼ []) ->
-                         let Q₁ : (h' ∼ []) -> _
-                             Q₁ = λ {()}
-                             Q₂ : (arrow i ⋆ x ∼ [])
-                             Q₂ = (incl (arrow {𝒞 = 𝒞} refl) ≀⋆≀ q)
-                         in Q₁ (P₄ ∙ Q₂))
+                        (λ (q : x ∼ []) ->
+                          let Q₁ : (h' ∼ []) -> _
+                              Q₁ = λ {()}
+                              Q₂ : (arrow i ⋆ x ∼ [])
+                              Q₂ = (incl (arrow {𝒞 = 𝒞} refl) ≀⋆≀ q)
+                          in Q₁ (P₄ ∙ Q₂))
 
-                       (λ (q : x ∼ idp) ->
-                         let Q₁ : (h' ∼ arrow i)
-                             Q₁ = P₄ ∙ (incl (arrow {𝒞 = 𝒞} refl) ≀⋆≀ q) ∙ unit-r-⋆
-                             Q₂ : h' ∼ (arrow i) -> b ≡-Str b'
-                             Q₂ = λ {(incl (arrow _)) -> refl}
-                         in 𝟘-rec (b≢b' (Q₂ Q₁))
-                       )
+                        (λ (q : x ∼ idp) ->
+                          let Q₁ : (h' ∼ arrow i)
+                              Q₁ = P₄ ∙ (incl (arrow {𝒞 = 𝒞} refl) ≀⋆≀ q) ∙ unit-r-⋆
+                              Q₂ : h' ∼ (arrow i) -> b ≡-Str b'
+                              Q₂ = λ {(incl (arrow _)) -> refl}
+                          in 𝟘-rec (b≢b' (Q₂ Q₁))
+                        )
 
-                       (λ {x0} {x1} {x'} (q : x ∼ arrow x') ->
-                         case-Decision (c ≟-Str x0) of
+                        (λ {x0} {x1} {x'} (q : x ∼ arrow x') ->
+                          case-Decision (c ≟-Str x0) of
 
-                           -- if the composition i ◆ x' is not well formed, i.e., c≠x0, then we have i◆x' = []
-                           (λ {c≢x0 ->
+                            -- if the composition i ◆ x' is not well formed, i.e., c≠x0, then we have i◆x' = []
+                            (λ {c≢x0 ->
                               let P₆ : h' ∼ []
                                   P₆ = P₄ ∙ (refl ≀⋆≀ q) ∙ PathMon-non-matching-arrows c≢x0 i x'
                                   P₇ : (h' ∼ []) -> _
                                   P₇ = λ {()}
                               in P₇ P₆
-                           })
+                            })
 
-                           -- if the composition i ◆ x' is well formed
-                           (λ {refl-StrId ->
+                            -- if the composition i ◆ x' is well formed
+                            (λ {refl-StrId ->
                               let P₈ : h' ∼ (arrow (i ◆ x'))
                                   P₈ = P₄ ∙ (refl ≀⋆≀ q) ∙ functoriality-arrow i x' ⁻¹
                                   P₉ : h' ∼ (arrow (i ◆ x')) -> b ≡-Str b'
                                   P₉ = λ {(incl (arrow _)) -> refl}
                               in 𝟘-rec (b≢b' (P₉ P₈))
-                           })
-                         )
+                            })
+                          )
               in P₅
           ))
 
@@ -308,6 +310,7 @@ module _ {𝒞 : Category 𝑖} {{_ : isDiscrete ⟨ 𝒞 ⟩}} {{_ : isSet-Str 
           })
           })
 
+-}
 
 
 

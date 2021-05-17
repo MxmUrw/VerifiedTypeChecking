@@ -159,6 +159,12 @@ module _ {𝒞 : Category 𝑖} {{_ : isDiscrete ⟨ 𝒞 ⟩}} {{_ : isSet-Str 
     hasZero.absorb-r-⋆ hasZero:PathMon {arrow f} = refl
     hasZero.absorb-l-⋆ hasZero:PathMon = refl
 
+  instance
+    zeroIsDecidable:PathMon : zeroIsDecidable ′(PathMon 𝒞)′
+    zeroIsDecidable.decide-◍ zeroIsDecidable:PathMon [] = right refl
+    zeroIsDecidable.decide-◍ zeroIsDecidable:PathMon idp = left (λ ())
+    zeroIsDecidable.decide-◍ zeroIsDecidable:PathMon (arrow f) = left (λ ())
+
 
 
   -- further statements

@@ -14,12 +14,13 @@ open import Verification.Experimental.Data.Prop.Everything
 open import Verification.Experimental.Data.Sum.Definition
 open import Verification.Experimental.Order.Preorder
 open import Verification.Experimental.Order.Lattice
+open import Verification.Experimental.Order.WellFounded.Definition
 open import Verification.Experimental.Algebra.Monoid.Definition
 open import Verification.Experimental.Algebra.MonoidWithZero.Definition
 open import Verification.Experimental.Algebra.MonoidWithZero.Ideal
 open import Verification.Experimental.Algebra.MonoidAction.Definition
 open import Verification.Experimental.Theory.Computation.Unification.Definition
-open import Verification.Experimental.Theory.Presentation.Signature.Definition
+-- open import Verification.Experimental.Theory.Presentation.Signature.Definition
 
 
 module _ (M : Monoid₀ (𝑖 , 𝑖)) where
@@ -32,16 +33,17 @@ module _ (M : Monoid₀ (𝑖 , 𝑖)) where
     open isSplittable public
 
     record isPrincipalFamily : 𝒰 (𝑗 ､ 𝑖 ⁺) where
-      field Size : 𝒰₀
-      field size : I -> Size
-      field _<<_ : Size -> Size -> 𝒰₀
-      field isWellFounded:Size : WellFounded _<<_
-      field trans-Size : ∀{a b c} -> a << b -> b << c -> a << c
+      field Size : WFT (ℓ₀ , ℓ₀)
+      -- field Size : 𝒰₀
+      field size : I -> ⟨ Size ⟩
+      -- field _≪_ : Size -> Size -> 𝒰₀
+      -- field isWellFounded:Size : WellFounded _≪_
+      -- field trans-Size : ∀{a b c} -> a ≪ b -> b ≪ c -> a ≪ c
       field _⁻¹*_ : ⦋ ⟨ Good ⟩ ⦌ -> I -> I
-      field size:⁻¹* : ∀ g i -> (size (g ⁻¹* i) ≡-Str size i) +-𝒰 (size (g ⁻¹* i) << size i)
+      field size:⁻¹* : ∀ g i -> (size (g ⁻¹* i) ≡-Str size i) +-𝒰 (size (g ⁻¹* i) ≪ size i)
       field preserves-𝓘:⁻¹* : ∀ {g i} -> 𝓘 (g ⁻¹* i) ∼ (⟨ g ⟩ ⁻¹↷-Ide (𝓘 i))
       -- field 𝓘 : Idx -> Ideal-r M
-      field ∂ : (i : I) -> (∑ λ b -> 𝓘 (𝒷 b) ∼ 𝓘 i) +-𝒰 (∑ λ n -> isSplittable n i (λ j -> size j << size i))
+      field ∂ : (i : I) -> (∑ λ b -> 𝓘 (𝒷 b) ∼ 𝓘 i) +-𝒰 (∑ λ n -> isSplittable n i (λ j -> size j ≪ size i))
       field principalBase : ∀ b -> isPrincipal/⁺-r Good (𝓘 (𝒷 b))
 
 
@@ -50,7 +52,7 @@ module _ (M : Monoid₀ (𝑖 , 𝑖)) where
   module _ (Good : Submonoid ′ ⟨ M ⟩ ′) {B I : 𝒰 𝑗} (𝒷 : B -> I) (𝓘 : I -> Ideal-r M) {{PF : isPrincipalFamily Good 𝒷 𝓘}} {{_ : zeroIsDecidable M}} where
 
     private
-      P : (s : Size) -> 𝒰 _
+      P : (s : ⟨ Size ⟩) -> 𝒰 _
       P s = ∀ i -> size i ≡-Str s -> isPrincipal/⁺-r Good (𝓘 i)
 
       lem-40 : ∀ {U V : Ideal-r M} -> (PU : isPrincipal/⁺-r Good U) -> isPrincipal/⁺-r Good (rep' U ⁻¹↷-Ide V) -> isPrincipal/⁺-r Good (V ∧ U)
@@ -102,7 +104,7 @@ module _ (M : Monoid₀ (𝑖 , 𝑖)) where
             P₂ = transp-isPrincipal/⁺-r preserves-𝓘:⁻¹* P₁
         in lem-40 P₀ P₂
 
-      lem-50 : ∀ s -> (∀ t -> t << s -> P t) -> P s
+      lem-50 : ∀ s -> (∀ t -> t ≪ s -> P t) -> P s
       lem-50 s IH k refl-StrId with ∂ k
       ... | left (b , P) = let P₀ = principalBase b
                            in transp-isPrincipal/⁺-r P P₀
@@ -110,17 +112,17 @@ module _ (M : Monoid₀ (𝑖 , 𝑖)) where
         let P₀ : ∀ i -> ∀(g : ⦋ ⟨ Good ⟩ ⦌) -> isPrincipal/⁺-r Good (𝓘 (g ⁻¹* Split .fam i))
             P₀ i g = case size:⁻¹* g (fam Split i) of
                        (λ p ->
-                          let Q₀ : size (fam Split i) << size k
+                          let Q₀ : size (fam Split i) ≪ size k
                               Q₀ = Split .famprops i
-                              Q₁ : size (g ⁻¹* fam Split i) << size k
-                              Q₁ = transport-Str (cong-Str (λ ξ -> ξ << size k) (p ⁻¹)) Q₀
+                              Q₁ : size (g ⁻¹* fam Split i) ≪ size k
+                              Q₁ = transport-Str (cong-Str (λ ξ -> ξ ≪ size k) (p ⁻¹)) Q₀
                           in IH (size (g ⁻¹* Split .fam i)) Q₁ (g ⁻¹* fam Split i) refl
                        )
                        (λ p ->
-                          let Q₀ : size (fam Split i) << size k
+                          let Q₀ : size (fam Split i) ≪ size k
                               Q₀ = Split .famprops i
-                              Q₁ : size (g ⁻¹* fam Split i) << size k
-                              Q₁ = trans-Size p Q₀
+                              Q₁ : size (g ⁻¹* fam Split i) ≪ size k
+                              Q₁ = p ⟡-≪ Q₀
                           in IH (size (g ⁻¹* Split .fam i)) Q₁ (g ⁻¹* fam Split i) refl
                        )
             P₁ = lem-45 (Split .fam) P₀
@@ -128,7 +130,7 @@ module _ (M : Monoid₀ (𝑖 , 𝑖)) where
 
 
     isPrincipal:Family : ∀ s -> P s
-    isPrincipal:Family = WFI.induction isWellFounded:Size lem-50
+    isPrincipal:Family = WFI.induction wellFounded lem-50
 
 
 

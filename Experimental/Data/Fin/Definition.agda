@@ -7,7 +7,7 @@ open import Verification.Experimental.Data.Int.Definition
 open import Verification.Experimental.Data.Prop.Subset
 open import Verification.Experimental.Set.Setoid
 open import Verification.Experimental.Set.Discrete
-open import Verification.Experimental.Set.Finite.Definition
+-- open import Verification.Experimental.Set.Finite.Definition
 open import Verification.Experimental.Order.Preorder
 open import Verification.Experimental.Order.Totalorder
 
@@ -37,9 +37,8 @@ module _ {n : ℕ} where
     isDiscrete':Fin : isDiscrete' (Fin n)
     is𝒫-Dec.decide-𝒫 (isDiscrete'.decidableEquality isDiscrete':Fin) = {!!}
 
-  instance
-    isFinite:Fin : isFinite ′(Fin n)′
-    isFinite:Fin = {!!}
-
+  -- instance
+  --   isFinite:Fin : isFinite ′(Fin n)′
+  --   isFinite:Fin = {!!}
 
 
