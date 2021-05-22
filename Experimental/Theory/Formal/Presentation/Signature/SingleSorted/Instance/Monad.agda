@@ -15,14 +15,14 @@ open import Verification.Experimental.Theory.Presentation.Signature.SingleSorted
 
 module _ {σ : Signature} where
   instance
-    isMonad:TermF : isMonad ′ TermF (𝑖 , 𝑖) σ ′
-    isMonad.pure isMonad:TermF = {!!}
-    isMonad.join isMonad:TermF = {!!}
-    isMonad.isNatural:pure isMonad:TermF = {!!}
-    isMonad.isNatural:join isMonad:TermF = {!!}
-    isMonad.unit-l-join isMonad:TermF = {!!}
-    isMonad.unit-r-join isMonad:TermF = {!!}
-    isMonad.assoc-join isMonad:TermF = {!!}
+    isMonad:Term : isMonad (𝑇𝑒𝑟𝑚 {𝑖} σ)
+    isMonad.pure isMonad:Term = {!!}
+    isMonad.join isMonad:Term = {!!}
+    isMonad.isNatural:pure isMonad:Term = {!!}
+    isMonad.isNatural:join isMonad:Term = {!!}
+    isMonad.unit-l-join isMonad:Term = {!!}
+    isMonad.unit-r-join isMonad:Term = {!!}
+    isMonad.assoc-join isMonad:Term = {!!}
 
 
 

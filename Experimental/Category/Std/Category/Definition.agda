@@ -84,7 +84,7 @@ module _ {C : 𝒰 _} {{_ : Category 𝑖 on C}} where
 isSetoid:Hom-Base : {A : 𝒰 𝑖} {Hom : A -> A -> 𝒰 𝑗} -> ∀{a b}
                     -> {{_ : isSetoid 𝑘 (Hom a b)}}
                     -> isSetoid _ (Hom-Base Hom a b)
-isSetoid._∼'_ (isSetoid:Hom-Base {{P}}) f g = _∼_ {{P}} ⟨ f ⟩ ⟨ g ⟩
+isSetoid._∼'_ (isSetoid:Hom-Base {{P}}) f g = _∼'_ {{P}} ⟨ f ⟩ ⟨ g ⟩
 isSetoid.isEquivRel:∼ isSetoid:Hom-Base = {!!}
 
 -- [Hide]

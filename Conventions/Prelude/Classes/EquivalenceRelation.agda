@@ -86,6 +86,7 @@ instance
 
 _≡-Str_ = StrId
 
+
 _≢-Str_ : ∀{X : 𝒰 𝑙} -> (a b : X) -> 𝒰 𝑙
 a ≢-Str b = ¬ StrId a b
 

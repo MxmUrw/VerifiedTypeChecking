@@ -148,3 +148,25 @@ is_ : (UU : 𝒰 𝑖) {{U : hasU UU 𝑘 𝑙}} -> (a : getU U) -> 𝒰 _
 is_ UU {{U}} a = getP U a
 
 
+
+--------------------------------------------------------------------
+-- Allowing the subsumption of all structures under a single name
+
+record hasStructure {A : 𝒰 𝑘} (a : A) (UU : 𝒰 𝑗) {{U : hasU UU 𝑘 𝑙}} : 𝒰 ((𝑘 ⁺) ､ 𝑙) where
+  constructor hasstructure
+  field isUniverseOf : A ≡-Str getU U
+  field isWithStructure : getP U (transport-Str (isUniverseOf) a)
+
+instance
+  hasStructure:Structure : ∀{UU : 𝒰 𝑗} {{U : hasU UU 𝑘 𝑙}} -> {a : getU U} -> {{_ : getP U a}} -> hasStructure {A = getU U} a UU -- {{{!!}}}
+  hasStructure.isUniverseOf hasStructure:Structure = refl
+  hasStructure.isWithStructure hasStructure:Structure = it
+
+structureOn : {A : 𝒰 𝑘} (a : A) {UU : 𝒰 𝑗} {{U : hasU UU 𝑘 𝑙}} -> {{_ : hasStructure a UU}} -> UU
+structureOn {A = .(getU U)} a {UU} ⦃ U ⦄ ⦃ hasstructure refl-StrId isWithStructure ⦄ = reconstruct U (a , isWithStructure)
+
+SomeStructure : {AA : 𝒰 𝑖} -> {A : AA} -> 𝒰ω
+SomeStructure {A = A} = ∀{𝑗 𝑙} -> {UU : 𝒰 𝑗} {{U : hasU UU _ 𝑙}} -> {{_ : hasStructure A UU}} -> UU
+
+
+

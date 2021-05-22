@@ -14,7 +14,12 @@ module _ {𝒞 : 𝒰 𝑖} {{_ : isCategory 𝑗 𝒞}} where
     field ⟨_⟩ : X
   open FullSubcategory {{...}} public
 
+  𝐅𝐮𝐥𝐥 : {X : 𝒰 𝑘} (f : X -> 𝒞) -> SomeStructure
+  𝐅𝐮𝐥𝐥 f = structureOn (FullSubcategory f)
+
+
   module _ {X : 𝒰 𝑘} {ι : X -> 𝒞} where
+
 
     instance
       isDiscrete:FullSubcategory : {{_ : isDiscrete X}} -> isDiscrete (FullSubcategory ι)

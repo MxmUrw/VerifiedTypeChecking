@@ -1,23 +1,26 @@
 
 module Verification.Experimental.Theory.Presentation.Signature.SingleSorted.Definition where
 
-open import Verification.Conventions
+open import Verification.Experimental.Conventions
 
 
 Signature : 𝒰 _
 Signature = ℕ -> 𝒰₀
 
 
-module _ where
-
-  data Term (s : Signature) (V : 𝒰 𝑖) : 𝒰 𝑖
+mutual
   data Terms (σ : Signature) (V : 𝒰 𝑖) : ℕ -> 𝒰 𝑖 where
     [] : Terms σ V 0
     _∷_ : Term σ V -> Terms σ V n -> Terms σ V (suc n)
 
-  data Term σ V where
+  data Term (σ : Signature) (V : 𝒰 𝑖) : 𝒰 𝑖 where
     te : ∀{n} -> σ n -> Terms σ V n -> Term σ V
     var : V -> Term σ V
+
+
+𝑇𝑒𝑟𝑚 : ∀ {𝑖} σ -> SomeStructure
+𝑇𝑒𝑟𝑚 {𝑖} σ = structureOn (Term {𝑖} σ)
+
 
 
 

@@ -287,6 +287,9 @@ Principal-r A = Ideal-r A :& isPrincipal-r
 
 module _ {𝑖 : 𝔏} {A : Monoid₀ (𝑖 , 𝑖)} where
 
+  record isEpiPrincipal (I : Ideal-r A) : 𝒰 𝑖 where
+
+module _ {𝑖 : 𝔏} {A : Monoid₀ (𝑖 , 𝑖)} where
 
   instance
     isPrincipal-r:⊤ : isPrincipal-r {A = A} ⊤

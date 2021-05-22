@@ -52,6 +52,8 @@ module _ (𝒞 : Category 𝑖) {{_ : isDiscrete ⟨ 𝒞 ⟩}} where
     idp : PathMon
     arrow : {a b : ⟨ 𝒞 ⟩} -> (f : a ⟶ b) -> PathMon
 
+𝖯𝖺𝗍𝗁𝖬𝗈𝗇 : ∀(𝒞 : Category 𝑖) -> {{_ : isDiscrete ⟨ 𝒞 ⟩}} -> SomeStructure
+𝖯𝖺𝗍𝗁𝖬𝗈𝗇 𝒞 = structureOn (PathMon 𝒞)
 
 module _ {𝒞 : Category 𝑖} {{_ : isDiscrete ⟨ 𝒞 ⟩}} {{_ : isSet-Str ⟨ 𝒞 ⟩}} where
 
@@ -141,7 +143,7 @@ module _ {𝒞 : Category 𝑖} {{_ : isDiscrete ⟨ 𝒞 ⟩}} {{_ : isSet-Str 
     lem-40 p q = lem-35 ⟨ p ⟩ ⟨ q ⟩
 
   instance
-    isMonoid:PathMon : isMonoid ′(PathMon 𝒞)′
+    isMonoid:PathMon : isMonoid (𝖯𝖺𝗍𝗁𝖬𝗈𝗇 𝒞)
     isMonoid._⋆_ isMonoid:PathMon = _⋆-PathMon_
     isMonoid.◌ isMonoid:PathMon = idp
     isMonoid.unit-l-⋆ isMonoid:PathMon = lem-10
@@ -152,7 +154,7 @@ module _ {𝒞 : Category 𝑖} {{_ : isDiscrete ⟨ 𝒞 ⟩}} {{_ : isSet-Str 
 
 
   instance
-    hasZero:PathMon : hasZero ′(PathMon 𝒞)′
+    hasZero:PathMon : hasZero (𝖯𝖺𝗍𝗁𝖬𝗈𝗇 𝒞)
     hasZero.◍ hasZero:PathMon = []
     hasZero.absorb-r-⋆ hasZero:PathMon {[]} = refl
     hasZero.absorb-r-⋆ hasZero:PathMon {idp} = refl
@@ -160,7 +162,7 @@ module _ {𝒞 : Category 𝑖} {{_ : isDiscrete ⟨ 𝒞 ⟩}} {{_ : isSet-Str 
     hasZero.absorb-l-⋆ hasZero:PathMon = refl
 
   instance
-    zeroIsDecidable:PathMon : zeroIsDecidable ′(PathMon 𝒞)′
+    zeroIsDecidable:PathMon : zeroIsDecidable (𝖯𝖺𝗍𝗁𝖬𝗈𝗇 𝒞)
     zeroIsDecidable.decide-◍ zeroIsDecidable:PathMon [] = right refl
     zeroIsDecidable.decide-◍ zeroIsDecidable:PathMon idp = left (λ ())
     zeroIsDecidable.decide-◍ zeroIsDecidable:PathMon (arrow f) = left (λ ())
