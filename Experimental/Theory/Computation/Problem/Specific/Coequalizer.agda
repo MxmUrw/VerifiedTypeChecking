@@ -12,9 +12,9 @@ open import Verification.Experimental.Category.Std.Limit.Specific.Coequalizer
 open import Verification.Experimental.Category.Std.Category.As.Monoid
 open import Verification.Experimental.Algebra.MonoidWithZero.Definition
 open import Verification.Experimental.Algebra.MonoidWithZero.Ideal
-open import Verification.Experimental.Theory.Computation.Problem.Definition
+open import Verification.Experimental.Theory.Computation.Refinement.Definition
 open import Verification.Experimental.Theory.Computation.Unification.Monoidic.PrincipalFamilyCat
-open import Verification.Experimental.Theory.Computation.Problem.Paradigm.DivideAndConquer
+open import Verification.Experimental.Theory.Computation.Refinement.Paradigm.DivideAndConquer
 
 record CoeqProblem (𝑖 : 𝔏 ^ 3) : 𝒰 (𝑖 ⁺) where
   field 𝒞 : Category 𝑖
