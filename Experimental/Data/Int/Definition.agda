@@ -1,7 +1,7 @@
 
 module Verification.Experimental.Data.Int.Definition where
 
-open import Verification.Conventions renaming (ℤ to Int)
+open import Verification.Experimental.Conventions renaming (ℤ to Int)
 open import Verification.Experimental.Meta.Structure
 open import Verification.Experimental.Set.Setoid
 open import Verification.Experimental.Algebra.Monoid
@@ -10,11 +10,15 @@ open import Verification.Experimental.Algebra.Ring
 open import Verification.Experimental.Order.Linearorder
 open import Verification.Experimental.Algebra.Ring.Ordered
 
-ℤ : SomeStructure
-ℤ = structureOn Int
+-- ℤ : SomeStructure
+-- ℤ = structureOn Int
+
+macro
+  ℤ : SomeStructure
+  ℤ = #structureOn Int
 
 instance
-  isSetoid:ℤ : isSetoid _ ℤ
+  isSetoid:ℤ : isSetoid _ Int
   isSetoid._∼'_ isSetoid:ℤ = _≡_
   isSetoid.isEquivRel:∼ isSetoid:ℤ = it
 
@@ -42,12 +46,12 @@ instance
 
 open import Cubical.Data.Bool renaming (_⊕_ to _⊕-Bool_)
 
-fromSign : Bool -> ℕ -> ℤ
+fromSign : Bool -> ℕ -> Int
 fromSign false zero = pos 0
 fromSign false (suc n) = negsuc n
 fromSign true n = pos n
 
-_⋅-ℤ_ : ℤ -> ℤ -> ℤ
+_⋅-ℤ_ : Int -> Int -> Int
 a ⋅-ℤ b = fromSign (sgn a ⊕-Bool sgn b) (abs a *-ℕ abs b)
 
 instance
@@ -75,7 +79,7 @@ instance
 --------------------------------------------------------------------
 -- Ordering
 
-_<-ℤ_ : ℤ -> ℤ -> 𝒰 _
+_<-ℤ_ : Int -> Int -> 𝒰 _
 pos n <-ℤ pos m = n <-ℕ m
 pos n <-ℤ negsuc m = 𝟘-𝒰
 negsuc n <-ℤ pos m = 𝟙-𝒰

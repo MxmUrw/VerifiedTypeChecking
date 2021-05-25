@@ -9,7 +9,7 @@ open import Verification.Experimental.Data.Universe.Definition
 
 
 instance
-  isCategory:𝒰 : isCategory (_ , 𝑖) (𝒰 𝑖)
+  isCategory:𝒰 : isCategory (_ , 𝑖) (𝐓𝐲𝐩𝐞 𝑖)
   isCategory.Hom' isCategory:𝒰 A B = A -> B
   isCategory.isSetoid:Hom isCategory:𝒰 = {!!}
   isCategory.id isCategory:𝒰 = {!!}

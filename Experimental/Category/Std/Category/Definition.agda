@@ -31,7 +31,7 @@ open Hom-Base public
 -- [Definition]
 -- | Given a type $𝒞$, whose elements we are going to call /objects/, we say that it has the structure of a category [...] if
 --   the following additional data is given:
-record isCategory {𝑖 : 𝔏} (𝑗 : 𝔏 ^ 2) (𝒞 : 𝒰 𝑖) : 𝒰 (𝑖 ､ 𝑗 ⁺) where
+record isCategory {𝑖 : 𝔏} (𝑗 : 𝔏 ^ 2) (𝒞 : 𝒰' 𝑖) : 𝒰 (𝑖 ､ 𝑗 ⁺) where
   infixl 50 _◆_ _◈_
 
 -- | 1. A type family [..], assigning to every pair of objects |a b : 𝒞|

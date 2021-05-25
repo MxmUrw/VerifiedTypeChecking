@@ -11,11 +11,12 @@ open import Verification.Experimental.Category.Std.Category.Definition
 open import Verification.Experimental.Theory.Computation.Problem.Definition
 
 
-𝟘 : ∀{𝑖} -> SomeStructure
-𝟘 {𝑖} = structureOn (⊥-𝒰 {𝑖})
+macro
+  𝟘 : ∀{𝑖} -> SomeStructure
+  𝟘 {𝑖} = #structureOn (⊥-𝒰 {𝑖})
 
-𝟙 : ∀{𝑖} -> SomeStructure
-𝟙 {𝑖} = structureOn (⊤-𝒰 {𝑖})
+  𝟙 : ∀{𝑖} -> SomeStructure
+  𝟙 {𝑖} = #structureOn (⊤-𝒰 {𝑖})
 
 instance
   isProblem:𝟙 : ∀{𝑖 𝑗} -> isProblem 𝑗 (𝟙 {𝑖})

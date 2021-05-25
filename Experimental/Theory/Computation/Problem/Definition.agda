@@ -20,16 +20,21 @@ record isProblem (𝑖 : 𝔏) (A : 𝒰 𝑗) : 𝒰 (𝑖 ⁺ ､ 𝑗) where
 open isProblem {{...}} public
 
 Problem : (𝑖 : 𝔏 ^ 2) -> 𝒰 _
-Problem 𝑖 = 𝒰 (𝑖 ⌄ 0) :& isProblem (𝑖 ⌄ 1)
+Problem 𝑖 = 𝒰' (𝑖 ⌄ 0) :& isProblem (𝑖 ⌄ 1)
 
-𝐏𝐫𝐨𝐛 : ∀ 𝑖 -> SomeStructure
-𝐏𝐫𝐨𝐛 𝑖 = structureOn (Problem 𝑖)
+macro
+  𝐏𝐫𝐨𝐛 : ∀ (𝑖 : 𝔏 ^ 2) -> SomeStructure
+  𝐏𝐫𝐨𝐛 𝑖 = #structureOn (Problem 𝑖)
+
+mymap : ∀{𝑖 : 𝔏 ^ 2} -> 𝐏𝐫𝐨𝐛 𝑖 -> 𝐏𝐫𝐨𝐛 𝑖
+mymap a = a
 
 ---------------------------------------------------------------
 -- Definition of problem morphisms
 
 module _ (A : 𝐏𝐫𝐨𝐛 (𝑖 , 𝑘)) (B : 𝐏𝐫𝐨𝐛 (𝑗 , 𝑘)) where
   record isDeductive (f : ⟨ A ⟩ -> ⟨ B ⟩) : 𝒰 (𝑖 ､ 𝑘) where
+    constructor deductive
     field deduct : Solution {{of A}} ≤ (Solution {{of B}} ∣ f)
 
   open isDeductive {{...}} public
@@ -68,4 +73,5 @@ instance
     ; assoc-r-◆  = incl refl
     ; _◈_        = {!!}
     }
-
+{-
+-}

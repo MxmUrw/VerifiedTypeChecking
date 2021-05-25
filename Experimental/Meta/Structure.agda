@@ -1,7 +1,7 @@
 
 module Verification.Experimental.Meta.Structure where
 
-open import Verification.Conventions
+open import Verification.Conventions hiding (′_′)
 -- open import Verification.Core.Category.Definition
 -- open import Verification.Core.Category.Instance.Set.Definition
 open import Verification.Core.Order.Preorder renaming (IPreorder to isPreorder)
@@ -139,7 +139,8 @@ instance
   getP (hasU:& {UU = A} {{U}} {P = P}) a = ∑i λ (p1 : getP U a) -> P (reconstruct U (a , p1))
   reconstruct (hasU:& {UU = A} {{U}} {P = P}) (a , pa) = ′_′ a {pa .ifst} {{pa .isnd}}
   destructEl (hasU:& {UU = A} ⦃ U ⦄ {P = P}) (′_′ a) = a
-  destructP (hasU:& {UU = A} {{U}} {P = P}) (′_′ a ) = make∑i -- {ifst = pold}
+  destructP (hasU:& {UU = A} {{U}} {P = P}) (record { ⟨_⟩ = a ; oldProof = pmain ; of_ = pof }) = make∑i {ifst = pmain} {{pof}}
+  -- make∑i -- {ifst = pold}
 
 _on_ : (UU : 𝒰 𝑖) {{U : hasU UU 𝑘 𝑙}} -> (a : getU U) -> 𝒰 _
 _on_ UU {{U}} a = getP U a
@@ -152,21 +153,135 @@ is_ UU {{U}} a = getP U a
 --------------------------------------------------------------------
 -- Allowing the subsumption of all structures under a single name
 
-record hasStructure {A : 𝒰 𝑘} (a : A) (UU : 𝒰 𝑗) {{U : hasU UU 𝑘 𝑙}} : 𝒰 ((𝑘 ⁺) ､ 𝑙) where
+-- record hasStructure {A : 𝒰 𝑘} (a : A) (UU : 𝒰 𝑗) (U : hasU UU 𝑘 𝑙) : 𝒰 ((𝑘 ⁺) ､ 𝑙) where
+--   constructor hasstructure
+--   field isUniverseOf : A ≡-Str getU U
+--   field isWithStructure : getP U (transport-Str (isUniverseOf) a)
+
+-- instance
+--   hasStructure:Structure : ∀{UU : 𝒰 𝑗} {{U : hasU UU 𝑘 𝑙}} -> {a : getU U} -> {{_ : getP U a}} -> hasStructure {A = getU U} a UU U -- {{{!!}}}
+--   hasStructure.isUniverseOf hasStructure:Structure = refl
+--   hasStructure.isWithStructure (hasStructure:Structure {{U = U}} {{P}}) = P
+
+---------------------------------------------------------------
+-- Still not quite working
+{-
+record hasStructure {A : 𝒰 𝑘} (a : A) (UU : 𝒰 𝑗) 𝑙 : 𝒰 ((𝑘 ⁺) ､ 𝑗 ､ 𝑙 ⁺) where
+  no-eta-equality
+  pattern
   constructor hasstructure
-  field isUniverseOf : A ≡-Str getU U
-  field isWithStructure : getP U (transport-Str (isUniverseOf) a)
+  field myU : hasU UU 𝑘 𝑙
+  field isUniverseOf : A ≡-Str getU myU
+  field isWithStructure : getP myU (transport-Str (isUniverseOf) a)
+
 
 instance
-  hasStructure:Structure : ∀{UU : 𝒰 𝑗} {{U : hasU UU 𝑘 𝑙}} -> {a : getU U} -> {{_ : getP U a}} -> hasStructure {A = getU U} a UU -- {{{!!}}}
-  hasStructure.isUniverseOf hasStructure:Structure = refl
-  hasStructure.isWithStructure hasStructure:Structure = it
+  -- hasStructure:Structure : ∀{UU : 𝒰 𝑗} {{U : hasU UU 𝑘 𝑙}} -> ∀{A} -> {{pp : A ≡-Str getU U}} -> {a : A} -> {{P : getP U (transport-Str pp a)}} -> hasStructure {A = A} (a) UU 𝑙 -- {{{!!}}}
+  hasStructure:Structure : ∀{UU : 𝒰 𝑗} {{U : hasU UU 𝑘 𝑙}} -> {a : getU U} -> {{P : getP U a}} -> hasStructure {A = getU U} a UU 𝑙
+  hasStructure:Structure {{U = U}} {{P = P}} = hasstructure U refl P
+  -- hasStructure.myU (hasStructure:Structure {{U = U}}) = U
+  -- hasStructure.isUniverseOf (hasStructure:Structure) = refl
+  -- -- hasStructure.isUniverseOf (hasStructure:Structure {{pp = pp}}) = pp
+  -- hasStructure.isWithStructure (hasStructure:Structure {{U = U}} {{P = P}}) = P
 
-structureOn : {A : 𝒰 𝑘} (a : A) {UU : 𝒰 𝑗} {{U : hasU UU 𝑘 𝑙}} -> {{_ : hasStructure a UU}} -> UU
-structureOn {A = .(getU U)} a {UU} ⦃ U ⦄ ⦃ hasstructure refl-StrId isWithStructure ⦄ = reconstruct U (a , isWithStructure)
+-- structureOn : {A : 𝒰 𝑘} (a : A) {UU : 𝒰 𝑗} {U : hasU UU 𝑘 𝑙} -> {{pp : A ≡-Str getU U}} -> {{_ : hasStructure {A = A} a UU 𝑙}} -> UU
+structureOn : {A : 𝒰 𝑘} (a : A) {UU : 𝒰 𝑗} {{_ : hasStructure {A = A} a UU 𝑙}} -> UU
+structureOn {A = .(getU myU)} a {UU} ⦃ hasstructure myU refl-StrId isWithStructure ⦄ = reconstruct myU (a , isWithStructure)
+-- structureOn {A = .(getU U)} a {UU} { U } ⦃ hasstructure refl-StrId isWithStructure ⦄ = reconstruct U (a , isWithStructure)
 
-SomeStructure : {AA : 𝒰 𝑖} -> {A : AA} -> 𝒰ω
-SomeStructure {A = A} = ∀{𝑗 𝑙} -> {UU : 𝒰 𝑗} {{U : hasU UU _ 𝑙}} -> {{_ : hasStructure A UU}} -> UU
+SomeStructure : {A : 𝒰 𝑖} -> {a : A} -> 𝒰ω
+SomeStructure {A = A} {a = a} = ∀{𝑗 𝑙} -> {UU : 𝒰 𝑗} -> {{XX : hasStructure a UU 𝑙}} -> UU
+
+-- SomeStructure : {A : 𝒰 𝑖} -> {a : A} -> 𝒰ω
+-- SomeStructure {A = A} {a = a} = ∀{𝑗} -> {UU : 𝒰 𝑗} -> UU
+
+AA : SomeStructure
+AA {{XX = XX}} = structureOn ℤ {{XX}}
+-- AA : SomeStructure
+-- AA = structureOn ℤ
+-}
+
+---------------------------------------------------------------
+-- Still not quite working
+
+{-
+
+record hasStructure {𝑘 𝑗 : 𝔏} {A : 𝒰 𝑘} (a : A) (UU : 𝒰 𝑗) : 𝒰 𝑗 where
+  no-eta-equality
+  pattern
+  constructor hasstructure
+  field myUU : UU
+  -- field myU : hasU UU 𝑘 𝑙
+  -- field isUniverseOf : A ≡-Str getU myU
+  -- field isWithStructure : getP myU (transport-Str (isUniverseOf) a)
 
 
+instance
+  hasStructure:Structure : ∀{𝑗 𝑘 𝑙 : 𝔏} -> ∀{UU : 𝒰 𝑗} {{U : hasU UU 𝑘 𝑙}} -> {a : getU U} -> {{P : getP U a}} -> hasStructure {A = getU U} a UU
+  hasStructure:Structure {{U = U}} {a = a} {{P = P}} = hasstructure (reconstruct U (a , P))
 
+structureOn : ∀{𝑘 𝑗 : 𝔏} {A : 𝒰 𝑘} (a : A) {UU : 𝒰 𝑗} {{_ : hasStructure {A = A} a UU}} -> UU
+structureOn a {UU = UU} {{hasstr}} = hasStructure.myUU hasstr
+
+SomeStructure : ∀{𝑖 : 𝔏} {A : 𝒰 𝑖} -> {a : A} -> 𝒰ω
+SomeStructure {A = A} {a = a} = ∀{𝑗} -> {UU : 𝒰 𝑗} -> {{XX : hasStructure a UU}} -> UU
+
+
+AA : SomeStructure
+AA {{XX = XX}} = structureOn ℤ {{XX}}
+-}
+
+---------------------------------------------------------------
+-- Now without middle man
+
+-- record hasStructure {𝑘 𝑗 : 𝔏} {A : 𝒰 𝑘} (a : A) (UU : 𝒰 𝑗) : 𝒰 𝑗 where
+--   no-eta-equality
+--   pattern
+--   constructor hasstructure
+--   field myUU : UU
+
+
+-- instance
+--   hasStructure:Structure : ∀{𝑗 𝑘 𝑙 : 𝔏} -> ∀{UU : 𝒰 𝑗} {{U : hasU UU 𝑘 𝑙}} -> {a : getU U} -> {{P : getP U a}} -> hasStructure {A = getU U} a UU
+--   hasStructure:Structure {{U = U}} {a = a} {{P = P}} = hasstructure (reconstruct U (a , P))
+
+{-
+
+structureOn : ∀{𝑘 𝑗 𝑙 : 𝔏} {A : 𝒰 𝑘} (a : A) {UU : 𝒰 𝑗} {{U : hasU UU 𝑘 𝑙}} {{pp : A ≡-Str getU U}} {{P : getP U (transport-Str pp a)}} -> UU
+structureOn a {UU = UU} {{U}} {{refl-StrId}} {{P}} = reconstruct U (a , P)
+-- hasStructure.myUU hasstr
+
+SomeStructure : ∀{𝑘 : 𝔏} {A : 𝒰 𝑘} -> {a : A} -> 𝒰ω
+SomeStructure {𝑘 = 𝑘} {A = A} {a = a} = ∀{𝑗 𝑙} -> {UU : 𝒰 𝑗} -> {{U : hasU UU 𝑘 𝑙}} {{pp : A ≡-Str getU U}} {{P : getP U (transport-Str pp a)}} -> UU
+
+-- SomeStructure : ∀{𝑖 : 𝔏} {A : 𝒰 𝑖} -> {a : A} -> 𝒰ω
+-- SomeStructure {A = A} {a = a} = ∀{𝑗} -> {UU : 𝒰 𝑗} -> {{XX : hasStructure a UU}} -> UU
+
+
+AA : SomeStructure
+AA = structureOn ℤ
+-}
+
+
+---------------------------------------------------------------
+-- And here only for :&
+
+
+{-
+structureOn' : ∀{𝑖 𝑘 𝑙 𝑗} -> {A : 𝒰 𝑘} -> (a : A) -> {UU : 𝒰 𝑖} {{U : hasU UU 𝑘 𝑙}} {P : UU -> 𝒰 𝑗} -> {{pp : A ≡-Str getU U}}
+               -> {oldP : getP U (transport-Str pp a)} -> {{ofP : P (reconstruct U (transport-Str pp a , oldP))}}
+               -> UU :& P
+structureOn' a {{pp = pp}} = ′ transport-Str pp a ′
+
+
+SomeStructure' : ∀{𝑘 : 𝔏} {A : 𝒰 𝑘} -> {a : A} -> 𝒰ω
+SomeStructure' {𝑘 = 𝑘} {A = A} {a = a} = ∀{𝑙 𝑗 𝑖} -> {UU : 𝒰 𝑖} {{U : hasU UU 𝑘 𝑙}} {P : UU -> 𝒰 𝑗} -> {{pp : A ≡-Str getU U}}
+               -> {oldP : getP U (transport-Str pp a)} -> {{ofP : P (reconstruct U (transport-Str pp a , oldP))}}
+               -> UU :& P
+
+BB : SomeStructure'
+BB = structureOn' ℤ
+
+-- pattern CCC = ′ ℤ ′
+
+-}
